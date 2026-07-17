@@ -1,0 +1,788 @@
+{
+  "info": {
+    "name": "SIGCB-QR API",
+    "description": "API del Sistema Integral de Gestión, Control y Seguimiento de Lectura Interna en la Biblioteca Universitaria mediante Códigos QR e Inteligencia Artificial.\n\nAutenticación mediante JWT en cookie HttpOnly (access_token).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "sigcbqr"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "auth": {
+    "type": "noauth"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Endpoints de autenticación",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@dev.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Inicia sesión y recibe un JWT en cookie HttpOnly (access_token)."
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Usuario\",\n  \"email\": \"nuevo@correo.com\",\n  \"password\": \"123456\",\n  \"telefono\": \"809-000-0000\",\n  \"rolId\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Registra un nuevo usuario y devuelve JWT en cookie HttpOnly."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Cierra la sesión actual. Invalida el JTI del token en la blacklist y limpia la cookie."
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario actual (me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Obtiene los datos del usuario autenticado mediante el JWT en cookie."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "description": "CRUD de usuarios (solo ADMIN)",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios?page=0&size=10&sort=nombre",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "nombre" }
+              ]
+            },
+            "description": "Lista todos los usuarios con paginación. Requiere rol ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Obtiene un usuario por su ID. Requiere rol ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario Nuevo\",\n  \"email\": \"usuario@correo.com\",\n  \"password\": \"123456\",\n  \"telefono\": \"809-111-2222\",\n  \"rolId\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Crea un nuevo usuario. Requiere rol ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario Actualizado\",\n  \"email\": \"actualizado@correo.com\",\n  \"telefono\": \"809-333-4444\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Actualiza un usuario existente. Requiere rol ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Desactiva un usuario (soft-delete). Requiere rol ADMIN."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Libros",
+      "description": "CRUD de libros y búsqueda",
+      "item": [
+        {
+          "name": "Listar libros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/libros?page=0&size=10&sort=titulo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "titulo" }
+              ]
+            },
+            "description": "Obtiene todos los libros activos con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar libros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/libros/buscar?q=Clean&page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros", "buscar"],
+              "query": [
+                { "key": "q", "value": "Clean" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "Busca libros por título."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener libro por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/libros/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros", "1"]
+            },
+            "description": "Obtiene un libro por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear libro",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Nuevo Libro\",\n  \"isbn\": \"978-0-00-000000-0\",\n  \"anioPublicacion\": 2024,\n  \"edicion\": \"1ra\",\n  \"ejemplaresTotales\": 5,\n  \"ubicacion\": \"Estante A1\",\n  \"descripcion\": \"Descripción del nuevo libro\",\n  \"categoriaId\": 1,\n  \"editorialId\": 1,\n  \"autorIds\": [1, 2]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/libros",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros"]
+            },
+            "description": "Crea un nuevo libro. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar libro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Libro Actualizado\",\n  \"isbn\": \"978-0-00-000000-1\",\n  \"anioPublicacion\": 2025,\n  \"edicion\": \"2da\",\n  \"ejemplaresTotales\": 10,\n  \"ubicacion\": \"Estante B2\",\n  \"categoriaId\": 2,\n  \"editorialId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/libros/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros", "1"]
+            },
+            "description": "Actualiza un libro existente. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar libro",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/libros/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "libros", "1"]
+            },
+            "description": "Desactiva un libro (soft-delete). Requiere rol ADMIN."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "description": "Estadísticas del dashboard",
+      "item": [
+        {
+          "name": "Estadísticas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "stats"]
+            },
+            "description": "Obtiene las estadísticas principales del dashboard."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catálogo",
+      "description": "Gestión de autores, editoriales, categorías, facultades y carreras",
+      "item": [
+        {
+          "name": "Listar autores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/autores?page=0&size=20&sort=apellido",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "autores"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" },
+                { "key": "sort", "value": "apellido" }
+              ]
+            },
+            "description": "Obtiene todos los autores con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear autor",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Robert\",\n  \"apellido\": \"Martin\",\n  \"nacionalidad\": \"Estadounidense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/autores",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "autores"]
+            },
+            "description": "Crea un nuevo autor."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar autor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Robert C.\",\n  \"apellido\": \"Martin\",\n  \"nacionalidad\": \"Estadounidense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/autores/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "autores", "1"]
+            },
+            "description": "Actualiza un autor existente."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar editoriales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/editoriales?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "editoriales"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            },
+            "description": "Obtiene todas las editoriales con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear editorial",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nueva Editorial\",\n  \"pais\": \"República Dominicana\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/editoriales",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "editoriales"]
+            },
+            "description": "Crea una nueva editorial."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar editorial",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Editorial Actualizada\",\n  \"pais\": \"RD\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/editoriales/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "editoriales", "1"]
+            },
+            "description": "Actualiza una editorial existente."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar editorial",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/editoriales/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "editoriales", "1"]
+            },
+            "description": "Desactiva una editorial (soft-delete)."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar categorías",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categorias"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            },
+            "description": "Obtiene todas las categorías con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nueva Categoría\",\n  \"descripcion\": \"Descripción de la categoría\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categorias",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categorias"]
+            },
+            "description": "Crea una nueva categoría."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar facultades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/facultades",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "facultades"]
+            },
+            "description": "Obtiene todas las facultades."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar carreras",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/carreras",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "carreras"]
+            },
+            "description": "Obtiene todas las carreras. Opcionalmente filtrar por facultadId."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Préstamos",
+      "description": "Gestión de préstamos",
+      "item": [
+        {
+          "name": "Listar préstamos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos?page=0&size=10&sort=fechaPrestamo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "sort", "value": "fechaPrestamo" }
+              ]
+            },
+            "description": "Obtiene todos los préstamos con paginación. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Préstamos por usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos/usuario/1?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos", "usuario", "1"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "Obtiene los préstamos de un usuario específico."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener préstamo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos", "1"]
+            },
+            "description": "Obtiene un préstamo por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear préstamo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 3,\n  \"inventarioId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos"]
+            },
+            "description": "Registra un nuevo préstamo. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Devolver libro",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos/1/devolver",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos", "1", "devolver"]
+            },
+            "description": "Registra la devolución de un préstamo. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Renovar préstamo",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/prestamos/1/renovar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "prestamos", "1", "renovar"]
+            },
+            "description": "Renueva un préstamo activo. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Multas",
+      "description": "Gestión de multas",
+      "item": [
+        {
+          "name": "Listar multas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/multas?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "multas"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "Obtiene todas las multas con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Multas por usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/multas/usuario/1?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "multas", "usuario", "1"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "Obtiene las multas de un usuario específico."
+          },
+          "response": []
+        },
+        {
+          "name": "Pagar multa",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/multas/1/pagar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "multas", "1", "pagar"]
+            },
+            "description": "Registra el pago de una multa. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "description": "Gestión de reservas",
+      "item": [
+        {
+          "name": "Listar reservas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reservas"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "Obtiene todas las reservas con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 3,\n  \"libroId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reservas"]
+            },
+            "description": "Registra una nueva reserva de libro."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar reserva",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reservas", "1"]
+            },
+            "description": "Cancela una reserva existente."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "description": "Reportes (solo ADMIN/BIBLIOTECARIO)",
+      "item": [
+        {
+          "name": "Préstamos diarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/prestamos-diarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "prestamos-diarios"]
+            },
+            "description": "Reporte de préstamos del día actual. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Libros más solicitados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/libros-mas-solicitados",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "libros-mas-solicitados"]
+            },
+            "description": "Top 10 libros más prestados. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        },
+        {
+          "name": "Multas cobradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reportes/multas-cobradas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reportes", "multas-cobradas"]
+            },
+            "description": "Resumen de multas del mes actual. Requiere rol ADMIN o BIBLIOTECARIO."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

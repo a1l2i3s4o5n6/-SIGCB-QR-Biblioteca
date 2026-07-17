@@ -8,6 +8,7 @@ import java.util.Collection;
 public record UserPrincipal(
         Long id,
         String email,
+        String password,
         String rol,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
@@ -18,8 +19,13 @@ public record UserPrincipal(
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override

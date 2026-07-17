@@ -113,14 +113,6 @@ public class JwtTokenProvider {
         return secretKey;
     }
 
-    public Date getExpirationFromToken(String token) {
-        return parseToken(token).getExpiration();
-    }
-
-    public SecretKey getSecretKey() {
-        return secretKey;
-    }
-
     public JwtBlacklistService getJwtBlacklistService() {
         return blacklistService;
     }

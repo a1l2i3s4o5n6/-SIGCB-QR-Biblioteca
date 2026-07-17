@@ -1,7 +1,7 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+RUN composer install --no-interaction --no-dev --no-scripts --optimize-autoloader
 
 FROM node:20-alpine AS frontend
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY package.json package-lock.json vite.config.js tailwind.config.js postcss.co
 COPY resources ./resources
 RUN npm ci && npm run build
 
-FROM php:8.2-apache
+FROM php:8.4-apache
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libonig-dev libzip-dev unzip \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring gd zip \
     && a2enmod rewrite

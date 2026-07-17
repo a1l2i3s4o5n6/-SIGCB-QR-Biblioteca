@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new SimpleGrantedAuthority("ROLE_" + rol)
             );
 
-            UserPrincipal userPrincipal = new UserPrincipal(userId, email, rol, authorities);
+            UserPrincipal userPrincipal = new UserPrincipal(userId, email, null, rol, authorities);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
