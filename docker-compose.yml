@@ -16,6 +16,17 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sigcbqr-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sigcbqr.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
   api:
     build: ./sigcb-qr-api
     container_name: sigcbqr-api
@@ -36,8 +47,8 @@ services:
       - "8000:80"
     environment:
       APP_NAME: "SIGCB-QR"
-      APP_ENV: production
-      APP_DEBUG: false
+      APP_ENV: local
+      APP_DEBUG: true
       APP_URL: http://localhost:8000
     depends_on:
       - api
