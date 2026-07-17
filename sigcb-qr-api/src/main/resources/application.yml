@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: sigcb-qr-api
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sigcbqr}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:Doctora2025}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+app:
+  jwt:
+    secret: aG9sYV9tdW5kby5lc3RlX2VzX3VuX3NlY3JldG9fbXV5X3NlZ3Vyb19wYXJhX2xvcyB0b2tlbmVzX2RlbF9zaXN0ZW1hX3NpZ2NiX3FyX2RlbF9wcm95ZWN0b19kZV9sYV91bml2ZXJzaWRhZA==
+    expiration-ms: 3600000
+
+  cors:
+    allowed-origins: http://localhost:8000,http://127.0.0.1:8000
+
+logging:
+  level:
+    com.sigcbqr: DEBUG
+    org.springframework.security: INFO
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method

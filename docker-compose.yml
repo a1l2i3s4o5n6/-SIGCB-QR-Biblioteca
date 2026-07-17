@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sigcbqr-postgres
+    environment:
+      POSTGRES_DB: sigcbqr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Doctora2025
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./sigcb-qr-api
+    container_name: sigcbqr-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sigcbqr
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Doctora2025
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./SIGCB-QR
+    container_name: sigcbqr-frontend
+    ports:
+      - "8000:80"
+    environment:
+      APP_NAME: "SIGCB-QR"
+      APP_ENV: production
+      APP_DEBUG: false
+      APP_URL: http://localhost:8000
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

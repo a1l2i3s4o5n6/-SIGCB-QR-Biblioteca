@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #63A355;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4A7D3F;
+}
+
+/* ===== Guest / Auth Layout ===== */
+.auth-bg {
+    background: linear-gradient(135deg, #63A355 0%, #4A7D3F 50%, #2A5F23 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
+    background-size: 60px 60px;
+    background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+}
+
+.auth-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.auth-card-top {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #C9A94E, #E4C06A);
+    border-radius: 2px;
+    margin: 0 auto;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    background: linear-gradient(180deg, #2A5F23 0%, #1A3815 100%);
+    transition: width 0.3s ease;
+    z-index: 40;
+}
+
+.sidebar .nav-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar .nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #C9A94E;
+}
+
+.sidebar .nav-item.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #C9A94E;
+}
+
+.sidebar .nav-item.active .nav-icon {
+    color: #C9A94E;
+}
+
+.sidebar .nav-item .nav-icon {
+    transition: color 0.3s ease;
+}
+
+.sidebar .nav-item:hover .nav-icon {
+    color: #C9A94E;
+}
+
+/* ===== Navbar ===== */
+.navbar-custom {
+    background: linear-gradient(135deg, #63A355 0%, #4A7D3F 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Cards ===== */
+.card-custom {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Buttons ===== */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #63A355 0%, #4A7D3F 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #4A7D3F 0%, #3A6631 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 125, 63, 0.4);
+}
+
+/* ===== Dashboard ===== */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* ===== Toggle button ===== */
+.sidebar-toggle {
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    color: #C9A94E !important;
+}
+
+/* ===== Responsive adjustments ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0 !important;
+        overflow: hidden;
+    }
+
+    .sidebar.open {
+        width: 260px !important;
+    }
+}
