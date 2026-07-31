@@ -87,7 +87,8 @@ class LibroServiceTest {
 
         Autor autor = new Autor();
         autor.setId(1L);
-        autor.setNombreCompleto("Test Autor");
+        autor.setNombre("Test");
+        autor.setApellido("Autor");
 
         LibroRequest request = new LibroRequest();
         request.setTitulo("Nuevo Libro");
