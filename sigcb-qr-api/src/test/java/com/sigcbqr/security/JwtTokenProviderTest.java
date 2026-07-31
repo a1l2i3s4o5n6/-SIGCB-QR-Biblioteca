@@ -1,5 +1,6 @@
 package com.sigcbqr.security;
 
+import com.sigcbqr.repository.JwtBlacklistRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -11,6 +12,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class JwtTokenProviderTest {
 
@@ -24,7 +28,9 @@ class JwtTokenProviderTest {
 
     @BeforeEach
     void setUp() {
-        JwtBlacklistService blacklistService = new JwtBlacklistService(null);
+        JwtBlacklistRepository blacklistRepository = mock(JwtBlacklistRepository.class);
+        when(blacklistRepository.existsByJti(any())).thenReturn(false);
+        JwtBlacklistService blacklistService = new JwtBlacklistService(blacklistRepository);
         tokenProvider = new JwtTokenProvider(SECRET, EXPIRATION, ISSUER, AUDIENCE, false, blacklistService);
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
     }

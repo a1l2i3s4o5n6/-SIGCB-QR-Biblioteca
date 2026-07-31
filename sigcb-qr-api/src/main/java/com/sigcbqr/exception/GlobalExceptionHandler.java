@@ -2,6 +2,7 @@ package com.sigcbqr.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,6 +41,16 @@ public class GlobalExceptionHandler {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         pd.setType(URI.create(BASE_ERROR_URL + "/unauthorized"));
         pd.setTitle("No autorizado");
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDenied(AccessDeniedException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+                "No tiene permisos para acceder a este recurso");
+        pd.setType(URI.create(BASE_ERROR_URL + "/forbidden"));
+        pd.setTitle("Acceso denegado");
         pd.setProperty("timestamp", System.currentTimeMillis());
         return pd;
     }

@@ -1,8 +1,10 @@
 package com.sigcbqr.controller;
 
+import com.sigcbqr.config.SecurityConfig;
 import com.sigcbqr.model.dto.request.LoginRequest;
 import com.sigcbqr.model.dto.request.RegisterRequest;
 import com.sigcbqr.model.dto.response.LoginResponse;
+import com.sigcbqr.security.JwtAuthenticationEntryPoint;
 import com.sigcbqr.security.JwtTokenProvider;
 import com.sigcbqr.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@Import(SecurityConfig.class)
 class AuthControllerTest {
 
     @Autowired
@@ -33,6 +37,9 @@ class AuthControllerTest {
 
     @MockBean
     private JwtTokenProvider tokenProvider;
+
+    @MockBean
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Test
     void loginExitoso() throws Exception {

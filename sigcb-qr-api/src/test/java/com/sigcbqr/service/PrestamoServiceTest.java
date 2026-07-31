@@ -85,21 +85,30 @@ class PrestamoServiceTest {
 
     @Test
     void devolverPrestamoConExito() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Test User");
+
         Prestamo prestamo = new Prestamo();
         prestamo.setId(1L);
         prestamo.setEstado("ACTIVO");
+        prestamo.setUsuario(usuario);
+        prestamo.setFechaVencimiento(java.time.LocalDateTime.now().plusDays(7));
 
         Inventario inventario = new Inventario();
         inventario.setId(1L);
         inventario.setEstado("PRESTADO");
+        inventario.setCodigoEjemplar("E-001");
 
         Libro libro = new Libro();
         libro.setId(1L);
+        libro.setTitulo("Test Book");
         libro.setEjemplaresDisponibles(3);
         inventario.setLibro(libro);
         prestamo.setInventario(inventario);
 
         when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(i -> i.getArgument(0));
 
         var response = prestamoService.devolver(1L);
         assertNotNull(response);

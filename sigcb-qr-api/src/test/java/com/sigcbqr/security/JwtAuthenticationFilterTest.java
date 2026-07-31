@@ -1,7 +1,6 @@
 package com.sigcbqr.security;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,15 +32,12 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void doFilterSinCookieContinuaLaCadena() throws Exception {
-        when(request.getCookies()).thenReturn(null);
         filter.doFilterInternal(request, response, filterChain);
         verify(filterChain).doFilter(request, response);
     }
 
     @Test
     void doFilterSinAccessTokenCookieContinuaLaCadena() throws Exception {
-        Cookie[] cookies = { new Cookie("other", "value") };
-        when(request.getCookies()).thenReturn(cookies);
         when(tokenProvider.extractTokenFromCookie(request)).thenReturn(null);
         filter.doFilterInternal(request, response, filterChain);
         verify(filterChain).doFilter(request, response);
@@ -49,8 +45,6 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void doFilterConAccessTokenCookieInvalido() throws Exception {
-        Cookie[] cookies = { new Cookie("access_token", "invalid-token") };
-        when(request.getCookies()).thenReturn(cookies);
         when(tokenProvider.extractTokenFromCookie(request)).thenReturn("invalid-token");
         when(tokenProvider.validateToken("invalid-token")).thenReturn(false);
 
