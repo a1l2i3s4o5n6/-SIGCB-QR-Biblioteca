@@ -1,0 +1,3194 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+11pt,
+a4paper,
+]{report}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+\usepackage{unicode-math} % this also loads fontspec
+\defaultfontfeatures{Scale=MatchLowercase}
+\defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage[]{mathpazo}
+\ifPDFTeX\else
+% xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+	\usepackage[]{microtype}
+	\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+	\IfFileExists{parskip.sty}{%
+		\usepackage{parskip}
+	}{% else
+		\setlength{\parindent}{0pt}
+		\setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+	\KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
+\lstset{defaultdialect=[5.3]Lua}
+\lstset{defaultdialect=[x86masm]Assembler}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{spanish}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+% ==================== Preámbulo de formato ====================
+\usepackage{geometry}
+\geometry{a4paper, top=2.7cm, bottom=2.7cm, left=2.6cm, right=2.6cm}
+
+\usepackage{xcolor}
+\definecolor{primaryblue}{HTML}{1B3A5C}
+\definecolor{accentblue}{HTML}{2E6DA4}
+\definecolor{codebg}{HTML}{F6F8FA}
+\definecolor{codeframe}{HTML}{D0D7DE}
+\definecolor{stringgreen}{HTML}{116329}
+\definecolor{commentgray}{HTML}{6E7781}
+\definecolor{keywordpurple}{HTML}{8250DF}
+
+% ---------- Títulos de sección ----------
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries\color{black}}
+{\chaptertitlename\ \thechapter}{18pt}{\Huge}
+\titleformat{\section}
+{\normalfont\Large\bfseries\color{black}}{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\large\bfseries\color{black}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries\color{black}}{\thesubsubsection}{1em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}
+
+% ---------- Encabezados y pies de página ----------
+\usepackage{fancyhdr}
+\setlength{\headheight}{22pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{gray}{SIGCB-QR --- Tercera Entrega}}
+\fancyhead[R]{\small\textcolor{gray}{\leftmark}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{codeframe}\leaders\hrule height \headrulewidth\hfill}}
+\fancypagestyle{plain}{%
+	\fancyhf{}
+	\fancyfoot[C]{\small\thepage}
+	\renewcommand{\headrulewidth}{0pt}
+}
+
+% ---------- Tablas ----------
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{pdflscape}
+\usepackage{seqsplit}
+\renewcommand{\arraystretch}{1.25}
+
+% ---------- Código fuente (listings) ----------
+\usepackage{listings}
+\lstdefinelanguage{gherkin}{
+	morekeywords={Feature,Scenario,Scenario Outline,Given,When,Then,And,But,Background,Examples},
+	sensitive=true,
+	morecomment=[l]{\#},
+	morestring=[b]"
+}
+\lstset{
+	extendedchars=true,
+	inputencoding=utf8,
+	literate=
+	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+	{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+	{ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1 {Ü}{{\"U}}1
+	{¿}{{?`}}1 {¡}{{!`}}1,
+	backgroundcolor=\color{codebg},
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{keywordpurple}\bfseries,
+	commentstyle=\color{commentgray}\itshape,
+	stringstyle=\color{stringgreen},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	numbersep=8pt,
+	frame=single,
+	rulecolor=\color{codeframe},
+	framesep=6pt,
+	breaklines=true,
+	breakatwhitespace=false,
+	showstringspaces=false,
+	tabsize=2,
+	captionpos=b,
+	columns=flexible,
+	xleftmargin=1pt,
+	xrightmargin=1pt
+}
+
+% ---------- Hipervínculos ----------
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=accentblue,
+	citecolor=accentblue,
+	urlcolor=accentblue,
+	pdftitle={SIGCB-QR - Sistema Integral de Gestion Bibliotecaria},
+	pdfauthor={Equipo SIGCB-QR}
+}
+
+% ---------- Otros ----------
+\usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=4pt}
+\usepackage{parskip}
+\setlength{\parskip}{6pt}
+\ifLuaTeX
+\usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+	pdflang={es-ES},
+	colorlinks=true,
+	linkcolor={Maroon},
+	filecolor={Maroon},
+	citecolor={Blue},
+	urlcolor={Blue},
+	pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+	
+	\begin{titlepage}
+		\centering
+		\vspace*{2.5cm}
+		
+		{\Large\bfseries\color{primaryblue} TERCERA ENTREGA PFC}\\[0.6cm]
+		
+		{\huge\bfseries\color{primaryblue} SIGCB-QR}\\[0.3cm]
+		{\Large\color{accentblue} Sistema Integral de Gestión Bibliotecaria}\\[1.5cm]
+		
+		\rule{0.55\textwidth}{0.6pt}\\[0.5cm]
+		
+		{\large Documento consolidado: SRS, Casos de Uso, Historias de Usuario,\\
+			Matriz de Trazabilidad, Código Fuente y Apéndices}\\[2cm]
+		
+		\begin{tabular}{rl}
+			\textbf{Versión:} & v0.9.0-rc \\[4pt]
+			\textbf{Fecha:} & Julio 2026 \\[4pt]
+			\textbf{Conforme a:} & ISO/IEC/IEEE 29148:2018 \\[4pt]
+			\textbf{Equipo:} & ARZ \\
+			\textbf{ } & \shortstack[l]{ARIAS MOREIRA MAYBELIN GREGORIA \\ ROMERO MENDEZ BRYAM STEVEN \\ ZAMBRANO MOREIRA ALISON ARIANA} \\
+		\end{tabular}
+		
+		\vfill
+		
+		{\small\color{gray} Documento técnico generado a partir del material consolidado del proyecto}
+		
+	\end{titlepage}
+	
+	{
+		\hypersetup{linkcolor=}
+		\setcounter{tocdepth}{3}
+		\tableofcontents
+	}
+	\hypertarget{software-requirements-specification-srs}{%
+		\chapter{Software Requirements Specification (SRS)}\label{software-requirements-specification-srs}}
+	
+	\textbf{Version:} v0.9.0-rc
+	\textbf{Fecha:} 2026-07-30
+	\textbf{Conforme a:} ISO/IEC/IEEE 29148:2018
+	
+	\hypertarget{introduccion}{%
+		\section{1. Introduccion}\label{introduccion}}
+	
+	\hypertarget{proposito}{%
+		\subsection{1.1 Proposito}\label{proposito}}
+	
+	Este documento especifica los requisitos funcionales y no funcionales del Sistema Integral de Gestion, Control y Seguimiento de Lectura Interna en la Biblioteca Universitaria mediante Codigos QR (SIGCB-QR). El sistema automatiza los procesos bibliotecarios: autenticacion, gestion de catalogo, prestamos, reservas, multas y reportes.
+	
+	\hypertarget{alcance}{%
+		\subsection{1.2 Alcance}\label{alcance}}
+	
+	SIGCB-QR es una aplicacion web de arquitectura cliente-servidor con backend Spring Boot 3.4, frontend Laravel 13, base de datos PostgreSQL 16 y cache Redis 7. El sistema expone una API REST documentada con OpenAPI 3.0 y utiliza autenticacion stateless JWT en cookie HttpOnly.
+	
+	\hypertarget{definiciones}{%
+		\subsection{1.3 Definiciones}\label{definiciones}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Termino & Definicion \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		JWT & JSON Web Token (RFC 7519) \\
+		JPA & Jakarta Persistence API \\
+		ORM & Object-Relational Mapping \\
+		CRUD & Create, Read, Update, Delete \\
+		TTL & Time To Live \\
+		Hit ratio & Proporcion de aciertos de cache \\
+	\end{longtable}
+	
+	\hypertarget{referencias}{%
+		\subsection{1.4 Referencias}\label{referencias}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		ISO/IEC/IEEE 29148:2018 -- Ingenieria de requisitos
+		\item
+		RFC 7519 -- JSON Web Token
+		\item
+		RFC 7807 -- Problem Details for HTTP APIs
+		\item
+		INCOSE Guide to Writing Requirements v4
+		\item
+		OWASP Cheat Sheet -- SQL Injection Prevention
+		\item
+		Cockburn -- Writing Effective Use Cases
+	\end{itemize}
+	
+	\hypertarget{resumen}{%
+		\subsection{1.5 Resumen}\label{resumen}}
+	
+	El SRS se organiza en: descripcion global (seccion 2), requisitos especificos funcionales (3), no funcionales (4), de interfaz externa (5), de seguridad (6) y de calidad (7).
+	
+	\hypertarget{descripcion-global}{%
+		\section{2. Descripcion global}\label{descripcion-global}}
+	
+	\hypertarget{perspectiva-del-producto}{%
+		\subsection{2.1 Perspectiva del producto}\label{perspectiva-del-producto}}
+	
+	SIGCB-QR es un sistema independiente que reemplaza procesos manuales bibliotecarios. Se compone de:
+	- API REST (sigcb-qr-api): Java 21, Spring Boot 3.4.4
+	- Frontend (SIGCB-QR): Laravel 13, PHP 8.4
+	- Base de datos: PostgreSQL 16
+	- Cache: Redis 7
+	- Contenedores: Docker Compose
+	
+	\hypertarget{funciones-del-sistema}{%
+		\subsection{2.2 Funciones del sistema}\label{funciones-del-sistema}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		Autenticacion stateless con JWT (login, registro, logout)
+		\item
+		CRUD de usuarios (admin)
+		\item
+		CRUD de material bibliografico (libros, autores, editoriales, categorias)
+		\item
+		Gestion de ejemplares (inventario)
+		\item
+		Prestamos, devoluciones y renovaciones
+		\item
+		Reservas
+		\item
+		Multas y sanciones
+		\item
+		Reportes y estadisticas de dashboard
+		\item
+		Catalogacion (facultades, carreras)
+	\end{itemize}
+	
+	\hypertarget{caracteristicas-de-usuarios}{%
+		\subsection{2.3 Caracteristicas de usuarios}\label{caracteristicas-de-usuarios}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Rol & Descripcion \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		ADMIN & Administracion completa del sistema \\
+		BIBLIOTECARIO & Gestion de prestamos, catalogo y reportes \\
+		ESTUDIANTE & Consulta de catalogo, prestamos y reservas \\
+	\end{longtable}
+	
+	\hypertarget{restricciones}{%
+		\subsection{2.4 Restricciones}\label{restricciones}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		Autenticacion stateless (sin sesiones HTTP)
+		\item
+		JWT transmitido en cookie HttpOnly + Secure + SameSite=Strict
+		\item
+		Base de datos gestionada exclusivamente por Flyway (ddl-auto=validate)
+		\item
+		Operaciones no elementales mediante stored procedures
+		\item
+		Contenedores Docker anclados por digest SHA256
+	\end{itemize}
+	
+	\hypertarget{supuestos-y-dependencias}{%
+		\subsection{2.5 Supuestos y dependencias}\label{supuestos-y-dependencias}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		Disponibilidad de Docker y Docker Compose
+		\item
+		Conexion de red entre contenedores
+		\item
+		Semillas deterministas fijadas
+	\end{itemize}
+	
+	\hypertarget{requisitos-especificos-funcionales}{%
+		\section{3. Requisitos especificos -- Funcionales}\label{requisitos-especificos-funcionales}}
+	
+	\hypertarget{req-f-001-autenticacion-de-usuarios}{%
+		\subsection{REQ-F-001 -- Autenticacion de usuarios}\label{req-f-001-autenticacion-de-usuarios}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad (MoSCoW) & Must \\
+		Enunciado & Al recibir credenciales validas, el sistema debera emitir un JWT firmado en cookie HttpOnly con los claims estandar (iss, sub, aud, exp, nbf, iat, jti) \\
+		Rationale & La autenticacion stateless elimina la necesidad de almacenar sesiones en servidor \\
+		Origen & Stakeholder: Administracion bibliotecaria \\
+		Criterio de aceptacion & Login exitoso en menos de 2s con JWT valido \\
+		Metodo de verificacion & Test (AuthControllerTest) \\
+		Trazabilidad & HU-01, CU-01 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-002-registro-de-usuarios}{%
+		\subsection{REQ-F-002 -- Registro de usuarios}\label{req-f-002-registro-de-usuarios}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & Al recibir datos de registro validos, el sistema debera crear un usuario con rol ESTUDIANTE por defecto y emitir un JWT \\
+		Rationale & Permitir auto-registro de estudiantes \\
+		Criterio de aceptacion & Registro exitoso con validacion de email unico \\
+		Metodo de verificacion & Test \\
+		Trazabilidad & HU-02, CU-01 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-003-cierre-de-sesion}{%
+		\subsection{REQ-F-003 -- Cierre de sesion}\label{req-f-003-cierre-de-sesion}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & Al recibir una solicitud de logout, el sistema debera agregar el JTI del token a la blacklist Redis e invalidar la cookie \\
+		Rationale & Garantizar que el token no pueda reutilizarse \\
+		Criterio de aceptacion & Token blacklistado no es valido para peticiones posteriores \\
+		Metodo de verificacion & Test \\
+		Trazabilidad & HU-03, CU-01 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-004-crud-de-usuarios-admin}{%
+		\subsection{REQ-F-004 -- CRUD de usuarios (Admin)}\label{req-f-004-crud-de-usuarios-admin}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & El sistema debera permitir al administrador crear, leer, actualizar y desactivar usuarios \\
+		Rationale & Gestion centralizada de cuentas \\
+		Criterio de aceptacion & CRUD completo con validaciones \\
+		Metodo de verificacion & Test \\
+		Trazabilidad & HU-04 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-005-crud-de-material-bibliografico}{%
+		\subsection{REQ-F-005 -- CRUD de material bibliografico}\label{req-f-005-crud-de-material-bibliografico}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & El sistema debera permitir crear, leer, actualizar y desactivar libros con sus metadatos (titulo, ISBN, autor, editorial, categoria) \\
+		Rationale & Catalogacion del acervo bibliotecario \\
+		Criterio de aceptacion & CRUD completo con paginacion y busqueda \\
+		Metodo de verificacion & Test \\
+		Trazabilidad & HU-05, CU-02 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-006-prestamo-de-ejemplares}{%
+		\subsection{REQ-F-006 -- Prestamo de ejemplares}\label{req-f-006-prestamo-de-ejemplares}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & Al recibir una solicitud de prestamo valida, el sistema debera crear el prestamo, actualizar el estado del ejemplar y disminuir los ejemplares disponibles \\
+		Rationale & Control de circulacion de material \\
+		Criterio de aceptacion & Prestamo creado en menos de 2s, maximo 5 activos por usuario \\
+		Metodo de verificacion & Test + stored procedure \\
+		Trazabilidad & HU-06, CU-03 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-007-devolucion-de-prestamo}{%
+		\subsection{REQ-F-007 -- Devolucion de prestamo}\label{req-f-007-devolucion-de-prestamo}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Must \\
+		Enunciado & Al recibir una devolucion, el sistema debera actualizar el estado del prestamo, liberar el ejemplar y generar multa si esta vencido \\
+		Rationale & Control de inventario y penalizaciones \\
+		Criterio de aceptacion & Devolucion procesada en menos de 2s \\
+		Metodo de verificacion & Test + stored procedure \\
+		Trazabilidad & HU-07, CU-04 \\
+	\end{longtable}
+	
+	\hypertarget{req-f-008-reporte-de-prestamos-diarios}{%
+		\subsection{REQ-F-008 -- Reporte de prestamos diarios}\label{req-f-008-reporte-de-prestamos-diarios}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & Funcional \\
+		Prioridad & Should \\
+		Enunciado & El sistema debera generar un reporte de prestamos del dia actual con datos de usuario y libro \\
+		Rationale & Seguimiento de actividad diaria \\
+		Criterio de aceptacion & Reporte generado en menos de 3s \\
+		Metodo de verificacion & Test + stored procedure \\
+		Trazabilidad & HU-08 \\
+	\end{longtable}
+	
+	\hypertarget{requisitos-no-funcionales}{%
+		\section{4. Requisitos no funcionales}\label{requisitos-no-funcionales}}
+	
+	\hypertarget{req-nf-001-rendimiento-listado-de-libros}{%
+		\subsection{REQ-NF-001 -- Rendimiento -- Listado de libros}\label{req-nf-001-rendimiento-listado-de-libros}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & No funcional \\
+		Prioridad & Must \\
+		Enunciado & El endpoint GET /api/libros debera responder con p95 \textless= 200 ms con cache Redis caliente \\
+		Rationale & Experiencia de usuario fluida en navegacion de catalogo \\
+		Criterio de aceptacion & p95 \textless{} 200ms en 3 corridas con cache caliente \\
+		Metodo de verificacion & Test de rendimiento (k6) \\
+		Trazabilidad & Evidencia: docs/mediciones/perf/ \\
+	\end{longtable}
+	
+	\hypertarget{req-nf-002-seguridad-autenticacion}{%
+		\subsection{REQ-NF-002 -- Seguridad -- Autenticacion}\label{req-nf-002-seguridad-autenticacion}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & No funcional \\
+		Prioridad & Must \\
+		Enunciado & El sistema debera implementar autenticacion JWT sin sesiones, con cookie HttpOnly + Secure + SameSite=Strict \\
+		Rationale & Mitigacion de ataques XSS y CSRF \\
+		Criterio de aceptacion & Ningun endpoint protegido accesible sin JWT valido \\
+		Metodo de verificacion & Test de seguridad \\
+		Trazabilidad & OWASP Top 10 \\
+	\end{longtable}
+	
+	\hypertarget{req-nf-003-seguridad-proteccion-contra-inyeccion-sql}{%
+		\subsection{REQ-NF-003 -- Seguridad -- Proteccion contra inyeccion SQL}\label{req-nf-003-seguridad-proteccion-contra-inyeccion-sql}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & No funcional \\
+		Prioridad & Must \\
+		Enunciado & Ninguna consulta SQL debera concatenar entrada de usuario; toda parametrizacion sera mediante parametros nombrados \\
+		Rationale & Prevencion de inyeccion SQL \\
+		Criterio de aceptacion & Escaneo SAST sin hallazgos de inyeccion SQL \\
+		Metodo de verificacion & Analisis estatico (inspection) \\
+		Trazabilidad & OWASP Cheat Sheet \\
+	\end{longtable}
+	
+	\hypertarget{req-nf-004-disponibilidad-contenedores}{%
+		\subsection{REQ-NF-004 -- Disponibilidad -- Contenedores}\label{req-nf-004-disponibilidad-contenedores}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & No funcional \\
+		Prioridad & Must \\
+		Enunciado & El sistema debera poder reconstruirse en menos de 2 minutos desde una clonacion limpia con un solo comando (make up) \\
+		Rationale & Reproducibilidad por terceros \\
+		Criterio de aceptacion & docker-compose up exitoso en ambiente limpio \\
+		Metodo de verificacion & Demostracion (demonstration) \\
+		Trazabilidad & Docker Compose \\
+	\end{longtable}
+	
+	\hypertarget{req-nf-005-mantenibilidad-cobertura-de-pruebas}{%
+		\subsection{REQ-NF-005 -- Mantenibilidad -- Cobertura de pruebas}\label{req-nf-005-mantenibilidad-cobertura-de-pruebas}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5882}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4118}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Tipo & No funcional \\
+		Prioridad & Should \\
+		Enunciado & El backend debera tener cobertura de linea \textgreater= 30\% medida por JaCoCo \\
+		Rationale & Garantia minima de calidad \\
+		Criterio de aceptacion & Reporte JaCoCo \textgreater= 30\% \\
+		Metodo de verificacion & Test (JaCoCo) \\
+		Trazabilidad & pom.xml \\
+	\end{longtable}
+	
+	\hypertarget{requisitos-de-interfaz-externa}{%
+		\section{5. Requisitos de interfaz externa}\label{requisitos-de-interfaz-externa}}
+	
+	\hypertarget{interfaz-de-usuario}{%
+		\subsection{5.1 Interfaz de usuario}\label{interfaz-de-usuario}}
+	
+	Frontend Laravel 13 con Tailwind CSS, accesible via navegador en puerto 8000.
+	
+	\hypertarget{interfaz-api-rest}{%
+		\subsection{5.2 Interfaz API REST}\label{interfaz-api-rest}}
+	
+	Documentacion OpenAPI 3.0 en \passthrough{\lstinline!/api-docs!} e interfaz Swagger UI en \passthrough{\lstinline!/swagger-ui.html!}.
+	
+	\hypertarget{interfaz-de-base-de-datos}{%
+		\subsection{5.3 Interfaz de base de datos}\label{interfaz-de-base-de-datos}}
+	
+	Conexion JDBC a PostgreSQL 16, esquema gestionado por Flyway.
+	
+	\hypertarget{requisitos-de-seguridad}{%
+		\section{6. Requisitos de seguridad}\label{requisitos-de-seguridad}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		JWT con claims estandar RFC 7519
+		\item
+		Cookie HttpOnly + Secure + SameSite=Strict
+		\item
+		Blacklist de JTI revocados en Redis
+		\item
+		CORS restringido a origenes configurados
+		\item
+		BCrypt para almacenamiento de contrasenas
+		\item
+		Parametros nombrados en todas las consultas
+		\item
+		Procedimientos almacenados sin SQL dinamico
+	\end{itemize}
+	
+	\hypertarget{calidad-de-software}{%
+		\section{7. Calidad de software}\label{calidad-de-software}}
+	
+	\hypertarget{caracteristicas-del-conjunto-de-requisitos-incose-c10-c15}{%
+		\subsection{7.1 Caracteristicas del conjunto de requisitos (INCOSE C10-C15)}\label{caracteristicas-del-conjunto-de-requisitos-incose-c10-c15}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.4348}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5652}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Atributo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Cumplimiento
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Complete (C10) & Todos los escenarios principales cubiertos \\
+		Consistent (C11) & Sin contradicciones entre requisitos \\
+		Feasible (C12) & Implementable con la pila tecnologica actual \\
+		Comprehensible (C13) & Redactado en lenguaje claro \\
+		Able to be validated (C14) & Cada requisito tiene metodo de verificacion \\
+		Correct (C15) & Aprobado por stakeholders \\
+	\end{longtable}
+	
+	\emph{Fin del SRS}
+	
+	\hypertarget{casos-de-uso}{%
+		\chapter{2. Casos de Uso}\label{casos-de-uso}}
+	
+	\hypertarget{cu-01-autenticaciuxf3n-de-usuarios}{%
+		\section{CU-01: Autenticación de usuarios}\label{cu-01-autenticaciuxf3n-de-usuarios}}
+	
+	\textbf{Nivel:} 1 (Resumen)
+	\textbf{Actor principal:} Usuario no autenticado
+	\textbf{Stakeholders:} Administración bibliotecaria (desea control de acceso)
+	
+	\hypertarget{escenario-principal-de-uxe9xito}{%
+		\subsection{Escenario principal de éxito}\label{escenario-principal-de-uxe9xito}}
+	
+	\begin{enumerate}
+		\def\labelenumi{\arabic{enumi}.}
+		\tightlist
+		\item
+		El usuario envía sus credenciales (email, contraseña) al sistema
+		\item
+		El sistema valida las credenciales contra la base de datos
+		\item
+		El sistema genera un JWT firmado con claims estándar (iss, sub, aud, exp, nbf, iat, jti)
+		\item
+		El sistema establece una cookie HttpOnly + Secure + SameSite=Strict con el JWT
+		\item
+		El usuario queda autenticado y puede acceder a recursos protegidos
+		\item
+		El sistema permite al usuario cerrar sesión, agregando el JTI a la blacklist
+	\end{enumerate}
+	
+	\hypertarget{extensiones}{%
+		\subsection{Extensiones}\label{extensiones}}
+	
+	\hypertarget{a.-credenciales-invuxe1lidas}{%
+		\subsubsection{1a. Credenciales inválidas}\label{a.-credenciales-invuxe1lidas}}
+	
+	1a1. El sistema responde con HTTP 401 y ProblemDetail
+	
+	\hypertarget{a.-token-expirado}{%
+		\subsubsection{2a. Token expirado}\label{a.-token-expirado}}
+	
+	2a1. El sistema rechaza la petición con HTTP 401
+	
+	\hypertarget{a.-token-blacklistado}{%
+		\subsubsection{3a. Token blacklistado}\label{a.-token-blacklistado}}
+	
+	3a1. El sistema rechaza la petición con HTTP 401
+	
+	\hypertarget{requisitos-asociados}{%
+		\subsection{Requisitos asociados}\label{requisitos-asociados}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-001 (Login)
+		\item
+		REQ-F-002 (Registro)
+		\item
+		REQ-F-003 (Logout)
+		\item
+		REQ-NF-002 (Seguridad)
+	\end{itemize}
+	
+	\hypertarget{cu-02-gestiuxf3n-de-material-bibliogruxe1fico}{%
+		\section{CU-02: Gestión de material bibliográfico}\label{cu-02-gestiuxf3n-de-material-bibliogruxe1fico}}
+	
+	\textbf{Nivel:} 2 (Etapa de objetivo de usuario)
+	\textbf{Actor principal:} Bibliotecario
+	\textbf{Precondición:} Autenticado con rol BIBLIOTECARIO o ADMIN
+	
+	\hypertarget{escenario-principal-de-uxe9xito-1}{%
+		\subsection{Escenario principal de éxito}\label{escenario-principal-de-uxe9xito-1}}
+	
+	\begin{enumerate}
+		\def\labelenumi{\arabic{enumi}.}
+		\tightlist
+		\item
+		El bibliotecario solicita el listado de libros (paginado)
+		\item
+		El sistema retorna los libros activos con paginación, desde caché Redis si está caliente
+		\item
+		El bibliotecario busca un libro por título
+		\item
+		El sistema retorna resultados de búsqueda
+		\item
+		El bibliotecario crea un nuevo libro con título, ISBN, editorial, categoría y autores
+		\item
+		El sistema valida los datos y crea el libro con ejemplares disponibles = totales
+		\item
+		El bibliotecario actualiza datos de un libro existente
+		\item
+		El bibliotecario desactiva un libro (eliminación lógica)
+	\end{enumerate}
+	
+	\hypertarget{extensiones-1}{%
+		\subsection{Extensiones}\label{extensiones-1}}
+	
+	\hypertarget{a.-datos-invuxe1lidos}{%
+		\subsubsection{5a. Datos inválidos}\label{a.-datos-invuxe1lidos}}
+	
+	5a1. El sistema responde con HTTP 400 y errores de validación
+	
+	\hypertarget{a.-libro-no-encontrado}{%
+		\subsubsection{7a. Libro no encontrado}\label{a.-libro-no-encontrado}}
+	
+	7a1. El sistema responde con HTTP 404 y ProblemDetail
+	
+	\hypertarget{requisitos-asociados-1}{%
+		\subsection{Requisitos asociados}\label{requisitos-asociados-1}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-005 (CRUD libros)
+		\item
+		REQ-NF-001 (Rendimiento con caché)
+	\end{itemize}
+	
+	\hypertarget{cu-03-prestamo-de-ejemplares}{%
+		\section{CU-03: Prestamo de ejemplares}\label{cu-03-prestamo-de-ejemplares}}
+	
+	\textbf{Nivel:} 2 (Etapa de objetivo de usuario)
+	\textbf{Actor principal:} Bibliotecario
+	\textbf{Precondicion:} Autenticado con rol BIBLIOTECARIO o ADMIN
+	\textbf{Postcondicion:} Prestamo registrado, ejemplar marcado como PRESTADO
+	
+	\hypertarget{escenario-principal-de-exito}{%
+		\subsection{Escenario principal de exito}\label{escenario-principal-de-exito}}
+	
+	\begin{enumerate}
+		\def\labelenumi{\arabic{enumi}.}
+		\tightlist
+		\item
+		El bibliotecario selecciona un usuario del sistema
+		\item
+		El bibliotecario selecciona un ejemplar disponible del inventario
+		\item
+		El sistema valida que el usuario no tenga mas de 5 prestamos activos
+		\item
+		El sistema valida que el ejemplar este DISPONIBLE
+		\item
+		El sistema crea el registro de prestamo con fecha actual y vencimiento en 7 dias
+		\item
+		El sistema cambia el estado del ejemplar a PRESTADO
+		\item
+		El sistema disminuye el contador de ejemplares disponibles del libro
+		\item
+		El sistema retorna el detalle del prestamo creado
+	\end{enumerate}
+	
+	\hypertarget{extensiones-2}{%
+		\subsection{Extensiones}\label{extensiones-2}}
+	
+	\hypertarget{a.-limite-de-prestamos-alcanzado}{%
+		\subsubsection{3a. Limite de prestamos alcanzado}\label{a.-limite-de-prestamos-alcanzado}}
+	
+	3a1. El sistema rechaza la operacion con HTTP 400
+	3a2. Mensaje: ``El usuario tiene demasiados prestamos activos''
+	
+	\hypertarget{a.-ejemplar-no-disponible}{%
+		\subsubsection{4a. Ejemplar no disponible}\label{a.-ejemplar-no-disponible}}
+	
+	4a1. El sistema rechaza la operacion con HTTP 400
+	4a2. Mensaje: ``El ejemplar no esta disponible''
+	
+	\hypertarget{a.-error-de-base-de-datos}{%
+		\subsubsection{5a. Error de base de datos}\label{a.-error-de-base-de-datos}}
+	
+	5a1. El sistema revierte la transaccion
+	5a2. El sistema retorna HTTP 500 con ProblemDetail
+	
+	\hypertarget{requisitos-asociados-2}{%
+		\subsection{Requisitos asociados}\label{requisitos-asociados-2}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-006 (Prestamo de ejemplares)
+		\item
+		REQ-NF-006 (Control de acceso por roles)
+		\item
+		REQ-R-003 (Tiempo de respuesta de SP)
+	\end{itemize}
+	
+	\hypertarget{cu-04-devolucion-de-prestamo}{%
+		\section{CU-04: Devolucion de prestamo}\label{cu-04-devolucion-de-prestamo}}
+	
+	\textbf{Nivel:} 2 (Etapa de objetivo de usuario)
+	\textbf{Actor principal:} Bibliotecario
+	\textbf{Precondicion:} Autenticado con rol BIBLIOTECARIO o ADMIN
+	\textbf{Postcondicion:} Prestamo cerrado, inventario actualizado, multa generada si aplica
+	
+	\hypertarget{escenario-principal-de-exito-1}{%
+		\subsection{Escenario principal de exito}\label{escenario-principal-de-exito-1}}
+	
+	\begin{enumerate}
+		\def\labelenumi{\arabic{enumi}.}
+		\tightlist
+		\item
+		El bibliotecario localiza el prestamo activo por su ID
+		\item
+		El sistema verifica que el prestamo exista y este ACTIVO
+		\item
+		El sistema registra la fecha de devolucion (fecha actual)
+		\item
+		El sistema cambia el estado del prestamo a DEVUELTO
+		\item
+		El sistema cambia el estado del ejemplar a DISPONIBLE
+		\item
+		El sistema incrementa el contador de ejemplares disponibles del libro
+		\item
+		Si la fecha actual supera la fecha de vencimiento, el sistema genera una multa
+		\item
+		El sistema retorna el detalle del prestamo actualizado
+	\end{enumerate}
+	
+	\hypertarget{extensiones-3}{%
+		\subsection{Extensiones}\label{extensiones-3}}
+	
+	\hypertarget{a.-prestamo-no-encontrado}{%
+		\subsubsection{2a. Prestamo no encontrado}\label{a.-prestamo-no-encontrado}}
+	
+	2a1. El sistema retorna HTTP 404 con ProblemDetail
+	
+	\hypertarget{b.-prestamo-ya-devuelto}{%
+		\subsubsection{2b. Prestamo ya devuelto}\label{b.-prestamo-ya-devuelto}}
+	
+	2b1. El sistema rechaza con HTTP 400
+	2b2. Mensaje: ``El prestamo ya fue devuelto''
+	
+	\hypertarget{a.-calculo-de-multa}{%
+		\subsubsection{7a. Calculo de multa}\label{a.-calculo-de-multa}}
+	
+	7a1. Dias de retraso = fecha\_actual - fecha\_vencimiento
+	7a2. Monto = dias\_retraso * \$0.50
+	7a3. La multa se registra con estado PENDIENTE
+	
+	\hypertarget{requisitos-asociados-3}{%
+		\subsection{Requisitos asociados}\label{requisitos-asociados-3}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-007 (Devolucion de prestamo)
+		\item
+		REQ-R-003 (Tiempo de respuesta de SP)
+	\end{itemize}
+	
+	\hypertarget{cu-05-generacion-de-reportes}{%
+		\section{CU-05: Generacion de reportes}\label{cu-05-generacion-de-reportes}}
+	
+	\textbf{Nivel:} 1 (Resumen)
+	\textbf{Actor principal:} Bibliotecario/Administrador
+	\textbf{Precondicion:} Autenticado con rol BIBLIOTECARIO o ADMIN
+	\textbf{Postcondicion:} Reporte generado y entregado al solicitante
+	
+	\hypertarget{escenario-principal-de-exito-2}{%
+		\subsection{Escenario principal de exito}\label{escenario-principal-de-exito-2}}
+	
+	\begin{enumerate}
+		\def\labelenumi{\arabic{enumi}.}
+		\tightlist
+		\item
+		El usuario solicita un tipo de reporte (prestamos diarios, libros mas solicitados, multas cobradas)
+		\item
+		El sistema ejecuta el stored procedure correspondiente
+		\item
+		El sistema recopila los datos agregados
+		\item
+		El sistema retorna los datos en formato JSON
+	\end{enumerate}
+	
+	\hypertarget{extensiones-4}{%
+		\subsection{Extensiones}\label{extensiones-4}}
+	
+	\hypertarget{a.-sin-datos-para-el-periodo}{%
+		\subsubsection{2a. Sin datos para el periodo}\label{a.-sin-datos-para-el-periodo}}
+	
+	2a1. El sistema retorna un reporte vacio con total = 0
+	
+	\hypertarget{a.-error-de-base-de-datos-1}{%
+		\subsubsection{3a. Error de base de datos}\label{a.-error-de-base-de-datos-1}}
+	
+	3a1. El sistema retorna HTTP 500 con ProblemDetail
+	
+	\hypertarget{requisitos-asociados-4}{%
+		\subsection{Requisitos asociados}\label{requisitos-asociados-4}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-009 (Reporte de prestamos diarios)
+		\item
+		REQ-NF-006 (Control de acceso por roles)
+	\end{itemize}
+	
+	\hypertarget{historias-de-usuario}{%
+		\chapter{3. Historias de Usuario}\label{historias-de-usuario}}
+	
+	\hypertarget{hu-01-autenticaciuxf3n-de-usuarios}{%
+		\section{HU-01: Autenticación de usuarios}\label{hu-01-autenticaciuxf3n-de-usuarios}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Usuario del sistema
+	\textbf{Objetivo:} Iniciar sesión con credenciales
+	\textbf{Beneficio:} Acceder a las funcionalidades del sistema según mi rol
+	
+	\textbf{Criterios INVEST:} Independent, Negotiable, Valuable, Estimable, Small, Testable
+	
+	\hypertarget{criterios-de-aceptaciuxf3n-gherkin}{%
+		\subsection{Criterios de aceptación (Gherkin)}\label{criterios-de-aceptaciuxf3n-gherkin}}
+	
+	\begin{lstlisting}
+		Feature: Autenticación
+		Scenario: Inicio de sesión exitoso
+		Given un usuario registrado con email "admin@dev.com" y contraseña "admin123"
+		When el usuario envía POST /api/auth/login con email y contraseña válidos
+		Then el sistema responde con HTTP 200
+		And la respuesta incluye un JWT en cookie HttpOnly
+		And el JWT contiene los claims iss, sub, aud, exp, nbf, iat, jti
+		
+		Scenario: Inicio de sesión con credenciales inválidas
+		Given un usuario registrado con email "admin@dev.com"
+		When el usuario envía POST /api/auth/login con contraseña incorrecta
+		Then el sistema responde con HTTP 401
+		And la respuesta sigue el formato ProblemDetail RFC 7807
+	\end{lstlisting}
+	
+	\hypertarget{hu-02-registro-de-usuarios}{%
+		\section{HU-02: Registro de usuarios}\label{hu-02-registro-de-usuarios}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Visitante
+	\textbf{Objetivo:} Registrarme como usuario del sistema
+	\textbf{Beneficio:} Obtener acceso como estudiante a los servicios bibliotecarios
+	
+	\hypertarget{criterios-de-aceptaciuxf3n-gherkin-1}{%
+		\subsection{Criterios de aceptación (Gherkin)}\label{criterios-de-aceptaciuxf3n-gherkin-1}}
+	
+	\begin{lstlisting}
+		Feature: Registro
+		Scenario: Registro exitoso
+		Given un visitante con datos válidos (nombre, email, contraseña)
+		When envía POST /api/auth/register
+		Then el sistema responde con HTTP 201
+		And se crea un usuario con rol ESTUDIANTE
+		And se emite un JWT en cookie
+		
+		Scenario: Registro con email duplicado
+		Given un usuario existente con email "estudiante@test.com"
+		When otro visitante intenta registrar el mismo email
+		Then el sistema responde con HTTP 400
+		And el mensaje indica que el email ya está registrado
+	\end{lstlisting}
+	
+	\hypertarget{hu-03-cierre-de-sesiuxf3n}{%
+		\section{HU-03: Cierre de sesión}\label{hu-03-cierre-de-sesiuxf3n}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Usuario autenticado
+	\textbf{Objetivo:} Cerrar sesión
+	\textbf{Beneficio:} Invalidar mi token actual y proteger mi cuenta
+	
+	\hypertarget{criterios-de-aceptaciuxf3n-gherkin-2}{%
+		\subsection{Criterios de aceptación (Gherkin)}\label{criterios-de-aceptaciuxf3n-gherkin-2}}
+	
+	\begin{lstlisting}
+		Feature: Cierre de sesión
+		Scenario: Logout exitoso
+		Given un usuario autenticado con JWT válido
+		When envía POST /api/auth/logout
+		Then el sistema responde con HTTP 200
+		And el JTI del token se agrega a la blacklist
+		And la cookie se elimina
+		
+		Scenario: Acceso post-logout
+		Given un usuario cuyo JWT fue invalidado
+		When intenta acceder a /api/libros
+		Then el sistema responde con HTTP 401
+	\end{lstlisting}
+	
+	\hypertarget{hu-04-gestiuxf3n-de-usuarios}{%
+		\section{HU-04: Gestión de usuarios}\label{hu-04-gestiuxf3n-de-usuarios}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Administrador
+	\textbf{Objetivo:} Gestionar usuarios del sistema
+	\textbf{Beneficio:} Controlar quién tiene acceso y con qué rol
+	
+	\hypertarget{criterios-de-aceptaciuxf3n-gherkin-3}{%
+		\subsection{Criterios de aceptación (Gherkin)}\label{criterios-de-aceptaciuxf3n-gherkin-3}}
+	
+	\begin{lstlisting}
+		Feature: CRUD de usuarios
+		Scenario: Listar usuarios
+		Given un administrador autenticado
+		When envía GET /api/usuarios
+		Then recibe lista paginada de usuarios
+		
+		Scenario: Crear usuario (admin)
+		Given un administrador autenticado
+		When envía POST /api/usuarios con datos válidos
+		Then el sistema crea el usuario con el rol especificado
+		
+		Scenario: Usuario no admin no puede gestionar usuarios
+		Given un estudiante autenticado
+		When envía GET /api/usuarios
+		Then el sistema responde con HTTP 403
+	\end{lstlisting}
+	
+	\hypertarget{hu-05-gestiuxf3n-de-material-bibliogruxe1fico}{%
+		\section{HU-05: Gestión de material bibliográfico}\label{hu-05-gestiuxf3n-de-material-bibliogruxe1fico}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Bibliotecario/Administrador
+	\textbf{Objetivo:} Gestionar libros, autores, editoriales y categorías
+	\textbf{Beneficio:} Mantener actualizado el catálogo bibliotecario
+	
+	\hypertarget{criterios-de-aceptaciuxf3n-gherkin-4}{%
+		\subsection{Criterios de aceptación (Gherkin)}\label{criterios-de-aceptaciuxf3n-gherkin-4}}
+	
+	\begin{lstlisting}
+		Feature: CRUD de libros
+		Scenario: Listar libros con paginación
+		Given un usuario autenticado
+		When envía GET /api/libros?page=0&size=10
+		Then recibe página de libros activos
+		
+		Scenario: Buscar libros por título
+		Given un usuario autenticado
+		When envía GET /api/libros/buscar?q=programación
+		Then recibe libros cuyo título contiene "programación"
+		
+		Scenario: Crear libro (bibliotecario)
+		Given un bibliotecario autenticado
+		When envía POST /api/libros con datos válidos
+		Then el sistema crea el libro con ejemplares disponibles = totales
+		
+		Scenario: Estudiante no puede crear libros
+		Given un estudiante autenticado
+		When envía POST /api/libros
+		Then el sistema responde con HTTP 403
+	\end{lstlisting}
+	
+	\hypertarget{hu-06-prestamo-de-ejemplares}{%
+		\section{HU-06: Prestamo de ejemplares}\label{hu-06-prestamo-de-ejemplares}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Bibliotecario
+	\textbf{Objetivo:} Registrar el prestamo de un ejemplar a un usuario
+	\textbf{Beneficio:} Controlar la circulacion del material bibliotecario
+	
+	\hypertarget{criterios-de-aceptacion-gherkin}{%
+		\subsection{Criterios de aceptacion (Gherkin)}\label{criterios-de-aceptacion-gherkin}}
+	
+	\begin{lstlisting}
+		Feature: Prestamo de ejemplares
+		Scenario: Prestamo exitoso
+		Given un usuario activo y un ejemplar disponible
+		When el bibliotecario registra el prestamo
+		Then el sistema crea el prestamo con fecha de vencimiento en 7 dias
+		And el estado del ejemplar cambia a PRESTADO
+		And los ejemplares disponibles del libro disminuyen en 1
+		
+		Scenario: Prestamo con ejemplar no disponible
+		Given un ejemplar en estado PRESTADO
+		When el bibliotecario intenta prestarlo
+		Then el sistema rechaza la operacion con HTTP 400
+		And el mensaje indica que el ejemplar no esta disponible
+		
+		Scenario: Prestamo con usuario que supera el limite
+		Given un usuario con 5 prestamos activos
+		When el bibliotecario intenta registrar un nuevo prestamo
+		Then el sistema rechaza la operacion con HTTP 400
+		And el mensaje indica limite de prestamos alcanzado
+	\end{lstlisting}
+	
+	\hypertarget{hu-07-devolucion-de-prestamo}{%
+		\section{HU-07: Devolucion de prestamo}\label{hu-07-devolucion-de-prestamo}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Bibliotecario
+	\textbf{Objetivo:} Registrar la devolucion de un ejemplar prestado
+	\textbf{Beneficio:} Actualizar el inventario y gestionar multas por retraso
+	
+	\hypertarget{criterios-de-aceptacion-gherkin-1}{%
+		\subsection{Criterios de aceptacion (Gherkin)}\label{criterios-de-aceptacion-gherkin-1}}
+	
+	\begin{lstlisting}
+		Feature: Devolucion de prestamo
+		Scenario: Devolucion en fecha
+		Given un prestamo activo cuya fecha de vencimiento no ha pasado
+		When el bibliotecario registra la devolucion
+		Then el sistema marca el prestamo como DEVUELTO
+		And registra la fecha de devolucion
+		And el ejemplar vuelve a estar DISPONIBLE
+		And los ejemplares disponibles del libro aumentan en 1
+		And no se genera ninguna multa
+		
+		Scenario: Devolucion con retraso
+		Given un prestamo activo cuya fecha de vencimiento ya paso
+		When el bibliotecario registra la devolucion
+		Then el sistema genera una multa de $0.50 por dia de retraso
+		And la multa queda registrada como PENDIENTE
+	\end{lstlisting}
+	
+	\hypertarget{hu-08-renovacion-de-prestamo}{%
+		\section{HU-08: Renovacion de prestamo}\label{hu-08-renovacion-de-prestamo}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Bibliotecario
+	\textbf{Objetivo:} Renovar un prestamo activo
+	\textbf{Beneficio:} Extender el periodo de prestamo sin devolver el material
+	
+	\hypertarget{criterios-de-aceptacion-gherkin-2}{%
+		\subsection{Criterios de aceptacion (Gherkin)}\label{criterios-de-aceptacion-gherkin-2}}
+	
+	\begin{lstlisting}
+		Feature: Renovacion de prestamo
+		Scenario: Renovacion exitosa
+		Given un prestamo activo
+		When el bibliotecario solicita la renovacion
+		Then el sistema marca el prestamo original como RENOVADO
+		And crea un nuevo prestamo con fecha de vencimiento extendida 7 dias
+		And el nuevo prestamo queda en estado ACTIVO
+		
+		Scenario: Renovacion de prestamo no activo
+		Given un prestamo en estado DEVUELTO
+		When el bibliotecario intenta renovarlo
+		Then el sistema rechaza la operacion con HTTP 400
+	\end{lstlisting}
+	
+	\hypertarget{hu-09-reportes-bibliotecarios}{%
+		\section{HU-09: Reportes bibliotecarios}\label{hu-09-reportes-bibliotecarios}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Bibliotecario/Administrador
+	\textbf{Objetivo:} Generar reportes de actividad
+	\textbf{Beneficio:} Obtener datos para la toma de decisiones
+	
+	\hypertarget{criterios-de-aceptacion-gherkin-3}{%
+		\subsection{Criterios de aceptacion (Gherkin)}\label{criterios-de-aceptacion-gherkin-3}}
+	
+	\begin{lstlisting}
+		Feature: Reportes
+		Scenario: Reporte de prestamos diarios
+		Given un bibliotecario autenticado
+		When solicita GET /api/reportes/prestamos-diarios
+		Then recibe el total de prestamos del dia actual
+		And el detalle de cada prestamo con usuario y libro
+		
+		Scenario: Reporte de libros mas solicitados
+		Given un bibliotecario autenticado
+		When solicita GET /api/reportes/libros-mas-solicitados
+		Then recibe el top 10 de libros con mayor cantidad de prestamos
+		
+		Scenario: Reporte de multas cobradas
+		Given un administrador autenticado
+		When solicita GET /api/reportes/multas-cobradas
+		Then recibe el total cobrado en el mes actual
+	\end{lstlisting}
+	
+	\hypertarget{hu-10-dashboard-de-estadisticas}{%
+		\section{HU-10: Dashboard de estadisticas}\label{hu-10-dashboard-de-estadisticas}}
+	
+	\textbf{Formato:} Connextra
+	\textbf{Rol:} Usuario autenticado
+	\textbf{Objetivo:} Visualizar estadisticas generales del sistema
+	\textbf{Beneficio:} Obtener una vision rapida del estado de la biblioteca
+	
+	\hypertarget{criterios-de-aceptacion-gherkin-4}{%
+		\subsection{Criterios de aceptacion (Gherkin)}\label{criterios-de-aceptacion-gherkin-4}}
+	
+	\begin{lstlisting}
+		Feature: Dashboard
+		Scenario: Visualizar estadisticas
+		Given un usuario autenticado
+		When solicita GET /api/dashboard/stats
+		Then recibe libros prestados hoy
+		And libros disponibles
+		And estudiantes activos
+		And reservas pendientes
+		And multas pendientes
+		And total acumulado de multas
+	\end{lstlisting}
+	
+	\hypertarget{matriz-de-trazabilidad}{%
+		\chapter{4. Matriz de Trazabilidad}\label{matriz-de-trazabilidad}}
+	
+	\begin{landscape}
+		\footnotesize
+		\setlength{\tabcolsep}{3pt}
+		\renewcommand{\arraystretch}{1.3}
+		\begin{longtable}{p{1.39cm}p{1.65cm}p{1.22cm}p{0.87cm}p{0.87cm}p{2.61cm}p{3.13cm}p{3.65cm}p{1.22cm}p{2.87cm}p{1.65cm}}
+			\caption{Matriz de trazabilidad de requisitos}\\
+			\toprule
+			\textbf{ID} & \textbf{Tipo} & \textbf{Prioridad} & \textbf{HU} & \textbf{CU} & \textbf{Módulo} & \textbf{Endpoint API} & \textbf{Prueba automatizada} & \textbf{Acceso} & \textbf{Evidencia} & \textbf{Estado} \\
+			\midrule
+			\endfirsthead
+			\toprule
+			\textbf{ID} & \textbf{Tipo} & \textbf{Prioridad} & \textbf{HU} & \textbf{CU} & \textbf{Módulo} & \textbf{Endpoint API} & \textbf{Prueba automatizada} & \textbf{Acceso} & \textbf{Evidencia} & \textbf{Estado} \\
+			\midrule
+			\endhead
+			\bottomrule
+			\endfoot
+			REQ-F-001 & Funcional & Must & HU-01 & CU-01 & \texttt{\footnotesize \seqsplit{AuthController}} & \texttt{\footnotesize \seqsplit{POST /api/auth/login}} & \texttt{\footnotesize \seqsplit{AuthControllerTest.login\_exitoso}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-001 & Funcional & Must & HU-01 & CU-01 & \texttt{\footnotesize \seqsplit{JwtTokenProvider}} & {\small --} & \texttt{\footnotesize \seqsplit{JwtTokenProviderTest.genera\_token\_con\_claims}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-002 & Funcional & Must & HU-02 & CU-01 & \texttt{\footnotesize \seqsplit{AuthController}} & \texttt{\footnotesize \seqsplit{POST /api/auth/register}} & \texttt{\footnotesize \seqsplit{AuthControllerTest.registro\_exitoso}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-003 & Funcional & Must & HU-03 & CU-01 & \texttt{\footnotesize \seqsplit{AuthController}} & \texttt{\footnotesize \seqsplit{POST /api/auth/logout}} & \texttt{\footnotesize \seqsplit{AuthControllerTest.logout\_invalida\_token}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-004 & Funcional & Must & HU-04 & {\small --} & \texttt{\footnotesize \seqsplit{UsuarioController}} & \texttt{\footnotesize \seqsplit{GET/POST/PUT/DELETE /api/usuarios}} & \texttt{\footnotesize \seqsplit{UsuarioControllerTest.crud}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-005 & Funcional & Must & HU-05 & CU-02 & \texttt{\footnotesize \seqsplit{LibroController}} & \texttt{\footnotesize \seqsplit{GET/POST/PUT/DELETE /api/libros}} & \texttt{\footnotesize \seqsplit{LibroControllerTest.crud}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-F-006 & Funcional & Must & HU-06 & CU-03 & \texttt{\footnotesize \seqsplit{PrestamoController}} & \texttt{\footnotesize \seqsplit{POST /api/prestamos}} & \texttt{\footnotesize \seqsplit{PrestamoServiceTest.crear\_prestamo}} & SP & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/REPORT.md}} & verificado \\
+			REQ-F-007 & Funcional & Must & HU-07 & CU-04 & \texttt{\footnotesize \seqsplit{PrestamoController}} & \texttt{\footnotesize \seqsplit{PUT /api/prestamos/\{id\}}/devolver} & \texttt{\footnotesize \seqsplit{PrestamoServiceTest.devolver\_prestamo}} & SP & {\small --} & verificado \\
+			REQ-F-008 & Funcional & Should & HU-08 & {\small --} & \texttt{\footnotesize \seqsplit{PrestamoController}} & \texttt{\footnotesize \seqsplit{PUT /api/prestamos/\{id\}}/renovar} & {\small --} & SP & {\small --} & implementado \\
+			REQ-F-009 & Funcional & Should & HU-09 & CU-05 & \texttt{\footnotesize \seqsplit{ReporteController}} & \texttt{\footnotesize \seqsplit{GET /api/reportes/prestamos-diarios}} & \texttt{\footnotesize \seqsplit{ReporteControllerTest.prestamosDiariosComoBibliotecario}} & SP & {\small --} & implementado \\
+			REQ-F-010 & Funcional & Must & HU-10 & {\small --} & \texttt{\footnotesize \seqsplit{DashboardController}} & \texttt{\footnotesize \seqsplit{GET /api/dashboard/stats}} & {\small --} & SP & {\small --} & verificado \\
+			REQ-F-011 & Funcional & Should & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{ReservaController}} & \texttt{\footnotesize \seqsplit{POST/DELETE /api/reservas/}} & {\small --} & CRUD-ORM & {\small --} & implementado \\
+			REQ-NF-001 & No funcional & Must & HU-05 & {\small --} & \texttt{\footnotesize \seqsplit{LibroService}} & \texttt{\footnotesize \seqsplit{GET /api/libros}} & \texttt{\footnotesize \seqsplit{LibroPerfTest.p95\_200ms}} & CRUD-ORM & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/REPORT.md}} & verificado \\
+			REQ-NF-002 & No funcional & Must & HU-01 & CU-01 & \texttt{\footnotesize \seqsplit{SecurityConfig}} & {\small --} & \texttt{\footnotesize \seqsplit{SecurityTest.endpoints\_protegidos}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-NF-003 & No funcional & Must & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{GlobalExceptionHandler}} & {\small --} & \texttt{\footnotesize \seqsplit{SecurityTest.sql\_injection\_prevenido}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-NF-004 & No funcional & Must & {\small --} & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{docker-compose.yml}} & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/startup-time.md}} & pendiente \\
+			REQ-NF-005 & No funcional & Should & {\small --} & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{pom.xml}} & {\small --} & JaCoCo & {\small --} & verificado \\
+			REQ-NF-006 & No funcional & Must & HU-04 & CU-01 & \texttt{\footnotesize \seqsplit{SecurityConfig}} & \texttt{\footnotesize \seqsplit{@PreAuthorize}} & \texttt{\footnotesize \seqsplit{ReporteControllerTest.prestamosDiariosComoEstudiante}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-NF-007 & No funcional & Must & HU-03 & {\small --} & \texttt{\footnotesize \seqsplit{JwtBlacklistService}} & {\small --} & \texttt{\footnotesize \seqsplit{JwtBlacklistServiceTest}} & CRUD-ORM & {\small --} & verificado \\
+			REQ-R-001 & Rendimiento & Must & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{AuthController}} & \texttt{\footnotesize \seqsplit{POST /api/auth/login}} & {\small --} & CRUD-ORM & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/}} & pendiente \\
+			REQ-R-002 & Rendimiento & Must & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{LibroController}} & \texttt{\footnotesize \seqsplit{GET/POST/PUT/DELETE /api/libros}} & {\small --} & CRUD-ORM & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/}} & pendiente \\
+			REQ-R-003 & Rendimiento & Should & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{PrestamoController}} & \texttt{\footnotesize \seqsplit{POST /api/prestamos}} & {\small --} & SP & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/}} & pendiente \\
+			REQ-R-004 & Rendimiento & Should & {\small --} & {\small --} & \texttt{\footnotesize \seqsplit{LibroService}} & \texttt{\footnotesize \seqsplit{GET /api/libros}} & {\small --} & CRUD-ORM & \texttt{\footnotesize \seqsplit{docs/mediciones/perf/REPORT.md}} & pendiente \\
+			\bottomrule
+		\end{longtable}
+	\end{landscape}
+	
+	\hypertarget{codigo-fuente}{%
+		\chapter{5. Codigo Fuente}\label{codigo-fuente}}
+	
+	\hypertarget{jwttokenprovider.java}{%
+		\section{JwtTokenProvider.java}\label{jwttokenprovider.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/security/JwtTokenProvider.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.security;
+		
+		import io.jsonwebtoken.*;
+		import io.jsonwebtoken.io.Decoders;
+		import io.jsonwebtoken.security.Keys;
+		import jakarta.servlet.http.Cookie;
+		import jakarta.servlet.http.HttpServletRequest;
+		import org.springframework.beans.factory.annotation.Value;
+		import org.springframework.stereotype.Component;
+		
+		import javax.crypto.SecretKey;
+		import java.util.Date;
+		import java.util.UUID;
+		
+		@Component
+		public class JwtTokenProvider {
+			
+			private final SecretKey secretKey;
+			private final long expirationMs;
+			private final String issuer;
+			private final String audience;
+			private final boolean secureCookie;
+			private final JwtBlacklistService blacklistService;
+			
+			public JwtTokenProvider(
+			@Value("${app.jwt.secret}") String secret,
+			@Value("${app.jwt.expiration-ms}") long expirationMs,
+			@Value("${app.jwt.issuer}") String issuer,
+			@Value("${app.jwt.audience}") String audience,
+			@Value("${app.jwt.secure-cookie}") boolean secureCookie,
+			JwtBlacklistService blacklistService) {
+				this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+				this.expirationMs = expirationMs;
+				this.issuer = issuer;
+				this.audience = audience;
+				this.secureCookie = secureCookie;
+				this.blacklistService = blacklistService;
+			}
+			
+			public String generateToken(Long userId, String email, String rol) {
+				Date now = new Date();
+				Date expiryDate = new Date(now.getTime() + expirationMs);
+				
+				return Jwts.builder()
+				.id(UUID.randomUUID().toString())
+				.issuer(issuer)
+				.subject(userId.toString())
+				.audience().add(audience).and()
+				.claim("email", email)
+				.claim("rol", rol)
+				.issuedAt(now)
+				.notBefore(now)
+				.expiration(expiryDate)
+				.signWith(secretKey)
+				.compact();
+			}
+			
+			public Long getUserIdFromToken(String token) {
+				Claims claims = parseToken(token);
+				return Long.parseLong(claims.getSubject());
+			}
+			
+			public String getEmailFromToken(String token) {
+				Claims claims = parseToken(token);
+				return claims.get("email", String.class);
+			}
+			
+			public String getRolFromToken(String token) {
+				Claims claims = parseToken(token);
+				return claims.get("rol", String.class);
+			}
+			
+			public String getJtiFromToken(String token) {
+				Claims claims = parseToken(token);
+				return claims.getId();
+			}
+			
+			public boolean validateToken(String token) {
+				try {
+					Claims claims = parseToken(token);
+					if (blacklistService.isBlacklisted(claims.getId())) {
+						return false;
+					}
+					return true;
+				} catch (JwtException | IllegalArgumentException e) {
+					return false;
+				}
+			}
+			
+			private Claims parseToken(String token) {
+				return Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+			}
+			
+			public String extractTokenFromCookie(HttpServletRequest request) {
+				Cookie[] cookies = request.getCookies();
+				if (cookies != null) {
+					for (Cookie cookie : cookies) {
+						if ("access_token".equals(cookie.getName())) {
+							return cookie.getValue();
+						}
+					}
+				}
+				return null;
+			}
+			
+			public Cookie createAccessTokenCookie(String token) {
+				Cookie cookie = new Cookie("access_token", token);
+				cookie.setHttpOnly(true);
+				cookie.setSecure(secureCookie);
+				cookie.setPath("/");
+				cookie.setMaxAge((int) (expirationMs / 1000));
+				cookie.setAttribute("SameSite", "Strict");
+				return cookie;
+			}
+			
+			public Date getExpirationFromToken(String token) {
+				return parseToken(token).getExpiration();
+			}
+			
+			public SecretKey getSecretKey() {
+				return secretKey;
+			}
+			
+			public JwtBlacklistService getJwtBlacklistService() {
+				return blacklistService;
+			}
+			
+			public Cookie createLogoutCookie() {
+				Cookie cookie = new Cookie("access_token", null);
+				cookie.setHttpOnly(true);
+				cookie.setSecure(secureCookie);
+				cookie.setPath("/");
+				cookie.setMaxAge(0);
+				cookie.setAttribute("SameSite", "Strict");
+				return cookie;
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{jwtauthenticationfilter.java}{%
+		\section{JwtAuthenticationFilter.java}\label{jwtauthenticationfilter.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/security/JwtAuthenticationFilter.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.security;
+		
+		import jakarta.servlet.FilterChain;
+		import jakarta.servlet.ServletException;
+		import jakarta.servlet.http.HttpServletRequest;
+		import jakarta.servlet.http.HttpServletResponse;
+		import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+		import org.springframework.security.core.authority.SimpleGrantedAuthority;
+		import org.springframework.security.core.context.SecurityContextHolder;
+		import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+		import org.springframework.stereotype.Component;
+		import org.springframework.util.StringUtils;
+		import org.springframework.web.filter.OncePerRequestFilter;
+		
+		import java.io.IOException;
+		import java.util.List;
+		
+		@Component
+		public class JwtAuthenticationFilter extends OncePerRequestFilter {
+			
+			private final JwtTokenProvider tokenProvider;
+			
+			public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
+				this.tokenProvider = tokenProvider;
+			}
+			
+			@Override
+			protected void doFilterInternal(HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain) throws ServletException, IOException {
+				
+				String token = tokenProvider.extractTokenFromCookie(request);
+				
+				if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+					Long userId = tokenProvider.getUserIdFromToken(token);
+					String email = tokenProvider.getEmailFromToken(token);
+					String rol = tokenProvider.getRolFromToken(token);
+					
+					List<SimpleGrantedAuthority> authorities = List.of(
+					new SimpleGrantedAuthority("ROLE_" + rol)
+					);
+					
+					UserPrincipal userPrincipal = new UserPrincipal(userId, email, null, rol, authorities);
+					
+					UsernamePasswordAuthenticationToken authentication =
+					new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
+					authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
+				
+				filterChain.doFilter(request, response);
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{securityconfig.java}{%
+		\section{SecurityConfig.java}\label{securityconfig.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/config/SecurityConfig.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.config;
+		
+		import com.sigcbqr.security.JwtAuthenticationEntryPoint;
+		import com.sigcbqr.security.JwtAuthenticationFilter;
+		import org.springframework.context.annotation.Bean;
+		import org.springframework.context.annotation.Configuration;
+		import org.springframework.security.authentication.AuthenticationManager;
+		import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+		import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+		import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+		import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+		import org.springframework.security.config.http.SessionCreationPolicy;
+		import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+		import org.springframework.security.crypto.password.PasswordEncoder;
+		import org.springframework.security.web.SecurityFilterChain;
+		import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+		
+		@Configuration
+		@EnableWebSecurity
+		@EnableMethodSecurity
+		public class SecurityConfig {
+			
+			private final JwtAuthenticationFilter jwtAuthenticationFilter;
+			private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+			
+			public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+			JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+				this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+				this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+			}
+			
+			@Bean
+			public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+				http
+				.csrf(csrf -> csrf.disable())
+				.cors(cors -> {})
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/auth/**").permitAll()
+				.requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/api/dashboard/**").authenticated()
+				.requestMatchers("/api/**").authenticated()
+				.anyRequest().permitAll()
+				)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				
+				return http.build();
+			}
+			
+			@Bean
+			public PasswordEncoder passwordEncoder() {
+				return new BCryptPasswordEncoder();
+			}
+			
+			@Bean
+			public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+				return config.getAuthenticationManager();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{jwtblacklistservice.java}{%
+		\section{JwtBlacklistService.java}\label{jwtblacklistservice.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/security/JwtBlacklistService.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.security;
+		
+		import com.sigcbqr.model.entity.JwtBlacklist;
+		import com.sigcbqr.repository.JwtBlacklistRepository;
+		import org.springframework.scheduling.annotation.Scheduled;
+		import org.springframework.stereotype.Service;
+		import org.springframework.transaction.annotation.Transactional;
+		
+		import java.time.LocalDateTime;
+		
+		@Service
+		public class JwtBlacklistService {
+			
+			private final JwtBlacklistRepository repository;
+			
+			public JwtBlacklistService(JwtBlacklistRepository repository) {
+				this.repository = repository;
+			}
+			
+			@Transactional
+			public void blacklist(String jti, LocalDateTime expiration) {
+				if (!repository.existsByJti(jti)) {
+					JwtBlacklist entry = JwtBlacklist.builder()
+					.jti(jti)
+					.fechaExpiracion(expiration)
+					.build();
+					repository.save(entry);
+				}
+			}
+			
+			public boolean isBlacklisted(String jti) {
+				return repository.existsByJti(jti);
+			}
+			
+			@Scheduled(cron = "0 0 */6 * * *")
+			@Transactional
+			public void cleanExpiredEntries() {
+				repository.deleteByFechaExpiracionBefore(LocalDateTime.now());
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{authcontroller.java}{%
+		\section{AuthController.java}\label{authcontroller.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/controller/AuthController.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.controller;
+		
+		import com.sigcbqr.model.dto.request.LoginRequest;
+		import com.sigcbqr.model.dto.request.RegisterRequest;
+		import com.sigcbqr.model.dto.response.ApiResponse;
+		import com.sigcbqr.model.dto.response.LoginResponse;
+		import com.sigcbqr.model.dto.response.UsuarioResponse;
+		import com.sigcbqr.security.JwtTokenProvider;
+		import com.sigcbqr.security.UserPrincipal;
+		import com.sigcbqr.service.AuthService;
+		import io.swagger.v3.oas.annotations.Operation;
+		import io.swagger.v3.oas.annotations.tags.Tag;
+		import jakarta.servlet.http.HttpServletRequest;
+		import jakarta.servlet.http.HttpServletResponse;
+		import jakarta.validation.Valid;
+		import org.springframework.http.ResponseEntity;
+		import org.springframework.security.core.annotation.AuthenticationPrincipal;
+		import org.springframework.web.bind.annotation.*;
+		
+		import java.time.LocalDateTime;
+		import java.util.Date;
+		
+		@RestController
+		@RequestMapping("/api/auth")
+		@Tag(name = "Autenticación", description = "Endpoints de autenticación con JWT en cookie HttpOnly")
+		public class AuthController {
+			
+			private final AuthService authService;
+			private final JwtTokenProvider tokenProvider;
+			
+			public AuthController(AuthService authService, JwtTokenProvider tokenProvider) {
+				this.authService = authService;
+				this.tokenProvider = tokenProvider;
+			}
+			
+			@PostMapping("/login")
+			@Operation(summary = "Iniciar sesión", description = "Autentica al usuario y devuelve un JWT en cookie HttpOnly")
+			public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request,
+			HttpServletResponse response) {
+				LoginResponse loginResponse = authService.login(request);
+				
+				String token = tokenProvider.generateToken(
+				loginResponse.getId(),
+				loginResponse.getEmail(),
+				loginResponse.getRol()
+				);
+				
+				var cookie = tokenProvider.createAccessTokenCookie(token);
+				response.addCookie(cookie);
+				
+				return ResponseEntity.ok(ApiResponse.success("Inicio de sesión exitoso", loginResponse));
+			}
+			
+			@PostMapping("/register")
+			@Operation(summary = "Registrar usuario", description = "Registra un nuevo usuario y devuelve JWT en cookie")
+			public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request,
+			HttpServletResponse response) {
+				LoginResponse loginResponse = authService.register(request);
+				
+				String token = tokenProvider.generateToken(
+				loginResponse.getId(),
+				loginResponse.getEmail(),
+				loginResponse.getRol()
+				);
+				
+				var cookie = tokenProvider.createAccessTokenCookie(token);
+				response.addCookie(cookie);
+				
+				return ResponseEntity.ok(ApiResponse.success("Registro exitoso", loginResponse));
+			}
+			
+			@PostMapping("/logout")
+			@Operation(summary = "Cerrar sesión", description = "Invalida el JWT actual agregando su JTI a la blacklist")
+			public ResponseEntity<ApiResponse> logout(HttpServletRequest request,
+			HttpServletResponse response) {
+				String token = tokenProvider.extractTokenFromCookie(request);
+				if (token != null && tokenProvider.validateToken(token)) {
+					Date expiration = tokenProvider.getExpirationFromToken(token);
+					authService.logout(token, new java.sql.Timestamp(expiration.getTime()).toLocalDateTime());
+				}
+				
+				var cookie = tokenProvider.createLogoutCookie();
+				response.addCookie(cookie);
+				
+				return ResponseEntity.ok(ApiResponse.success("Sesión cerrada exitosamente", null));
+			}
+			
+			@GetMapping("/me")
+			@Operation(summary = "Usuario actual", description = "Obtiene los datos del usuario autenticado")
+			public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+				var usuario = authService.getCurrentUser(userPrincipal.id());
+				var response = UsuarioResponse.builder()
+				.id(usuario.getId())
+				.nombre(usuario.getNombre())
+				.email(usuario.getEmail())
+				.telefono(usuario.getTelefono())
+				.rol(usuario.getRol().getNombre())
+				.activo(usuario.getActivo())
+				.createdAt(usuario.getCreatedAt())
+				.build();
+				return ResponseEntity.ok(ApiResponse.success("Usuario actual", response));
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{authservice.java}{%
+		\section{AuthService.java}\label{authservice.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/service/AuthService.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.service;
+		
+		import com.sigcbqr.exception.BadRequestException;
+		import com.sigcbqr.exception.ResourceNotFoundException;
+		import com.sigcbqr.model.dto.request.LoginRequest;
+		import com.sigcbqr.model.dto.request.RegisterRequest;
+		import com.sigcbqr.model.dto.response.LoginResponse;
+		import com.sigcbqr.model.entity.Rol;
+		import com.sigcbqr.model.entity.Usuario;
+		import com.sigcbqr.repository.RolRepository;
+		import com.sigcbqr.repository.UsuarioRepository;
+		import com.sigcbqr.security.JwtTokenProvider;
+		import org.springframework.security.authentication.AuthenticationManager;
+		import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+		import org.springframework.security.crypto.password.PasswordEncoder;
+		import org.springframework.stereotype.Service;
+		import org.springframework.transaction.annotation.Transactional;
+		
+		import java.time.LocalDateTime;
+		
+		@Service
+		public class AuthService {
+			
+			private final AuthenticationManager authenticationManager;
+			private final JwtTokenProvider tokenProvider;
+			private final UsuarioRepository usuarioRepository;
+			private final RolRepository rolRepository;
+			private final PasswordEncoder passwordEncoder;
+			
+			public AuthService(AuthenticationManager authenticationManager,
+			JwtTokenProvider tokenProvider,
+			UsuarioRepository usuarioRepository,
+			RolRepository rolRepository,
+			PasswordEncoder passwordEncoder) {
+				this.authenticationManager = authenticationManager;
+				this.tokenProvider = tokenProvider;
+				this.usuarioRepository = usuarioRepository;
+				this.rolRepository = rolRepository;
+				this.passwordEncoder = passwordEncoder;
+			}
+			
+			public LoginResponse login(LoginRequest request) {
+				authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+				);
+				
+				Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+				.orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+				
+				String token = tokenProvider.generateToken(usuario.getId(), usuario.getEmail(),
+				usuario.getRol().getNombre());
+				
+				return LoginResponse.builder()
+				.id(usuario.getId())
+				.nombre(usuario.getNombre())
+				.email(usuario.getEmail())
+				.rol(usuario.getRol().getNombre())
+				.mensaje("Inicio de sesión exitoso")
+				.build();
+			}
+			
+			@Transactional
+			public LoginResponse register(RegisterRequest request) {
+				if (usuarioRepository.existsByEmail(request.getEmail())) {
+					throw new BadRequestException("El correo ya está registrado");
+				}
+				
+				Rol rol;
+				if (request.getRolId() != null) {
+					rol = rolRepository.findById(request.getRolId())
+					.orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado"));
+				} else {
+					rol = rolRepository.findByNombre("ESTUDIANTE")
+					.orElseThrow(() -> new ResourceNotFoundException("Rol ESTUDIANTE no encontrado"));
+				}
+				
+				Usuario usuario = Usuario.builder()
+				.nombre(request.getNombre())
+				.email(request.getEmail())
+				.password(passwordEncoder.encode(request.getPassword()))
+				.telefono(request.getTelefono())
+				.activo(true)
+				.rol(rol)
+				.build();
+				
+				usuario = usuarioRepository.save(usuario);
+				
+				String token = tokenProvider.generateToken(usuario.getId(), usuario.getEmail(),
+				usuario.getRol().getNombre());
+				
+				return LoginResponse.builder()
+				.id(usuario.getId())
+				.nombre(usuario.getNombre())
+				.email(usuario.getEmail())
+				.rol(usuario.getRol().getNombre())
+				.mensaje("Registro exitoso")
+				.build();
+			}
+			
+			public void logout(String token, LocalDateTime expiration) {
+				String jti = tokenProvider.getJtiFromToken(token);
+				tokenProvider.getJwtBlacklistService().blacklist(jti, expiration);
+			}
+			
+			public Usuario getCurrentUser(Long userId) {
+				return usuarioRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Usuario", userId));
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{prestamocontroller.java}{%
+		\section{PrestamoController.java}\label{prestamocontroller.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/controller/PrestamoController.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.controller;
+		
+		import com.sigcbqr.model.dto.request.PrestamoRequest;
+		import com.sigcbqr.model.dto.response.ApiResponse;
+		import com.sigcbqr.model.dto.response.PageResponse;
+		import com.sigcbqr.model.dto.response.PrestamoResponse;
+		import com.sigcbqr.service.PrestamoService;
+		import io.swagger.v3.oas.annotations.Operation;
+		import io.swagger.v3.oas.annotations.tags.Tag;
+		import jakarta.validation.Valid;
+		import org.springframework.data.domain.Pageable;
+		import org.springframework.data.web.PageableDefault;
+		import org.springframework.http.ResponseEntity;
+		import org.springframework.security.access.prepost.PreAuthorize;
+		import org.springframework.web.bind.annotation.*;
+		
+		@RestController
+		@RequestMapping("/api/prestamos")
+		@Tag(name = "Préstamos", description = "Gestión de préstamos, devoluciones y renovaciones")
+		public class PrestamoController {
+			
+			private final PrestamoService prestamoService;
+			
+			public PrestamoController(PrestamoService prestamoService) {
+				this.prestamoService = prestamoService;
+			}
+			
+			@GetMapping
+			@Operation(summary = "Listar préstamos", description = "Obtiene todos los préstamos con paginación")
+			@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+			public ResponseEntity<PageResponse<PrestamoResponse>> listar(
+			@PageableDefault(size = 10, sort = "fechaPrestamo") Pageable pageable) {
+				var page = prestamoService.listar(pageable);
+				return ResponseEntity.ok(PageResponse.from(page));
+			}
+			
+			@GetMapping("/usuario/{usuarioId}")
+			@Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico")
+			public ResponseEntity<PageResponse<PrestamoResponse>> listarPorUsuario(
+			@PathVariable Long usuarioId,
+			@PageableDefault(size = 10) Pageable pageable) {
+				var page = prestamoService.listarPorUsuario(usuarioId, pageable);
+				return ResponseEntity.ok(PageResponse.from(page));
+			}
+			
+			@GetMapping("/{id}")
+			@Operation(summary = "Obtener préstamo", description = "Obtiene un préstamo por su ID")
+			public ResponseEntity<ApiResponse> obtener(@PathVariable Long id) {
+				var prestamo = prestamoService.obtener(id);
+				return ResponseEntity.ok(ApiResponse.success("Préstamo encontrado", prestamo));
+			}
+			
+			@PostMapping
+			@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+			@Operation(summary = "Crear préstamo", description = "Registra un nuevo préstamo")
+			public ResponseEntity<ApiResponse> crear(@Valid @RequestBody PrestamoRequest request) {
+				var prestamo = prestamoService.crear(request);
+				return ResponseEntity.ok(ApiResponse.created("Préstamo registrado", prestamo));
+			}
+			
+			@PutMapping("/{id}/devolver")
+			@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+			@Operation(summary = "Devolver libro", description = "Registra la devolución de un préstamo")
+			public ResponseEntity<ApiResponse> devolver(@PathVariable Long id) {
+				var prestamo = prestamoService.devolver(id);
+				return ResponseEntity.ok(ApiResponse.success("Devolución registrada", prestamo));
+			}
+			
+			@PutMapping("/{id}/renovar")
+			@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+			@Operation(summary = "Renovar préstamo", description = "Renueva un préstamo activo")
+			public ResponseEntity<ApiResponse> renovar(@PathVariable Long id) {
+				var prestamo = prestamoService.renovar(id);
+				return ResponseEntity.ok(ApiResponse.success("Préstamo renovado", prestamo));
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{prestamoservice.java}{%
+		\section{PrestamoService.java}\label{prestamoservice.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/service/PrestamoService.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.service;
+		
+		import com.sigcbqr.exception.BadRequestException;
+		import com.sigcbqr.exception.ResourceNotFoundException;
+		import com.sigcbqr.model.dto.request.PrestamoRequest;
+		import com.sigcbqr.model.dto.response.PrestamoResponse;
+		import com.sigcbqr.model.entity.*;
+		import com.sigcbqr.repository.*;
+		import org.springframework.data.domain.Page;
+		import org.springframework.data.domain.Pageable;
+		import org.springframework.stereotype.Service;
+		import org.springframework.transaction.annotation.Transactional;
+		
+		import java.time.LocalDateTime;
+		
+		@Service
+		public class PrestamoService {
+			
+			private final PrestamoRepository prestamoRepository;
+			private final UsuarioRepository usuarioRepository;
+			private final InventarioRepository inventarioRepository;
+			private final LibroRepository libroRepository;
+			
+			public PrestamoService(PrestamoRepository prestamoRepository,
+			UsuarioRepository usuarioRepository,
+			InventarioRepository inventarioRepository,
+			LibroRepository libroRepository) {
+				this.prestamoRepository = prestamoRepository;
+				this.usuarioRepository = usuarioRepository;
+				this.inventarioRepository = inventarioRepository;
+				this.libroRepository = libroRepository;
+			}
+			
+			public Page<PrestamoResponse> listar(Pageable pageable) {
+				return prestamoRepository.findAll(pageable).map(this::toResponse);
+			}
+			
+			public Page<PrestamoResponse> listarPorUsuario(Long usuarioId, Pageable pageable) {
+				return prestamoRepository.findByUsuarioIdOrderByFechaPrestamoDesc(usuarioId, pageable)
+				.map(this::toResponse);
+			}
+			
+			public PrestamoResponse obtener(Long id) {
+				Prestamo prestamo = prestamoRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+				return toResponse(prestamo);
+			}
+			
+			@Transactional
+			public PrestamoResponse crear(PrestamoRequest request) {
+				Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
+				.orElseThrow(() -> new ResourceNotFoundException("Usuario", request.getUsuarioId()));
+				
+				Inventario inventario = inventarioRepository.findById(request.getInventarioId())
+				.orElseThrow(() -> new ResourceNotFoundException("Ejemplar", request.getInventarioId()));
+				
+				if (!"DISPONIBLE".equals(inventario.getEstado())) {
+					throw new BadRequestException("El ejemplar no está disponible");
+				}
+				
+				long prestamosActivos = prestamoRepository.countByUsuarioIdAndEstado(request.getUsuarioId(), "ACTIVO");
+				if (prestamosActivos >= 5) {
+					throw new BadRequestException("El usuario tiene demasiados préstamos activos");
+				}
+				
+				Prestamo prestamo = Prestamo.builder()
+				.usuario(usuario)
+				.inventario(inventario)
+				.fechaPrestamo(LocalDateTime.now())
+				.fechaVencimiento(LocalDateTime.now().plusDays(7))
+				.estado("ACTIVO")
+				.build();
+				
+				inventario.setEstado("PRESTADO");
+				inventarioRepository.save(inventario);
+				
+				Libro libro = inventario.getLibro();
+				libro.setEjemplaresDisponibles(libro.getEjemplaresDisponibles() - 1);
+				libroRepository.save(libro);
+				
+				prestamo = prestamoRepository.save(prestamo);
+				return toResponse(prestamo);
+			}
+			
+			@Transactional
+			public PrestamoResponse devolver(Long id) {
+				Prestamo prestamo = prestamoRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+				
+				if ("DEVUELTO".equals(prestamo.getEstado())) {
+					throw new BadRequestException("El préstamo ya fue devuelto");
+				}
+				
+				prestamo.setFechaDevolucion(LocalDateTime.now());
+				prestamo.setEstado("DEVUELTO");
+				
+				Inventario inventario = prestamo.getInventario();
+				inventario.setEstado("DISPONIBLE");
+				inventarioRepository.save(inventario);
+				
+				Libro libro = inventario.getLibro();
+				libro.setEjemplaresDisponibles(libro.getEjemplaresDisponibles() + 1);
+				libroRepository.save(libro);
+				
+				// Generar multa si está vencido
+				if (prestamo.getFechaVencimiento().isBefore(LocalDateTime.now())) {
+					// Multa lógica here - handled by MultaService
+				}
+				
+				prestamo = prestamoRepository.save(prestamo);
+				return toResponse(prestamo);
+			}
+			
+			@Transactional
+			public PrestamoResponse renovar(Long id) {
+				Prestamo prestamo = prestamoRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+				
+				if (!"ACTIVO".equals(prestamo.getEstado())) {
+					throw new BadRequestException("Solo se pueden renovar préstamos activos");
+				}
+				
+				prestamo.setEstado("RENOVADO");
+				prestamo.setObservaciones("Renovado - nueva fecha: " + LocalDateTime.now().plusDays(7));
+				prestamoRepository.save(prestamo);
+				
+				Prestamo nuevoPrestamo = Prestamo.builder()
+				.usuario(prestamo.getUsuario())
+				.inventario(prestamo.getInventario())
+				.fechaPrestamo(LocalDateTime.now())
+				.fechaVencimiento(LocalDateTime.now().plusDays(7))
+				.estado("ACTIVO")
+				.observaciones("Renovación del préstamo #" + prestamo.getId())
+				.build();
+				
+				nuevoPrestamo = prestamoRepository.save(nuevoPrestamo);
+				return toResponse(nuevoPrestamo);
+			}
+			
+			private PrestamoResponse toResponse(Prestamo prestamo) {
+				return PrestamoResponse.builder()
+				.id(prestamo.getId())
+				.usuarioNombre(prestamo.getUsuario().getNombre())
+				.libroTitulo(prestamo.getInventario().getLibro().getTitulo())
+				.codigoEjemplar(prestamo.getInventario().getCodigoEjemplar())
+				.fechaPrestamo(prestamo.getFechaPrestamo())
+				.fechaVencimiento(prestamo.getFechaVencimiento())
+				.fechaDevolucion(prestamo.getFechaDevolucion())
+				.estado(prestamo.getEstado())
+				.observaciones(prestamo.getObservaciones())
+				.build();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{cacheconfig.java}{%
+		\section{CacheConfig.java}\label{cacheconfig.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/config/CacheConfig.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.config;
+		
+		import org.springframework.beans.factory.annotation.Value;
+		import org.springframework.cache.CacheManager;
+		import org.springframework.cache.annotation.EnableCaching;
+		import org.springframework.context.annotation.Bean;
+		import org.springframework.context.annotation.Configuration;
+		import org.springframework.data.redis.cache.RedisCacheConfiguration;
+		import org.springframework.data.redis.cache.RedisCacheManager;
+		import org.springframework.data.redis.connection.RedisConnectionFactory;
+		import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+		import org.springframework.data.redis.serializer.RedisSerializationContext;
+		
+		import java.time.Duration;
+		
+		@Configuration
+		@EnableCaching
+		public class CacheConfig {
+			
+			@Value("${app.cache.default-ttl-seconds}")
+			private int defaultTtlSeconds;
+			
+			@Bean
+			public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+				RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+				.entryTtl(Duration.ofSeconds(defaultTtlSeconds))
+				.disableCachingNullValues()
+				.serializeValuesWith(
+				RedisSerializationContext.SerializationPair.fromSerializer(
+				new GenericJackson2JsonRedisSerializer()));
+				
+				return RedisCacheManager.builder(connectionFactory)
+				.cacheDefaults(config)
+				.build();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{globalexceptionhandler.java}{%
+		\section{GlobalExceptionHandler.java}\label{globalexceptionhandler.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/exception/GlobalExceptionHandler.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.exception;
+		
+		import org.springframework.http.HttpStatus;
+		import org.springframework.http.ProblemDetail;
+		import org.springframework.security.authentication.BadCredentialsException;
+		import org.springframework.validation.FieldError;
+		import org.springframework.web.bind.MethodArgumentNotValidException;
+		import org.springframework.web.bind.annotation.ExceptionHandler;
+		import org.springframework.web.bind.annotation.RestControllerAdvice;
+		
+		import java.net.URI;
+		import java.util.HashMap;
+		import java.util.Map;
+		
+		@RestControllerAdvice
+		public class GlobalExceptionHandler {
+			
+			public static final String BASE_ERROR_URL = "https://api.sigcbqr.com/errors";
+			
+			@ExceptionHandler(ResourceNotFoundException.class)
+			public ProblemDetail handleNotFound(ResourceNotFoundException ex) {
+				ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+				pd.setType(URI.create(BASE_ERROR_URL + "/not-found"));
+				pd.setTitle("Recurso no encontrado");
+				pd.setProperty("timestamp", System.currentTimeMillis());
+				return pd;
+			}
+			
+			@ExceptionHandler(BadRequestException.class)
+			public ProblemDetail handleBadRequest(BadRequestException ex) {
+				ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+				pd.setType(URI.create(BASE_ERROR_URL + "/bad-request"));
+				pd.setTitle("Solicitud inválida");
+				pd.setProperty("timestamp", System.currentTimeMillis());
+				return pd;
+			}
+			
+			@ExceptionHandler(BadCredentialsException.class)
+			public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
+				ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
+				pd.setType(URI.create(BASE_ERROR_URL + "/unauthorized"));
+				pd.setTitle("No autorizado");
+				pd.setProperty("timestamp", System.currentTimeMillis());
+				return pd;
+			}
+			
+			@ExceptionHandler(MethodArgumentNotValidException.class)
+			public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
+				Map<String, String> errors = new HashMap<>();
+				for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+					errors.put(error.getField(), error.getDefaultMessage());
+				}
+				ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Error de validación");
+				pd.setType(URI.create(BASE_ERROR_URL + "/validation"));
+				pd.setTitle("Error de validación");
+				pd.setProperty("errors", errors);
+				pd.setProperty("timestamp", System.currentTimeMillis());
+				return pd;
+			}
+			
+			@ExceptionHandler(Exception.class)
+			public ProblemDetail handleGeneral(Exception ex) {
+				ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
+				"Error interno del servidor: " + ex.getMessage());
+				pd.setType(URI.create(BASE_ERROR_URL + "/internal-error"));
+				pd.setTitle("Error interno");
+				pd.setProperty("timestamp", System.currentTimeMillis());
+				return pd;
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{prestamo.java}{%
+		\section{Prestamo.java}\label{prestamo.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/model/entity/Prestamo.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.model.entity;
+		
+		import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+		import jakarta.persistence.*;
+		import lombok.*;
+		
+		import java.time.LocalDateTime;
+		
+		@Entity
+		@Table(name = "prestamos")
+		@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+		@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+		public class Prestamo {
+			
+			@Id
+			@GeneratedValue(strategy = GenerationType.IDENTITY)
+			private Long id;
+			
+			@ManyToOne(fetch = FetchType.LAZY)
+			@JoinColumn(name = "usuario_id", nullable = false)
+			private Usuario usuario;
+			
+			@ManyToOne(fetch = FetchType.LAZY)
+			@JoinColumn(name = "inventario_id", nullable = false)
+			private Inventario inventario;
+			
+			@Column(name = "fecha_prestamo")
+			private LocalDateTime fechaPrestamo;
+			
+			@Column(name = "fecha_vencimiento", nullable = false)
+			private LocalDateTime fechaVencimiento;
+			
+			@Column(name = "fecha_devolucion")
+			private LocalDateTime fechaDevolucion;
+			
+			@Column(length = 30)
+			private String estado;
+			
+			@Column(columnDefinition = "TEXT")
+			private String observaciones;
+			
+			@Column(name = "created_at")
+			private LocalDateTime createdAt;
+			
+			@Column(name = "updated_at")
+			private LocalDateTime updatedAt;
+			
+			@PrePersist
+			protected void onCreate() {
+				createdAt = LocalDateTime.now();
+				updatedAt = LocalDateTime.now();
+				if (estado == null) estado = "ACTIVO";
+				if (fechaPrestamo == null) fechaPrestamo = LocalDateTime.now();
+			}
+			
+			@PreUpdate
+			protected void onUpdate() {
+				updatedAt = LocalDateTime.now();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{libro.java}{%
+		\section{Libro.java}\label{libro.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/model/entity/Libro.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.model.entity;
+		
+		import jakarta.persistence.*;
+		import lombok.*;
+		
+		import java.time.LocalDateTime;
+		import java.util.HashSet;
+		import java.util.Set;
+		
+		@Entity
+		@Table(name = "libros")
+		@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+		public class Libro {
+			
+			@Id
+			@GeneratedValue(strategy = GenerationType.IDENTITY)
+			private Long id;
+			
+			@Column(nullable = false, length = 300)
+			private String titulo;
+			
+			@Column(unique = true, length = 20)
+			private String isbn;
+			
+			@Column(name = "anio_publicacion")
+			private Integer anioPublicacion;
+			
+			@Column(length = 50)
+			private String edicion;
+			
+			@Column(name = "ejemplares_totales")
+			private Integer ejemplaresTotales;
+			
+			@Column(name = "ejemplares_disponibles")
+			private Integer ejemplaresDisponibles;
+			
+			@Column(length = 100)
+			private String ubicacion;
+			
+			@Column(columnDefinition = "TEXT")
+			private String descripcion;
+			
+			private String portada;
+			
+			private Boolean activo;
+			
+			@ManyToOne(fetch = FetchType.LAZY)
+			@JoinColumn(name = "categoria_id")
+			private Categoria categoria;
+			
+			@ManyToOne(fetch = FetchType.LAZY)
+			@JoinColumn(name = "editorial_id")
+			private Editorial editorial;
+			
+			@ManyToMany(fetch = FetchType.LAZY)
+			@JoinTable(
+			name = "libro_autores",
+			joinColumns = @JoinColumn(name = "libro_id"),
+			inverseJoinColumns = @JoinColumn(name = "autor_id")
+			)
+			@Builder.Default
+			private Set<Autor> autores = new HashSet<>();
+			
+			@Column(name = "created_at")
+			private LocalDateTime createdAt;
+			
+			@Column(name = "updated_at")
+			private LocalDateTime updatedAt;
+			
+			@PrePersist
+			protected void onCreate() {
+				createdAt = LocalDateTime.now();
+				updatedAt = LocalDateTime.now();
+				if (activo == null) activo = true;
+				if (ejemplaresTotales == null) ejemplaresTotales = 1;
+				if (ejemplaresDisponibles == null) ejemplaresDisponibles = ejemplaresTotales;
+			}
+			
+			@PreUpdate
+			protected void onUpdate() {
+				updatedAt = LocalDateTime.now();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{usuario.java}{%
+		\section{Usuario.java}\label{usuario.java}}
+	
+	\passthrough{\lstinline!sigcb-qr-api/src/main/java/com/sigcbqr/model/entity/Usuario.java!}
+	
+	\begin{lstlisting}[language=Java]
+		package com.sigcbqr.model.entity;
+		
+		import jakarta.persistence.*;
+		import lombok.*;
+		
+		import java.time.LocalDateTime;
+		
+		@Entity
+		@Table(name = "usuarios")
+		@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+		public class Usuario {
+			
+			@Id
+			@GeneratedValue(strategy = GenerationType.IDENTITY)
+			private Long id;
+			
+			@Column(nullable = false, length = 100)
+			private String nombre;
+			
+			@Column(nullable = false, unique = true, length = 150)
+			private String email;
+			
+			@Column(nullable = false)
+			private String password;
+			
+			@Column(length = 20)
+			private String telefono;
+			
+			private String foto;
+			
+			@Column(nullable = false)
+			private Boolean activo;
+			
+			@ManyToOne(fetch = FetchType.EAGER)
+			@JoinColumn(name = "rol_id", nullable = false)
+			private Rol rol;
+			
+			@Column(name = "created_at")
+			private LocalDateTime createdAt;
+			
+			@Column(name = "updated_at")
+			private LocalDateTime updatedAt;
+			
+			@PrePersist
+			protected void onCreate() {
+				createdAt = LocalDateTime.now();
+				updatedAt = LocalDateTime.now();
+				if (activo == null) activo = true;
+			}
+			
+			@PreUpdate
+			protected void onUpdate() {
+				updatedAt = LocalDateTime.now();
+			}
+		}
+	\end{lstlisting}
+	
+	\hypertarget{sp_crear_prestamo.sql}{%
+		\section{sp\_crear\_prestamo.sql}\label{sp_crear_prestamo.sql}}
+	
+	\passthrough{\lstinline!db/procs/sp\_crear\_prestamo.sql!}
+	
+	\begin{lstlisting}[language=SQL]
+		CREATE OR REPLACE PROCEDURE sp_crear_prestamo(
+		IN p_usuario_id BIGINT,
+		IN p_inventario_id BIGINT,
+		IN p_dias_prestamo INT DEFAULT 7,
+		INOUT p_prestamo_id BIGINT DEFAULT NULL
+		)
+		LANGUAGE plpgsql
+		AS $$
+		DECLARE
+		v_estado_inventario VARCHAR;
+		v_prestamos_activos BIGINT;
+		BEGIN
+		SELECT estado INTO v_estado_inventario FROM inventario WHERE id = p_inventario_id;
+		IF v_estado_inventario IS NULL THEN
+		RAISE EXCEPTION 'Ejemplar no encontrado';
+		END IF;
+		IF v_estado_inventario != 'DISPONIBLE' THEN
+		RAISE EXCEPTION 'El ejemplar no está disponible';
+		END IF;
+		
+		SELECT COUNT(*) INTO v_prestamos_activos
+		FROM prestamos WHERE usuario_id = p_usuario_id AND estado = 'ACTIVO';
+		IF v_prestamos_activos >= 5 THEN
+		RAISE EXCEPTION 'El usuario tiene demasiados préstamos activos';
+		END IF;
+		
+		INSERT INTO prestamos (usuario_id, inventario_id, fecha_prestamo, fecha_vencimiento, estado)
+		VALUES (p_usuario_id, p_inventario_id, NOW(), NOW() + (p_dias_prestamo || ' days')::INTERVAL, 'ACTIVO')
+		RETURNING id INTO p_prestamo_id;
+		
+		UPDATE inventario SET estado = 'PRESTADO' WHERE id = p_inventario_id;
+		
+		UPDATE libros l
+		SET ejemplares_disponibles = ejemplares_disponibles - 1
+		FROM inventario i
+		WHERE i.id = p_inventario_id AND l.id = i.libro_id;
+		END;
+		$$;
+	\end{lstlisting}
+	
+	\hypertarget{sp_devolver_prestamo.sql}{%
+		\section{sp\_devolver\_prestamo.sql}\label{sp_devolver_prestamo.sql}}
+	
+	\passthrough{\lstinline!db/procs/sp\_devolver\_prestamo.sql!}
+	
+	\begin{lstlisting}[language=SQL]
+		CREATE OR REPLACE PROCEDURE sp_devolver_prestamo(
+		IN p_prestamo_id BIGINT,
+		INOUT p_multa_generada BOOLEAN DEFAULT FALSE
+		)
+		LANGUAGE plpgsql
+		AS $$
+		DECLARE
+		v_estado VARCHAR;
+		v_inventario_id BIGINT;
+		v_libro_id BIGINT;
+		v_fecha_vencimiento TIMESTAMP;
+		v_dias_retraso INT;
+		BEGIN
+		SELECT estado, inventario_id, fecha_vencimiento
+		INTO v_estado, v_inventario_id, v_fecha_vencimiento
+		FROM prestamos WHERE id = p_prestamo_id;
+		
+		IF v_estado IS NULL THEN
+		RAISE EXCEPTION 'Préstamo no encontrado';
+		END IF;
+		IF v_estado = 'DEVUELTO' THEN
+		RAISE EXCEPTION 'El préstamo ya fue devuelto';
+		END IF;
+		
+		UPDATE prestamos
+		SET estado = 'DEVUELTO', fecha_devolucion = NOW()
+		WHERE id = p_prestamo_id;
+		
+		UPDATE inventario SET estado = 'DISPONIBLE' WHERE id = v_inventario_id;
+		
+		UPDATE libros l
+		SET ejemplares_disponibles = ejemplares_disponibles + 1
+		FROM inventario i
+		WHERE i.id = v_inventario_id AND l.id = i.libro_id;
+		
+		IF v_fecha_vencimiento < NOW() THEN
+		v_dias_retraso := EXTRACT(DAY FROM (NOW() - v_fecha_vencimiento));
+		INSERT INTO multas (prestamo_id, usuario_id, monto, pagada, fecha_multa)
+		SELECT p_prestamo_id, p.usuario_id, v_dias_retraso * 0.50, false, NOW()
+		FROM prestamos p WHERE p.id = p_prestamo_id;
+		p_multa_generada := TRUE;
+		END IF;
+		END;
+		$$;
+	\end{lstlisting}
+	
+	\hypertarget{sp_reporte_prestamos_diarios.sql}{%
+		\section{sp\_reporte\_prestamos\_diarios.sql}\label{sp_reporte_prestamos_diarios.sql}}
+	
+	\passthrough{\lstinline!db/procs/sp\_reporte\_prestamos\_diarios.sql!}
+	
+	\begin{lstlisting}[language=SQL]
+		CREATE OR REPLACE PROCEDURE sp_reporte_prestamos_diarios(
+		IN p_fecha DATE,
+		INOUT p_ref REFCURSOR
+		)
+		LANGUAGE plpgsql
+		AS $$
+		BEGIN
+		OPEN p_ref FOR
+		SELECT p.id, p.fecha_prestamo, p.estado,
+		u.nombre AS usuario_nombre,
+		l.titulo AS libro_titulo
+		FROM prestamos p
+		JOIN usuarios u ON u.id = p.usuario_id
+		JOIN inventario i ON i.id = p.inventario_id
+		JOIN libros l ON l.id = i.libro_id
+		WHERE p.fecha_prestamo::DATE = p_fecha
+		ORDER BY p.fecha_prestamo;
+		END;
+		$$;
+	\end{lstlisting}
+	
+	\hypertarget{apendices}{%
+		\chapter{7. Apendices}\label{apendices}}
+	
+	\hypertarget{bituxe1cora-de-observaciones-sigcb-qr}{%
+		\section{Bitácora de Observaciones --- SIGCB-QR}\label{bituxe1cora-de-observaciones-sigcb-qr}}
+	
+	\begin{quote}
+		Archivo de trazabilidad de observaciones recibidas del docente en las Entregas 1A y 1B,
+		conforme al requisito \textbf{Bloque 0} de la Tercera Entrega (v0.9.0-rc).
+	\end{quote}
+	
+	\hypertarget{resumen-1}{%
+		\subsection{Resumen}\label{resumen-1}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Indicador & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Total observaciones & 7 \\
+		Resueltas & 7 \\
+		No resueltas & 0 \\
+		\% Resuelto & 100 \% \\
+	\end{longtable}
+	
+	\hypertarget{observaciones}{%
+		\subsection{Observaciones}\label{observaciones}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1311}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1311}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1639}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2131}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1639}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1967}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Código
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Fuente
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Criterio
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Observación
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Decisión
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Commit(es)
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		OBS-01 & Entrega 1A & SRS & El documento SRS no sigue la plantilla ISO/IEC/IEEE 29148:2018. Faltan secciones de rationale, trazabilidad y métodos de verificación. & Implementado: SRS completo en docs/requisitos/SRS.md con todas las secciones obligatorias, identificadores únicos, rationale, trazabilidad y criterios de verificación. & \\
+		OBS-02 & Entrega 1B & Auth JWT & El JWT no incluye el claim \passthrough{\lstinline!aud!} (audience) para restringir el público objetivo del token. & Aplicada: se agregaron los claims \passthrough{\lstinline!iss!}, \passthrough{\lstinline!aud!}, \passthrough{\lstinline!nbf!} e \passthrough{\lstinline!iat!} al JWT firmado. & \\
+		OBS-03 & Entrega 1B & Auth Cookie & La cookie JWT tiene \passthrough{\lstinline!Secure=false!} en desarrollo; debe obtenerse de configuración externa. & Aplicada: \passthrough{\lstinline!Secure!} ahora se configura desde \passthrough{\lstinline!app.jwt.secure-cookie!} en application.yml. & \\
+		OBS-04 & Entrega 1B & API Errors & Los errores HTTP no siguen RFC 7807 (ProblemDetails). No se distingue entre type, title, status, detail e instance. & Aplicada: GlobalExceptionHandler ahora retorna \passthrough{\lstinline!ProblemDetail!} con los campos type, title, status, detail e instance. & \\
+		OBS-05 & Entrega 1B & Cache & No hay cache Redis implementado. El endpoint de listado de libros no tiene TTL configurable externamente ni métrica de hit ratio. & Aplicada: Se integró Redis con TTL desde \passthrough{\lstinline!app.cache.default-ttl-seconds!}. Se agregó métrica de hit ratio en docs/mediciones/. & \\
+		OBS-06 & Entrega 1B & Data Access & Las consultas de reportes y agregaciones se realizan vía JPQL en lugar de procedimientos almacenados. No hay separación CRUD-ORM vs SP. & Aplicada: Se migraron todas las consultas no elementales a stored procedures en \passthrough{\lstinline!db/procs/!}. Catálogo en docs/basedatos/CATALOGO-SP.md. & \\
+		OBS-07 & Entrega 1B & Docker & Las imágenes Docker usan etiquetas variables (\passthrough{\lstinline!latest!}, \passthrough{\lstinline!16-alpine!}) en lugar de digest SHA256, lo que rompe la reproducibilidad. & Aplicada: Todas las imágenes fijadas por digest SHA256 en docker-compose.yml. & \\
+	\end{longtable}
+	
+	\hypertarget{historial-de-cambios}{%
+		\subsection{Historial de cambios}\label{historial-de-cambios}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3182}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3182}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Fecha
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Autor
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Cambio
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		2026-07-30 & Equipo SIGCB-QR & Creación inicial del archivo con 7 observaciones identificadas del análisis técnico. Pendiente de completar con feedback formal del docente. \\
+	\end{longtable}
+	
+	\hypertarget{changelog-de-requisitos-sigcb-qr}{%
+		\section{Changelog de Requisitos --- SIGCB-QR}\label{changelog-de-requisitos-sigcb-qr}}
+	
+	\begin{quote}
+		Formato: \href{https://keepachangelog.com/}{Keep a Changelog} adaptado a requisitos.
+	\end{quote}
+	
+	\hypertarget{v0.9.0-rc-2026-07-30}{%
+		\subsection{{[}v0.9.0-rc{]} --- 2026-07-30}\label{v0.9.0-rc-2026-07-30}}
+	
+	\hypertarget{added}{%
+		\subsubsection{Added}\label{added}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-008: Renovacion de prestamo
+		\item
+		REQ-F-009: Reporte de prestamos diarios
+		\item
+		REQ-F-010: Dashboard de estadisticas
+		\item
+		REQ-F-011: Gestion de reservas
+		\item
+		REQ-NF-005: Cobertura de pruebas \textgreater= 30\% (JaCoCo)
+		\item
+		REQ-NF-006: Control de acceso por roles (RBAC)
+		\item
+		REQ-NF-007: Cache Redis para blacklist JWT
+		\item
+		REQ-R-001: Tiempo de respuesta de autenticacion (p95 \textless= 500ms)
+		\item
+		REQ-R-002: Tiempo de respuesta de CRUD (p95 \textless= 300ms)
+		\item
+		REQ-R-003: Tiempo de respuesta de stored procedures (\textless{} 1s)
+		\item
+		REQ-R-004: Hit ratio de cache Redis \textgreater= 80\%
+		\item
+		HU-06: Prestamo de ejemplares
+		\item
+		HU-07: Devolucion de prestamo
+		\item
+		HU-08: Renovacion de prestamo
+		\item
+		HU-09: Reportes bibliotecarios
+		\item
+		HU-10: Dashboard de estadisticas
+		\item
+		CU-03: Prestamo de ejemplares
+		\item
+		CU-04: Devolucion de prestamo
+		\item
+		CU-05: Generacion de reportes
+		\item
+		SRS estructurado completo segun ISO/IEC/IEEE 29148:2018
+		\item
+		Matriz de trazabilidad con 23 filas
+		\item
+		SRS.pdf generado
+	\end{itemize}
+	
+	\hypertarget{modified}{%
+		\subsubsection{Modified}\label{modified}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-001: Claims JWT ampliados (iss, aud, nbf, iat agregados)
+		\item
+		REQ-F-001: Cookie JWT ahora usa Secure desde configuracion externa
+		\item
+		REQ-F-003: Logout ahora usa blacklist JWT
+		\item
+		REQ-F-005: Cache Redis agregado con @Cacheable
+		\item
+		REQ-F-006: Migrado a stored procedure (sp\_crear\_prestamo)
+		\item
+		REQ-F-007: Migrado a stored procedure (sp\_devolver\_prestamo)
+		\item
+		REQ-NF-002: Endurecido con SameSite=Strict + Secure configurable
+		\item
+		Error handling: migrado de ApiResponse a RFC 7807 ProblemDetails
+	\end{itemize}
+	
+	\hypertarget{v0.7.0-2026-07-14-entrega-1b}{%
+		\subsection{{[}v0.7.0{]} --- 2026-07-14 (Entrega 1B)}\label{v0.7.0-2026-07-14-entrega-1b}}
+	
+	\hypertarget{added-1}{%
+		\subsubsection{Added}\label{added-1}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		REQ-F-001: Autenticacion stateless JWT
+		\item
+		REQ-F-002: Registro de usuarios
+		\item
+		REQ-F-003: Cierre de sesion con JTI blacklist
+		\item
+		REQ-F-004: CRUD de usuarios (Admin)
+		\item
+		REQ-F-005: CRUD de material bibliografico
+		\item
+		REQ-F-006: Prestamo de ejemplares (via JPA)
+		\item
+		REQ-F-007: Devolucion de prestamo (via JPA)
+		\item
+		REQ-NF-001: Rendimiento de listado de libros
+		\item
+		REQ-NF-002: Seguridad de autenticacion
+		\item
+		REQ-NF-003: Proteccion contra inyeccion SQL
+		\item
+		REQ-NF-004: Disponibilidad mediante Docker Compose
+	\end{itemize}
+	
+	\hypertarget{v0.3.0-2026-06-04-entrega-1a}{%
+		\subsection{{[}v0.3.0{]} --- 2026-06-04 (Entrega 1A)}\label{v0.3.0-2026-06-04-entrega-1a}}
+	
+	\hypertarget{added-2}{%
+		\subsubsection{Added}\label{added-2}}
+	
+	\begin{itemize}
+		\tightlist
+		\item
+		SRS inicial con requisitos funcionales y no funcionales base
+		\item
+		Casos de uso y arquitectura C4 nivel 1 y 2
+	\end{itemize}
+	
+	\hypertarget{catuxe1logo-de-procedimientos-almacenados-y-funciones-sigcb-qr}{%
+		\section{Catálogo de Procedimientos Almacenados y Funciones --- SIGCB-QR}\label{catuxe1logo-de-procedimientos-almacenados-y-funciones-sigcb-qr}}
+	
+	\begin{quote}
+		Versión: v0.9.0-rc
+		Fecha: 2026-07-30
+	\end{quote}
+	
+	\hypertarget{convenciuxf3n-de-nomenclatura}{%
+		\subsection{Convención de nomenclatura}\label{convenciuxf3n-de-nomenclatura}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3750}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3750}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Prefijo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Tipo
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Archivo
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		\passthrough{\lstinline!fn\_!} & Función SQL (RETURNS) & \passthrough{\lstinline!db/procs/fn\_<verbo>\_<sustantivo>.sql!} \\
+		\passthrough{\lstinline!sp\_!} & Procedimiento almacenado & \passthrough{\lstinline!db/procs/sp\_<verbo>\_<sustantivo>.sql!} \\
+	\end{longtable}
+	
+	\hypertarget{funciones}{%
+		\subsection{Funciones}\label{funciones}}
+	
+	\hypertarget{fn_contar_prestamos_entre_fechas}{%
+		\subsubsection{fn\_contar\_prestamos\_entre\_fechas}\label{fn_contar_prestamos_entre_fechas}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Propiedad & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Cuenta préstamos en un rango de fechas \\
+		Parámetros & \passthrough{\lstinline!p\_inicio TIMESTAMP!}, \passthrough{\lstinline!p\_fin TIMESTAMP!} \\
+		Retorno & \passthrough{\lstinline!BIGINT!} \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!} (SELECT) \\
+	\end{longtable}
+	
+	\hypertarget{fn_total_multas_pendientes}{%
+		\subsubsection{fn\_total\_multas\_pendientes}\label{fn_total_multas_pendientes}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Propiedad & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Suma el monto total de multas no pagadas \\
+		Parámetros & Ninguno \\
+		Retorno & \passthrough{\lstinline!DECIMAL(12,2)!} \\
+		Tablas afectadas & \passthrough{\lstinline!multas!} (SELECT) \\
+	\end{longtable}
+	
+	\hypertarget{fn_total_cobrado_entre}{%
+		\subsubsection{fn\_total\_cobrado\_entre}\label{fn_total_cobrado_entre}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Propiedad & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Suma el monto cobrado en un rango de fechas \\
+		Parámetros & \passthrough{\lstinline!p\_inicio TIMESTAMP!}, \passthrough{\lstinline!p\_fin TIMESTAMP!} \\
+		Retorno & \passthrough{\lstinline!DECIMAL(12,2)!} \\
+		Tablas afectadas & \passthrough{\lstinline!multas!} (SELECT) \\
+	\end{longtable}
+	
+	\hypertarget{fn_libros_disponibles}{%
+		\subsubsection{fn\_libros\_disponibles}\label{fn_libros_disponibles}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Lista libros con ejemplares disponibles \\
+		Parámetros & Ninguno \\
+		Retorno & \passthrough{\lstinline!TABLE(id BIGINT, titulo VARCHAR, isbn VARCHAR, ejemplares\_disponibles INT)!} \\
+		Tablas afectadas & \passthrough{\lstinline!libros!} (SELECT) \\
+	\end{longtable}
+	
+	\hypertarget{procedimientos-almacenados}{%
+		\subsection{Procedimientos almacenados}\label{procedimientos-almacenados}}
+	
+	\hypertarget{sp_reporte_libros_mas_prestados}{%
+		\subsubsection{sp\_reporte\_libros\_mas\_prestados}\label{sp_reporte_libros_mas_prestados}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Propiedad & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Obtiene los libros más prestados (top N) \\
+		Parámetros & \passthrough{\lstinline!p\_limit INT!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con id, titulo, isbn, veces\_prestado \\
+		Tablas afectadas & \passthrough{\lstinline!libros!} (SELECT) \\
+	\end{longtable}
+	
+	\hypertarget{sp_prestamos_entre_fechas}{%
+		\subsubsection{sp\_prestamos\_entre\_fechas}\label{sp_prestamos_entre_fechas}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Obtiene préstamos en un rango de fechas con datos de usuario y libro \\
+		Parámetros & \passthrough{\lstinline!p\_inicio TIMESTAMP!} (IN), \passthrough{\lstinline!p\_fin TIMESTAMP!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con datos completos del préstamo + usuario + libro \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!}, \passthrough{\lstinline!usuarios!}, \passthrough{\lstinline!inventario!}, \passthrough{\lstinline!libros!} (SELECT, JOIN) \\
+	\end{longtable}
+	
+	\hypertarget{sp_top_usuarios_prestamos}{%
+		\subsubsection{sp\_top\_usuarios\_prestamos}\label{sp_top_usuarios_prestamos}}
+	
+	\begin{longtable}[]{@{}ll@{}}
+		\toprule\noalign{}
+		Propiedad & Valor \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Obtiene los usuarios con más préstamos (top N) \\
+		Parámetros & \passthrough{\lstinline!p\_limit INT!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con id, nombre, email, total\_prestamos \\
+		Tablas afectadas & \passthrough{\lstinline!usuarios!}, \passthrough{\lstinline!prestamos!} (SELECT, JOIN, GROUP BY) \\
+	\end{longtable}
+	
+	\hypertarget{sp_dashboard_estadisticas}{%
+		\subsubsection{sp\_dashboard\_estadisticas}\label{sp_dashboard_estadisticas}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Obtiene estadísticas agregadas para el dashboard \\
+		Parámetros & \passthrough{\lstinline!p\_fecha\_inicio TIMESTAMP!} (IN), \passthrough{\lstinline!p\_fecha\_fin TIMESTAMP!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con 6 métricas agregadas \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!}, \passthrough{\lstinline!libros!}, \passthrough{\lstinline!usuarios!}, \passthrough{\lstinline!reservas!}, \passthrough{\lstinline!multas!} (SELECT, COUNT, SUM) \\
+	\end{longtable}
+	
+	\hypertarget{sp_crear_prestamo}{%
+		\subsubsection{sp\_crear\_prestamo}\label{sp_crear_prestamo}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Crea un préstamo con validaciones de disponibilidad y límite \\
+		Parámetros & \passthrough{\lstinline!p\_usuario\_id BIGINT!} (IN), \passthrough{\lstinline!p\_inventario\_id BIGINT!} (IN), \passthrough{\lstinline!p\_dias\_prestamo INT DEFAULT 7!} (IN), \passthrough{\lstinline!p\_prestamo\_id BIGINT DEFAULT NULL!} (INOUT) \\
+		Validaciones & Disponibilidad del ejemplar, límite de 5 préstamos activos \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!} (INSERT), \passthrough{\lstinline!inventario!} (UPDATE), \passthrough{\lstinline!libros!} (UPDATE) \\
+	\end{longtable}
+	
+	\hypertarget{sp_devolver_prestamo}{%
+		\subsubsection{sp\_devolver\_prestamo}\label{sp_devolver_prestamo}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Procesa la devolución de un préstamo y genera multa si aplica \\
+		Parámetros & \passthrough{\lstinline!p\_prestamo\_id BIGINT!} (IN), \passthrough{\lstinline!p\_multa\_generada BOOLEAN DEFAULT FALSE!} (INOUT) \\
+		Validaciones & Estado del préstamo, fecha de vencimiento \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!} (UPDATE), \passthrough{\lstinline!inventario!} (UPDATE), \passthrough{\lstinline!libros!} (UPDATE), \passthrough{\lstinline!multas!} (INSERT) \\
+	\end{longtable}
+	
+	\hypertarget{sp_renovar_prestamo}{%
+		\subsubsection{sp\_renovar\_prestamo}\label{sp_renovar_prestamo}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Renueva un préstamo activo creando uno nuevo \\
+		Parámetros & \passthrough{\lstinline!p\_prestamo\_id BIGINT!} (IN), \passthrough{\lstinline!p\_dias\_renovacion INT DEFAULT 7!} (IN), \passthrough{\lstinline!p\_nuevo\_prestamo\_id BIGINT DEFAULT NULL!} (INOUT) \\
+		Validaciones & Estado del préstamo original \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!} (UPDATE, INSERT) \\
+	\end{longtable}
+	
+	\hypertarget{sp_reporte_prestamos_diarios}{%
+		\subsubsection{sp\_reporte\_prestamos\_diarios}\label{sp_reporte_prestamos_diarios}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Genera reporte de préstamos de un día específico \\
+		Parámetros & \passthrough{\lstinline!p\_fecha DATE!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con préstamos del día + usuario + libro \\
+		Tablas afectadas & \passthrough{\lstinline!prestamos!}, \passthrough{\lstinline!usuarios!}, \passthrough{\lstinline!inventario!}, \passthrough{\lstinline!libros!} (SELECT, JOIN) \\
+	\end{longtable}
+	
+	\hypertarget{sp_reporte_multas_cobradas}{%
+		\subsubsection{sp\_reporte\_multas\_cobradas}\label{sp_reporte_multas_cobradas}}
+	
+	\begin{longtable}[]{@{}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6111}}
+			>{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3889}}@{}}
+		\toprule\noalign{}
+		\begin{minipage}[b]{\linewidth}\raggedright
+			Propiedad
+		\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+			Valor
+		\end{minipage} \\
+		\midrule\noalign{}
+		\endhead
+		\bottomrule\noalign{}
+		\endlastfoot
+		Propósito & Genera reporte de multas cobradas en un mes específico \\
+		Parámetros & \passthrough{\lstinline!p\_mes INT!} (IN), \passthrough{\lstinline!p\_anio INT!} (IN), \passthrough{\lstinline!p\_ref REFCURSOR!} (INOUT) \\
+		Cursores & Retorna cursor con mes, total\_cobrado, pendientes \\
+		Tablas afectadas & \passthrough{\lstinline!multas!} (SELECT, COUNT, SUM) \\
+	\end{longtable}
+	
+	\hypertarget{seguridad}{%
+		\subsection{Seguridad}\label{seguridad}}
+	
+	Todos los procedimientos usan exclusivamente parámetros nombrados. No se construye SQL dinámico
+	mediante concatenación (EXECUTE IMMEDIATE, sp\_executesql o equivalentes).
+	
+	La cuenta de base de datos de la aplicación tiene únicamente:
+	- \passthrough{\lstinline!EXECUTE!} sobre estos procedimientos y funciones
+	- \passthrough{\lstinline!SELECT!}, \passthrough{\lstinline!INSERT!}, \passthrough{\lstinline!UPDATE!}, \passthrough{\lstinline!DELETE!} sobre las tablas del dominio
+	
+\end{document}
