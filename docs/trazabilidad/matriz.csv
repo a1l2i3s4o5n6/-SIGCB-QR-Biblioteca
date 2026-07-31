@@ -1,4 +1,4 @@
-id_requisito,tipo,prioridad_moscow,historia_usuario,caso_de_uso,modulo_codigo,endpoint_api,prueba_automatizada,tipo_acceso,evidencia_empirica,estado
+﻿id_requisito,tipo,prioridad_moscow,historia_usuario,caso_de_uso,modulo_codigo,endpoint_api,prueba_automatizada,tipo_acceso,evidencia_empirica,estado
 REQ-F-001,Funcional,Must,HU-01,CU-01,AuthController,POST /api/auth/login,AuthControllerTest.login_exitoso,CRUD-ORM,,verificado
 REQ-F-001,Funcional,Must,HU-01,CU-01,JwtTokenProvider,,JwtTokenProviderTest.genera_token_con_claims,CRUD-ORM,,verificado
 REQ-F-002,Funcional,Must,HU-02,CU-01,AuthController,POST /api/auth/register,AuthControllerTest.registro_exitoso,CRUD-ORM,,verificado
@@ -7,9 +7,18 @@ REQ-F-004,Funcional,Must,HU-04,,UsuarioController,GET/POST/PUT/DELETE /api/usuar
 REQ-F-005,Funcional,Must,HU-05,CU-02,LibroController,GET/POST/PUT/DELETE /api/libros,LibroControllerTest.crud,CRUD-ORM,,verificado
 REQ-F-006,Funcional,Must,HU-06,CU-03,PrestamoController,POST /api/prestamos,PrestamoServiceTest.crear_prestamo,SP,docs/mediciones/perf/REPORT.md,verificado
 REQ-F-007,Funcional,Must,HU-07,CU-04,PrestamoController,PUT /api/prestamos/{id}/devolver,PrestamoServiceTest.devolver_prestamo,SP,,verificado
-REQ-F-008,Funcional,Should,HU-08,,ReporteController,GET /api/reportes/prestamos-diarios,ReporteServiceTest.prestamos_diarios,SP,,implementado
-REQ-NF-001,No funcional,Must,,,LibroService,GET /api/libros,LibroPerfTest.p95_200ms,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
-REQ-NF-002,No funcional,Must,HU-01,CU-01,SecurityConfig,GET /api/**,SecurityTest.endpoints_protegidos,CRUD-ORM,,verificado
-REQ-NF-003,No funcional,Must,,,GlobalExceptionHandler,POST /api/auth/login,SecurityTest.sql_injection_prevenido,CRUD-ORM,,verificado
-REQ-NF-004,No funcional,Must,,,,docker-compose.yml,,,SP,docs/mediciones/perf/startup-time.md,pendiente
-REQ-NF-005,No funcional,Should,,,,,,JaCoCo,,verificado
+REQ-F-008,Funcional,Should,HU-08,,PrestamoController,PUT /api/prestamos/{id}/renovar,,SP,,implementado
+REQ-F-009,Funcional,Should,HU-09,CU-05,ReporteController,GET /api/reportes/prestamos-diarios,ReporteControllerTest.prestamosDiariosComoBibliotecario,SP,,implementado
+REQ-F-010,Funcional,Must,HU-10,,DashboardController,GET /api/dashboard/stats,,SP,,verificado
+REQ-F-011,Funcional,Should,,,ReservaController,POST/DELETE /api/reservas/,,CRUD-ORM,,implementado
+REQ-NF-001,No funcional,Must,HU-05,,LibroService,GET /api/libros,LibroPerfTest.p95_200ms,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
+REQ-NF-002,No funcional,Must,HU-01,CU-01,SecurityConfig,,SecurityTest.endpoints_protegidos,CRUD-ORM,,verificado
+REQ-NF-003,No funcional,Must,,,GlobalExceptionHandler,,SecurityTest.sql_injection_prevenido,CRUD-ORM,,verificado
+REQ-NF-004,No funcional,Must,,,,docker-compose.yml,,,,docs/mediciones/perf/startup-time.md,pendiente
+REQ-NF-005,No funcional,Should,,,,pom.xml,,JaCoCo,,verificado
+REQ-NF-006,No funcional,Must,HU-04,CU-01,SecurityConfig,@PreAuthorize,ReporteControllerTest.prestamosDiariosComoEstudiante,CRUD-ORM,,verificado
+REQ-NF-007,No funcional,Must,HU-03,,JwtBlacklistService,,JwtBlacklistServiceTest,CRUD-ORM,,verificado
+REQ-R-001,Rendimiento,Must,,,AuthController,POST /api/auth/login,,CRUD-ORM,docs/mediciones/perf/,pendiente
+REQ-R-002,Rendimiento,Must,,,LibroController,GET/POST/PUT/DELETE /api/libros,,CRUD-ORM,docs/mediciones/perf/,pendiente
+REQ-R-003,Rendimiento,Should,,,PrestamoController,POST /api/prestamos,,SP,docs/mediciones/perf/,pendiente
+REQ-R-004,Rendimiento,Should,,,LibroService,GET /api/libros,,CRUD-ORM,docs/mediciones/perf/REPORT.md,pendiente
