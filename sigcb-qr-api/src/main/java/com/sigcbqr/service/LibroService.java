@@ -6,6 +6,8 @@ import com.sigcbqr.model.dto.request.LibroRequest;
 import com.sigcbqr.model.dto.response.LibroResponse;
 import com.sigcbqr.model.entity.*;
 import com.sigcbqr.repository.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class LibroService {
         this.autorRepository = autorRepository;
     }
 
+    @Cacheable(value = "libros", key = "#pageable.pageNumber + '-' + #pageable.pageSize", unless = "#result.content.isEmpty()")
     public Page<LibroResponse> listar(Pageable pageable) {
         return libroRepository.findByActivoTrue(pageable).map(this::toResponse);
     }
@@ -46,6 +49,7 @@ public class LibroService {
         return toResponse(libro);
     }
 
+    @CacheEvict(value = "libros", allEntries = true)
     @Transactional
     public LibroResponse crear(LibroRequest request) {
         if (request.getEjemplaresTotales() != null && request.getEjemplaresTotales() < 1) {
@@ -86,6 +90,7 @@ public class LibroService {
         return toResponse(libro);
     }
 
+    @CacheEvict(value = "libros", allEntries = true)
     @Transactional
     public LibroResponse actualizar(Long id, LibroRequest request) {
         Libro libro = libroRepository.findById(id)
@@ -129,6 +134,7 @@ public class LibroService {
         return toResponse(libro);
     }
 
+    @CacheEvict(value = "libros", allEntries = true)
     @Transactional
     public void eliminar(Long id) {
         Libro libro = libroRepository.findById(id)

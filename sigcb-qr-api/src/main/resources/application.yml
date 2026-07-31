@@ -25,13 +25,30 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 1
+
 app:
   jwt:
     secret: aG9sYV9tdW5kby5lc3RlX2VzX3VuX3NlY3JldG9fbXV5X3NlZ3Vyb19wYXJhX2xvcyB0b2tlbmVzX2RlbF9zaXN0ZW1hX3NpZ2NiX3FyX2RlbF9wcm95ZWN0b19kZV9sYV91bml2ZXJzaWRhZA==
     expiration-ms: 3600000
+    issuer: ${JWT_ISSUER:sigcbqr-api}
+    audience: ${JWT_AUDIENCE:sigcbqr-frontend}
+    secure-cookie: ${JWT_SECURE_COOKIE:false}
 
   cors:
     allowed-origins: http://localhost:8000,http://127.0.0.1:8000
+
+  cache:
+    default-ttl-seconds: ${CACHE_DEFAULT_TTL_SECONDS:300}
 
 logging:
   level:

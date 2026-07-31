@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +24,11 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     @Query("SELECT l FROM Libro l ORDER BY (l.ejemplaresTotales - l.ejemplaresDisponibles) DESC")
     List<Libro> findMasPrestados(Pageable pageable);
+
+    // Stored procedures
+    @Procedure("sp_reporte_libros_mas_prestados")
+    List<Object[]> reporteLibrosMasPrestados(@Param("p_limit") Integer limit);
+
+    @Procedure("fn_libros_disponibles")
+    List<Object[]> fnLibrosDisponibles();
 }

@@ -17,14 +17,23 @@ public class JwtTokenProvider {
 
     private final SecretKey secretKey;
     private final long expirationMs;
+    private final String issuer;
+    private final String audience;
+    private final boolean secureCookie;
     private final JwtBlacklistService blacklistService;
 
     public JwtTokenProvider(
             @Value("${app.jwt.secret}") String secret,
             @Value("${app.jwt.expiration-ms}") long expirationMs,
+            @Value("${app.jwt.issuer}") String issuer,
+            @Value("${app.jwt.audience}") String audience,
+            @Value("${app.jwt.secure-cookie}") boolean secureCookie,
             JwtBlacklistService blacklistService) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.expirationMs = expirationMs;
+        this.issuer = issuer;
+        this.audience = audience;
+        this.secureCookie = secureCookie;
         this.blacklistService = blacklistService;
     }
 
@@ -34,10 +43,13 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
+                .issuer(issuer)
                 .subject(userId.toString())
+                .audience().add(audience).and()
                 .claim("email", email)
                 .claim("rol", rol)
                 .issuedAt(now)
+                .notBefore(now)
                 .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
@@ -98,7 +110,7 @@ public class JwtTokenProvider {
     public Cookie createAccessTokenCookie(String token) {
         Cookie cookie = new Cookie("access_token", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(secureCookie);
         cookie.setPath("/");
         cookie.setMaxAge((int) (expirationMs / 1000));
         cookie.setAttribute("SameSite", "Strict");
@@ -120,7 +132,7 @@ public class JwtTokenProvider {
     public Cookie createLogoutCookie() {
         Cookie cookie = new Cookie("access_token", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(secureCookie);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         cookie.setAttribute("SameSite", "Strict");
