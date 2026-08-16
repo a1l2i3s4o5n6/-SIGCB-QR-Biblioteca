@@ -1,0 +1,11 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.log
+.apt_generated/
+.settings/
+.project
+.classpath
+bin/
