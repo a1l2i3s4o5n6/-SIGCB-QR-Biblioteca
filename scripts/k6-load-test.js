@@ -20,7 +20,7 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
 export default function () {
   // Login para obtener cookie
   const loginRes = http.post(`${BASE_URL}/api/auth/login`, JSON.stringify({
-    email: 'admin@dev.com',
+    email: 'admin@biblioteca.com',
     password: 'admin123',
   }), {
     headers: { 'Content-Type': 'application/json' },

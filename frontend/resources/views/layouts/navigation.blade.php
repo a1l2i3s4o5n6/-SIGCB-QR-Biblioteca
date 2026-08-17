@@ -28,9 +28,9 @@
                 <button @click="open = !open"
                     class="flex items-center space-x-2 text-white/90 hover:text-white focus:outline-none transition group">
                     <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold text-white">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+                        {{ substr(session('user.nombre', '?'), 0, 1) }}
                     </div>
-                    <span class="hidden sm:block text-sm font-medium">{{ Auth::user()->name }}</span>
+                    <span class="hidden sm:block text-sm font-medium">{{ session('user.nombre', 'Usuario') }}</span>
                     <i class="fas fa-chevron-down text-xs transition" :class="{'rotate-180': open}"></i>
                 </button>
 
@@ -42,15 +42,9 @@
                     x-transition:enter-end="transform opacity-100 scale-100"
                     style="display: none;">
                     <div class="px-4 py-2 border-b border-gray-100">
-                        <p class="text-sm font-semibold text-gray-800">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                        <p class="text-sm font-semibold text-gray-800">{{ session('user.nombre', 'Usuario') }}</p>
+                        <p class="text-xs text-gray-500">{{ session('user.email', '') }}</p>
                     </div>
-
-                    <a href="{{ route('profile.edit') }}"
-                        class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition">
-                        <i class="fas fa-user-circle w-5 text-gray-400"></i>
-                        <span class="ml-2">Mi Perfil</span>
-                    </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
