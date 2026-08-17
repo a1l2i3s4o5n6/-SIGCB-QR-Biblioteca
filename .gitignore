@@ -17,3 +17,9 @@ Thumbs.db
 pgdata/
 
 __pycache__/
+
+# Entorno y secretos
+.env
+
+# Logs de la JVM
+hs_err_pid*.log
