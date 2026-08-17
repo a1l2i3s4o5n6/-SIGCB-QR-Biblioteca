@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PrestamoController;
 use Illuminate\Support\Facades\Route;
 
 // ── Página de inicio → redirige al login ────────────────────────────────────
@@ -30,4 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/catalogo/{id}/editar', [CatalogoController::class, 'edit'])->name('catalogo.edit');
     Route::put('/catalogo/{id}',        [CatalogoController::class, 'update'])->name('catalogo.update');
     Route::delete('/catalogo/{id}',     [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+
+    // ── Préstamos ───────────────────────────────────────────────────────
+    Route::get('/prestamos',                [PrestamoController::class, 'index'])->name('prestamos.index');
+    Route::get('/prestamos/crear',          [PrestamoController::class, 'create'])->name('prestamos.create');
+    Route::post('/prestamos',               [PrestamoController::class, 'store'])->name('prestamos.store');
+    Route::get('/prestamos/{id}',           [PrestamoController::class, 'show'])->name('prestamos.show');
+    Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
+    Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
 });

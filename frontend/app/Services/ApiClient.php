@@ -154,6 +154,38 @@ class ApiClient
         return $this->withAuth()->get('/prestamos', $params)->json() ?? [];
     }
 
+    public function getPrestamo(int $id): array
+    {
+        return $this->withAuth()->get("/prestamos/{$id}")->json() ?? [];
+    }
+
+    public function crearPrestamo(int $usuarioId, int $inventarioId): array
+    {
+        return $this->withAuth()->post('/prestamos', [
+            'usuarioId'    => $usuarioId,
+            'inventarioId' => $inventarioId,
+        ])->json() ?? [];
+    }
+
+    public function devolverPrestamo(int $id): array
+    {
+        return $this->withAuth()->put("/prestamos/{$id}/devolver")->json() ?? [];
+    }
+
+    public function renovarPrestamo(int $id): array
+    {
+        return $this->withAuth()->put("/prestamos/{$id}/renovar")->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
+    // INVENTARIO (ejemplares disponibles)
+    // ─────────────────────────────────────────────
+
+    public function getInventarioDisponible(array $params = []): array
+    {
+        return $this->withAuth()->get('/inventario/disponibles', $params)->json() ?? [];
+    }
+
     public function getReservas(array $params = []): array
     {
         return $this->withAuth()->get('/reservas', $params)->json() ?? [];

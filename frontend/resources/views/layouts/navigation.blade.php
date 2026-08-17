@@ -102,8 +102,8 @@
             <span class="ml-3">Usuarios</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('prestamos.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
         </a>
@@ -219,8 +219,8 @@
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('prestamos.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
         </a>
