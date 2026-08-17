@@ -106,6 +106,45 @@ class ApiClient
         return $this->withAuth()->get("/libros/{$id}")->json() ?? [];
     }
 
+    public function buscarLibros(string $q, array $params = []): array
+    {
+        return $this->withAuth()->get('/libros/buscar', array_merge(['q' => $q], $params))->json() ?? [];
+    }
+
+    public function crearLibro(array $data): array
+    {
+        return $this->withAuth()->post('/libros', $data)->json() ?? [];
+    }
+
+    public function actualizarLibro(int $id, array $data): array
+    {
+        return $this->withAuth()->put("/libros/{$id}", $data)->json() ?? [];
+    }
+
+    public function eliminarLibro(int $id): array
+    {
+        return $this->withAuth()->delete("/libros/{$id}")->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
+    // CATÁLOGOS (autores, editoriales, categorías)
+    // ─────────────────────────────────────────────
+
+    public function getAutores(array $params = []): array
+    {
+        return $this->withAuth()->get('/autores', $params)->json() ?? [];
+    }
+
+    public function getEditoriales(array $params = []): array
+    {
+        return $this->withAuth()->get('/editoriales', $params)->json() ?? [];
+    }
+
+    public function getCategorias(array $params = []): array
+    {
+        return $this->withAuth()->get('/categorias', $params)->json() ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // PRÉSTAMOS
     // ─────────────────────────────────────────────

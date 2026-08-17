@@ -90,8 +90,8 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Biblioteca</p>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('catalogo.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('catalogo.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
@@ -209,8 +209,8 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Biblioteca</p>
 
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('catalogo.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('catalogo.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
