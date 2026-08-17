@@ -115,12 +115,23 @@ class ApiClient
         return $this->withAuth()->get('/prestamos', $params)->json() ?? [];
     }
 
+    public function getReservas(array $params = []): array
+    {
+        return $this->withAuth()->get('/reservas', $params)->json() ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
 
     public function getEstadisticas(): array
     {
-        return $this->withAuth()->get('/reportes/estadisticas')->json() ?? [];
+        $response = $this->withAuth()->get('/dashboard/stats');
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json('data') ?? [];
     }
 }

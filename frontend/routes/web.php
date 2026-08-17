@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // ── Página de inicio → redirige al login ────────────────────────────────────
@@ -18,7 +19,5 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 // ── Rutas protegidas (requieren JWT en sesión) ───────────────────────────────
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

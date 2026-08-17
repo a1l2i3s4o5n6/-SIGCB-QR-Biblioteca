@@ -3,6 +3,7 @@ package com.sigcbqr.controller;
 import com.sigcbqr.model.dto.request.ReservaRequest;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
+import com.sigcbqr.model.dto.response.ReservaResponse;
 import com.sigcbqr.model.entity.Reserva;
 import com.sigcbqr.repository.LibroRepository;
 import com.sigcbqr.repository.ReservaRepository;
@@ -38,10 +39,21 @@ public class ReservaController {
 
     @GetMapping
     @Operation(summary = "Listar reservas", description = "Obtiene todas las reservas con paginación")
-    public ResponseEntity<PageResponse<Reserva>> listar(
+    public ResponseEntity<PageResponse<ReservaResponse>> listar(
             @PageableDefault(size = 10) Pageable pageable) {
-        var page = reservaRepository.findAll(pageable);
+        var page = reservaRepository.findAll(pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
+    }
+
+    private ReservaResponse toResponse(Reserva reserva) {
+        return ReservaResponse.builder()
+                .id(reserva.getId())
+                .usuarioNombre(reserva.getUsuario().getNombre())
+                .libroTitulo(reserva.getLibro().getTitulo())
+                .fechaReserva(reserva.getFechaReserva())
+                .fechaVencimiento(reserva.getFechaVencimiento())
+                .estado(reserva.getEstado())
+                .build();
     }
 
     @PostMapping
@@ -66,7 +78,7 @@ public class ReservaController {
                 .build();
 
         reserva = reservaRepository.save(reserva);
-        return ResponseEntity.ok(ApiResponse.created("Reserva registrada", reserva));
+        return ResponseEntity.ok(ApiResponse.created("Reserva registrada", toResponse(reserva)));
     }
 
     @DeleteMapping("/{id}")
@@ -76,6 +88,6 @@ public class ReservaController {
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
-        return ResponseEntity.ok(ApiResponse.success("Reserva cancelada", null));
+        return ResponseEntity.ok(ApiResponse.success("Reserva cancelada", toResponse(reserva)));
     }
 }
