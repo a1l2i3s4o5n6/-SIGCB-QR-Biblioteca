@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,4 +50,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/prestamos/{id}',           [PrestamoController::class, 'show'])->name('prestamos.show');
     Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
     Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
+
+    // ── Reservas ────────────────────────────────────────────────────────
+    Route::get('/reservas',                [ReservaController::class, 'index'])->name('reservas.index');
+    Route::get('/reservas/crear',          [ReservaController::class, 'create'])->name('reservas.create');
+    Route::post('/reservas',               [ReservaController::class, 'store'])->name('reservas.store');
+    Route::get('/reservas/{id}',           [ReservaController::class, 'show'])->name('reservas.show');
+    Route::delete('/reservas/{id}',        [ReservaController::class, 'cancelar'])->name('reservas.cancelar');
 });

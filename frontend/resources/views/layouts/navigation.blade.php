@@ -114,8 +114,8 @@
             <span class="ml-3">Devoluciones</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reservas.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reservas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
@@ -229,8 +229,8 @@
             <i class="nav-icon fas fa-undo-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Devoluciones</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reservas.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reservas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
