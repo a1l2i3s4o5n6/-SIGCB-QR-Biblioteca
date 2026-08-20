@@ -206,6 +206,19 @@ class ApiClient
         return $this->withAuth()->get('/reservas', $params)->json() ?? [];
     }
 
+    public function crearReserva(int $usuarioId, int $libroId): array
+    {
+        return $this->withAuth()->post('/reservas', [
+            'usuarioId' => $usuarioId,
+            'libroId'   => $libroId,
+        ])->json() ?? [];
+    }
+
+    public function cancelarReserva(int $id): array
+    {
+        return $this->withAuth()->delete("/reservas/{$id}")->json() ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
