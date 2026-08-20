@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 // ── Página de inicio → redirige al login ────────────────────────────────────
@@ -31,6 +32,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/catalogo/{id}/editar', [CatalogoController::class, 'edit'])->name('catalogo.edit');
     Route::put('/catalogo/{id}',        [CatalogoController::class, 'update'])->name('catalogo.update');
     Route::delete('/catalogo/{id}',     [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+
+    // ── Usuarios ────────────────────────────────────────────────────────
+    Route::get('/usuarios',                [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/crear',          [UsuarioController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios',               [UsuarioController::class, 'store'])->name('usuarios.store');
+    Route::get('/usuarios/{id}',           [UsuarioController::class, 'show'])->name('usuarios.show');
+    Route::get('/usuarios/{id}/editar',    [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{id}',           [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{id}',        [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
 
     // ── Préstamos ───────────────────────────────────────────────────────
     Route::get('/prestamos',                [PrestamoController::class, 'index'])->name('prestamos.index');
