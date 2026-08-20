@@ -92,6 +92,21 @@ class ApiClient
         return $this->withAuth()->get("/usuarios/{$id}")->json() ?? [];
     }
 
+    public function crearUsuario(array $data): array
+    {
+        return $this->withAuth()->post('/usuarios', $data)->json() ?? [];
+    }
+
+    public function actualizarUsuario(int $id, array $data): array
+    {
+        return $this->withAuth()->put("/usuarios/{$id}", $data)->json() ?? [];
+    }
+
+    public function eliminarUsuario(int $id): array
+    {
+        return $this->withAuth()->delete("/usuarios/{$id}")->json() ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // LIBROS
     // ─────────────────────────────────────────────
