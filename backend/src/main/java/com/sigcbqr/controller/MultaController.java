@@ -22,9 +22,12 @@ import java.time.LocalDateTime;
 public class MultaController {
 
     private final MultaRepository multaRepository;
+    private final com.sigcbqr.service.AuditoriaService auditoriaService;
 
-    public MultaController(MultaRepository multaRepository) {
+    public MultaController(MultaRepository multaRepository,
+                           com.sigcbqr.service.AuditoriaService auditoriaService) {
         this.multaRepository = multaRepository;
+        this.auditoriaService = auditoriaService;
     }
 
     @GetMapping
@@ -55,6 +58,9 @@ public class MultaController {
         multa.setPagada(true);
         multa.setFechaPago(LocalDateTime.now());
         multaRepository.save(multa);
+        auditoriaService.registrar("PAGAR", "MULTA", multa.getId(),
+                "Multa de $" + multa.getMonto() + " pagada"
+                        + (multa.getUsuario() != null ? " por " + multa.getUsuario().getNombre() : ""));
         return ResponseEntity.ok(ApiResponse.success("Multa pagada", null));
     }
 

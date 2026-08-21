@@ -23,15 +23,18 @@ public class LibroService {
     private final CategoriaRepository categoriaRepository;
     private final EditorialRepository editorialRepository;
     private final AutorRepository autorRepository;
+    private final AuditoriaService auditoriaService;
 
     public LibroService(LibroRepository libroRepository,
                         CategoriaRepository categoriaRepository,
                         EditorialRepository editorialRepository,
-                        AutorRepository autorRepository) {
+                        AutorRepository autorRepository,
+                        AuditoriaService auditoriaService) {
         this.libroRepository = libroRepository;
         this.categoriaRepository = categoriaRepository;
         this.editorialRepository = editorialRepository;
         this.autorRepository = autorRepository;
+        this.auditoriaService = auditoriaService;
     }
 
     @Cacheable(value = "libros", key = "#pageable.pageNumber + '-' + #pageable.pageSize", unless = "#result.content.isEmpty()")
@@ -87,6 +90,8 @@ public class LibroService {
         }
 
         libro = libroRepository.save(libro);
+        auditoriaService.registrar("CREAR", "LIBRO", libro.getId(),
+                "Libro \"" + libro.getTitulo() + "\" registrado");
         return toResponse(libro);
     }
 
@@ -131,6 +136,8 @@ public class LibroService {
         }
 
         libro = libroRepository.save(libro);
+        auditoriaService.registrar("ACTUALIZAR", "LIBRO", libro.getId(),
+                "Libro \"" + libro.getTitulo() + "\" actualizado");
         return toResponse(libro);
     }
 
@@ -141,6 +148,8 @@ public class LibroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Libro", id));
         libro.setActivo(false);
         libroRepository.save(libro);
+        auditoriaService.registrar("ELIMINAR", "LIBRO", libro.getId(),
+                "Libro \"" + libro.getTitulo() + "\" desactivado");
     }
 
     private LibroResponse toResponse(Libro libro) {

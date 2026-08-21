@@ -36,12 +36,14 @@ class AuthServiceTest {
     private RolRepository rolRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private AuditoriaService auditoriaService;
 
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(authenticationManager, tokenProvider, usuarioRepository, rolRepository, passwordEncoder);
+        authService = new AuthService(authenticationManager, tokenProvider, usuarioRepository, rolRepository, passwordEncoder, auditoriaService);
     }
 
     @Test

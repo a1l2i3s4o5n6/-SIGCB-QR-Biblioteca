@@ -28,13 +28,16 @@ public class ReservaController {
     private final ReservaRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
     private final LibroRepository libroRepository;
+    private final com.sigcbqr.service.AuditoriaService auditoriaService;
 
     public ReservaController(ReservaRepository reservaRepository,
                              UsuarioRepository usuarioRepository,
-                             LibroRepository libroRepository) {
+                             LibroRepository libroRepository,
+                             com.sigcbqr.service.AuditoriaService auditoriaService) {
         this.reservaRepository = reservaRepository;
         this.usuarioRepository = usuarioRepository;
         this.libroRepository = libroRepository;
+        this.auditoriaService = auditoriaService;
     }
 
     @GetMapping
@@ -78,6 +81,8 @@ public class ReservaController {
                 .build();
 
         reserva = reservaRepository.save(reserva);
+        auditoriaService.registrar("CREAR", "RESERVA", reserva.getId(),
+                "Reserva de \"" + libro.getTitulo() + "\" por " + usuario.getNombre());
         return ResponseEntity.ok(ApiResponse.created("Reserva registrada", toResponse(reserva)));
     }
 
@@ -88,6 +93,8 @@ public class ReservaController {
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
+        auditoriaService.registrar("CANCELAR", "RESERVA", reserva.getId(),
+                "Reserva de \"" + reserva.getLibro().getTitulo() + "\" cancelada");
         return ResponseEntity.ok(ApiResponse.success("Reserva cancelada", toResponse(reserva)));
     }
 }

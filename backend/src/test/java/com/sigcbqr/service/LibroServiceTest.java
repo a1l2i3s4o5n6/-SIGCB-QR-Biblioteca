@@ -33,12 +33,14 @@ class LibroServiceTest {
     private EditorialRepository editorialRepository;
     @Mock
     private AutorRepository autorRepository;
+    @Mock
+    private AuditoriaService auditoriaService;
 
     private LibroService libroService;
 
     @BeforeEach
     void setUp() {
-        libroService = new LibroService(libroRepository, categoriaRepository, editorialRepository, autorRepository);
+        libroService = new LibroService(libroRepository, categoriaRepository, editorialRepository, autorRepository, auditoriaService);
     }
 
     @Test
