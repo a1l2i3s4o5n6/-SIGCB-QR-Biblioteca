@@ -234,6 +234,25 @@ class ApiClient
     }
 
     // ─────────────────────────────────────────────
+    // REPORTES
+    // ─────────────────────────────────────────────
+
+    public function getReportePrestamosDiarios(): array
+    {
+        return $this->withAuth()->get('/reportes/prestamos-diarios')->json() ?? [];
+    }
+
+    public function getReporteLibrosMasSolicitados(): array
+    {
+        return $this->withAuth()->get('/reportes/libros-mas-solicitados')->json() ?? [];
+    }
+
+    public function getReporteMultasCobradas(): array
+    {
+        return $this->withAuth()->get('/reportes/multas-cobradas')->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
 

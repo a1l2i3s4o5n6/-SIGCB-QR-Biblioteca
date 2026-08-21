@@ -5,6 +5,7 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -62,4 +63,7 @@ Route::middleware('auth')->group(function () {
     // ── Multas ──────────────────────────────────────────────────────────
     Route::get('/multas',                  [MultaController::class, 'index'])->name('multas.index');
     Route::post('/multas/{id}/pagar',      [MultaController::class, 'pagar'])->name('multas.pagar');
+
+    // ── Reportes ────────────────────────────────────────────────────────
+    Route::get('/reportes',                [ReporteController::class, 'index'])->name('reportes.index');
 });

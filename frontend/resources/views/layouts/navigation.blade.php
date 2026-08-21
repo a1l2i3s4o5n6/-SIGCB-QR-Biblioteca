@@ -134,8 +134,8 @@
             <span class="ml-3">Multas</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reportes.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
@@ -247,8 +247,8 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reportes.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
