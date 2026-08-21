@@ -59,18 +59,20 @@
                 <!-- Rol -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Rol <span class="text-red-500">*</span></label>
+                    @php $selectedRolId = old('rolId', array_search($usuario['rol'] ?? '', $roles) ?: null); @endphp
                     <select name="rolId" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
                         @foreach ($roles as $rolId => $rol)
-                            <option value="{{ $rolId }}" @selected(old('rolId', $usuario['rol'] ?? '') == $rol)>{{ $rol }}</option>
+                            <option value="{{ $rolId }}" @selected($selectedRolId == $rolId)>{{ $rol }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- Activo -->
                 <div class="sm:col-span-2 flex items-center gap-2 pt-2">
+                    <input type="hidden" name="activo" value="0">
                     <input type="checkbox" name="activo" value="1" id="activo"
-                        class="w-4 h-4 rounded border-gray-300 text-primary-400 focus:ring-primary-400" @checked(old('activo', $usuario['activo'] ?? false))>
+                        class="w-4 h-4 rounded border-gray-300 text-primary-400 focus:ring-primary-400" @checked(old('activo', ($usuario['activo'] ?? false) ? '1' : '0') == '1')>
                     <label for="activo" class="text-sm text-gray-700">Cuenta activa</label>
                 </div>
             </div>

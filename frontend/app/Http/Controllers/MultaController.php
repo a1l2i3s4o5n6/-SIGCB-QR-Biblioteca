@@ -40,6 +40,8 @@ class MultaController extends Controller
 
     public function pagar(int $id): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']), 403);
+
         try {
             $this->api->pagarMulta($id);
             return redirect()->route('multas.index')

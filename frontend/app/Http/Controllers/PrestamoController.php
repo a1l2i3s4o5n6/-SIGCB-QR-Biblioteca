@@ -9,6 +9,8 @@ use Illuminate\View\View;
 
 class PrestamoController extends Controller
 {
+    private const STAFF = ['ADMIN', 'BIBLIOTECARIO'];
+
     public function __construct(protected ApiClient $api) {}
 
     public function index(Request $request): View
@@ -39,11 +41,15 @@ class PrestamoController extends Controller
 
     public function create(): View
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403, 'No tienes permisos para registrar préstamos.');
+
         return view('prestamos.create', $this->formData());
     }
 
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         $request->validate([
             'usuarioId'    => ['required', 'integer'],
             'inventarioId' => ['required', 'integer'],
@@ -64,6 +70,8 @@ class PrestamoController extends Controller
 
     public function devolver(int $id): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         try {
             $this->api->devolverPrestamo($id);
             return redirect()->route('prestamos.show', $id)
@@ -75,6 +83,8 @@ class PrestamoController extends Controller
 
     public function renovar(int $id): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         try {
             $this->api->renovarPrestamo($id);
             return redirect()->route('prestamos.show', $id)

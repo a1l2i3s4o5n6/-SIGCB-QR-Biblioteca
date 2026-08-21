@@ -96,11 +96,13 @@
             <span class="ml-3">Libros</span>
         </a>
 
+        @if (session('rol') === 'ADMIN')
         <a href="{{ route('usuarios.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('usuarios.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
+        @endif
 
         <a href="{{ route('prestamos.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
@@ -134,11 +136,13 @@
             <span class="ml-3">Multas</span>
         </a>
 
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
+        @endif
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
@@ -214,11 +218,13 @@
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
+        @if (session('rol') === 'ADMIN')
         <a href="{{ route('usuarios.index') }}" @click="sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('usuarios.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
+        @endif
         <a href="{{ route('prestamos.index') }}" @click="sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
@@ -247,11 +253,13 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}" @click="sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
+        @endif
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 

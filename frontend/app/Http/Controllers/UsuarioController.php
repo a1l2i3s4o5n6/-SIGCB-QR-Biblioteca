@@ -11,8 +11,14 @@ class UsuarioController extends Controller
 {
     public function __construct(protected ApiClient $api) {}
 
+    private function authorizeAdmin(): void
+    {
+        abort_unless(session('rol') === 'ADMIN', 403, 'Solo el administrador puede gestionar usuarios.');
+    }
+
     public function index(Request $request): View
     {
+        $this->authorizeAdmin();
         $page = max(0, (int) $request->query('page', 0));
         $size = min(100, max(5, (int) $request->query('size', 10)));
 
@@ -31,6 +37,8 @@ class UsuarioController extends Controller
 
     public function show(int $id): View
     {
+        $this->authorizeAdmin();
+
         $data = $this->api->getUsuario($id);
         $usuario = $data['data'] ?? $data;
 
@@ -39,11 +47,15 @@ class UsuarioController extends Controller
 
     public function create(): View
     {
+        $this->authorizeAdmin();
+
         return view('usuarios.create', $this->formData());
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorizeAdmin();
+
         $request->validate([
             'nombre'  => ['required', 'string', 'max:120'],
             'email'   => ['required', 'email'],
@@ -70,6 +82,8 @@ class UsuarioController extends Controller
 
     public function edit(int $id): View
     {
+        $this->authorizeAdmin();
+
         $data = $this->api->getUsuario($id);
         $usuario = $data['data'] ?? $data;
 
@@ -78,6 +92,8 @@ class UsuarioController extends Controller
 
     public function update(Request $request, int $id): RedirectResponse
     {
+        $this->authorizeAdmin();
+
         $request->validate([
             'nombre'  => ['required', 'string', 'max:120'],
             'email'   => ['required', 'email'],
@@ -104,6 +120,8 @@ class UsuarioController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
+        $this->authorizeAdmin();
+
         try {
             $this->api->eliminarUsuario($id);
             return redirect()->route('usuarios.index')

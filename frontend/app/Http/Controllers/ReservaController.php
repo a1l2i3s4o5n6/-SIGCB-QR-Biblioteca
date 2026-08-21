@@ -9,6 +9,8 @@ use Illuminate\View\View;
 
 class ReservaController extends Controller
 {
+    private const STAFF = ['ADMIN', 'BIBLIOTECARIO'];
+
     public function __construct(protected ApiClient $api) {}
 
     public function index(Request $request): View
@@ -40,11 +42,15 @@ class ReservaController extends Controller
 
     public function create(): View
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403, 'No tienes permisos para registrar reservas.');
+
         return view('reservas.create', $this->formData());
     }
 
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         $request->validate([
             'usuarioId' => ['required', 'integer'],
             'libroId'   => ['required', 'integer'],
@@ -65,6 +71,8 @@ class ReservaController extends Controller
 
     public function cancelar(int $id): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         try {
             $this->api->cancelarReserva($id);
             return redirect()->route('reservas.index')

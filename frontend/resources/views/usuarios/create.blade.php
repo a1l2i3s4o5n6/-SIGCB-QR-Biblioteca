@@ -71,8 +71,9 @@
 
                 <!-- Activo -->
                 <div class="sm:col-span-2 flex items-center gap-2 pt-2">
+                    <input type="hidden" name="activo" value="0">
                     <input type="checkbox" name="activo" value="1" id="activo"
-                        class="w-4 h-4 rounded border-gray-300 text-primary-400 focus:ring-primary-400" @checked(old('activo', true))>
+                        class="w-4 h-4 rounded border-gray-300 text-primary-400 focus:ring-primary-400" @checked(old('activo', '1') == '1')>
                     <label for="activo" class="text-sm text-gray-700">Cuenta activa</label>
                 </div>
             </div>

@@ -9,6 +9,8 @@ use Illuminate\View\View;
 
 class CatalogoController extends Controller
 {
+    private const STAFF = ['ADMIN', 'BIBLIOTECARIO'];
+
     public function __construct(protected ApiClient $api) {}
 
     public function index(Request $request): View
@@ -47,11 +49,15 @@ class CatalogoController extends Controller
 
     public function create(): View
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403, 'No tienes permisos para gestionar el catálogo.');
+
         return view('catalogo.create', $this->formData());
     }
 
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         $data = $this->validated($request);
 
         try {
@@ -65,6 +71,8 @@ class CatalogoController extends Controller
 
     public function edit(int $id): View
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403, 'No tienes permisos para gestionar el catálogo.');
+
         $data = $this->api->getLibro($id);
         $libro = $data['data'] ?? $data;
 
@@ -73,6 +81,8 @@ class CatalogoController extends Controller
 
     public function update(Request $request, int $id): RedirectResponse
     {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
         $data = $this->validated($request);
 
         try {
@@ -86,6 +96,8 @@ class CatalogoController extends Controller
 
     public function destroy(int $id): RedirectResponse
     {
+        abort_unless(session('rol') === 'ADMIN', 403, 'Solo el administrador puede eliminar libros.');
+
         try {
             $this->api->eliminarLibro($id);
             return redirect()->route('catalogo.index')
