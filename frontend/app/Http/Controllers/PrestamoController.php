@@ -31,6 +31,24 @@ class PrestamoController extends Controller
         ]);
     }
 
+    public function devoluciones(Request $request): View
+    {
+        $page = max(0, (int) $request->query('page', 0));
+        $size = min(50, max(5, (int) $request->query('size', 10)));
+
+        $data = $this->api->getPrestamos(['estado' => 'DEVUELTO', 'page' => $page, 'size' => $size]);
+
+        return view('devoluciones.index', [
+            'prestamos'   => $data['content'] ?? [],
+            'page'        => $data['page'] ?? $page,
+            'size'        => $data['size'] ?? $size,
+            'total'       => $data['totalElements'] ?? 0,
+            'totalPages'  => $data['totalPages'] ?? 0,
+            'first'       => $data['first'] ?? true,
+            'last'        => $data['last'] ?? true,
+        ]);
+    }
+
     public function show(int $id): View
     {
         $data = $this->api->getPrestamo($id);

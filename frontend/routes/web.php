@@ -53,6 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
     Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
 
+    // ── Devoluciones ────────────────────────────────────────────────────
+    Route::get('/devoluciones',            [PrestamoController::class, 'devoluciones'])->name('devoluciones.index');
+
     // ── Reservas ────────────────────────────────────────────────────────
     Route::get('/reservas',                [ReservaController::class, 'index'])->name('reservas.index');
     Route::get('/reservas/crear',          [ReservaController::class, 'create'])->name('reservas.create');

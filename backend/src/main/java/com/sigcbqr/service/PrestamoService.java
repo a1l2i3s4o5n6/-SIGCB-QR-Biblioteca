@@ -35,6 +35,10 @@ public class PrestamoService {
         return prestamoRepository.findAll(pageable).map(this::toResponse);
     }
 
+    public Page<PrestamoResponse> listarPorEstado(String estado, Pageable pageable) {
+        return prestamoRepository.findByEstado(estado, pageable).map(this::toResponse);
+    }
+
     public Page<PrestamoResponse> listarPorUsuario(Long usuarioId, Pageable pageable) {
         return prestamoRepository.findByUsuarioIdOrderByFechaPrestamoDesc(usuarioId, pageable)
                 .map(this::toResponse);
