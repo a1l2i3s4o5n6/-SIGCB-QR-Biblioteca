@@ -253,6 +253,26 @@ class ApiClient
     }
 
     // ─────────────────────────────────────────────
+    // CONFIGURACIÓN
+    // ─────────────────────────────────────────────
+
+    public function getConfiguracion(): array
+    {
+        $response = $this->withAuth()->get('/configuracion');
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function actualizarConfiguracion(int $id, string $valor): array
+    {
+        return $this->withAuth()->put("/configuracion/{$id}", ['valor' => $valor])->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
 

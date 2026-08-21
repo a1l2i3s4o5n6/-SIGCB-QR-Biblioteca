@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\PrestamoController;
@@ -69,4 +70,8 @@ Route::middleware('auth')->group(function () {
 
     // ── Reportes ────────────────────────────────────────────────────────
     Route::get('/reportes',                [ReporteController::class, 'index'])->name('reportes.index');
+
+    // ── Configuración ───────────────────────────────────────────────────
+    Route::get('/configuracion',           [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::post('/configuracion',          [ConfiguracionController::class, 'update'])->name('configuracion.update');
 });

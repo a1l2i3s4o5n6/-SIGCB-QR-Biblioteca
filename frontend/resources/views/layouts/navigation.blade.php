@@ -152,11 +152,13 @@
             <span class="ml-3">Auditoría</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('configuracion.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-cog w-5 text-center text-sm"></i>
             <span class="ml-3">Configuración</span>
         </a>
+        @endif
     </nav>
 
     <!-- Sidebar footer -->
@@ -268,11 +270,13 @@
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('configuracion.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-cog w-5 text-center text-sm"></i>
             <span class="ml-3">Configuración</span>
         </a>
+        @endif
     </nav>
 
     <div class="px-5 py-3 border-t border-white/10 mt-2">
