@@ -220,6 +220,20 @@ class ApiClient
     }
 
     // ─────────────────────────────────────────────
+    // MULTAS
+    // ─────────────────────────────────────────────
+
+    public function getMultas(array $params = []): array
+    {
+        return $this->withAuth()->get('/multas', $params)->json() ?? [];
+    }
+
+    public function pagarMulta(int $id): array
+    {
+        return $this->withAuth()->post("/multas/{$id}/pagar")->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
 

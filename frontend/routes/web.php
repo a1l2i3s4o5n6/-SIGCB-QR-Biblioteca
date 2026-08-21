@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MultaController;
 use App\Http\Controllers\PrestamoController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UsuarioController;
@@ -57,4 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/reservas',               [ReservaController::class, 'store'])->name('reservas.store');
     Route::get('/reservas/{id}',           [ReservaController::class, 'show'])->name('reservas.show');
     Route::delete('/reservas/{id}',        [ReservaController::class, 'cancelar'])->name('reservas.cancelar');
+
+    // ── Multas ──────────────────────────────────────────────────────────
+    Route::get('/multas',                  [MultaController::class, 'index'])->name('multas.index');
+    Route::post('/multas/{id}/pagar',      [MultaController::class, 'pagar'])->name('multas.pagar');
 });
