@@ -146,11 +146,13 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('auditoria.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('auditoria.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
+        @endif
 
         @if (session('rol') === 'ADMIN')
         <a href="{{ route('configuracion.index') }}"
@@ -265,11 +267,13 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('auditoria.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('auditoria.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
+        @endif
         @if (session('rol') === 'ADMIN')
         <a href="{{ route('configuracion.index') }}" @click="sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">

@@ -273,6 +273,21 @@ class ApiClient
     }
 
     // ─────────────────────────────────────────────
+    // AUDITORÍA
+    // ─────────────────────────────────────────────
+
+    public function getAuditoria(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/auditoria', $params);
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
     // DASHBOARD / ESTADÍSTICAS
     // ─────────────────────────────────────────────
 
