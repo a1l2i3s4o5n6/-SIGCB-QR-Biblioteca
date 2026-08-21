@@ -1,7 +1,15 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MultaController;
+use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
 // ── Página de inicio → redirige al login ────────────────────────────────────
@@ -20,4 +28,54 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // ── Rutas protegidas (requieren JWT en sesión) ───────────────────────────────
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // ── Catálogo de libros ────────────────────────────────────────────────
+    Route::get('/catalogo',             [CatalogoController::class, 'index'])->name('catalogo.index');
+    Route::get('/catalogo/crear',       [CatalogoController::class, 'create'])->name('catalogo.create');
+    Route::post('/catalogo',            [CatalogoController::class, 'store'])->name('catalogo.store');
+    Route::get('/catalogo/{id}',        [CatalogoController::class, 'show'])->name('catalogo.show');
+    Route::get('/catalogo/{id}/editar', [CatalogoController::class, 'edit'])->name('catalogo.edit');
+    Route::put('/catalogo/{id}',        [CatalogoController::class, 'update'])->name('catalogo.update');
+    Route::delete('/catalogo/{id}',     [CatalogoController::class, 'destroy'])->name('catalogo.destroy');
+
+    // ── Usuarios ────────────────────────────────────────────────────────
+    Route::get('/usuarios',                [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/crear',          [UsuarioController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios',               [UsuarioController::class, 'store'])->name('usuarios.store');
+    Route::get('/usuarios/{id}',           [UsuarioController::class, 'show'])->name('usuarios.show');
+    Route::get('/usuarios/{id}/editar',    [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{id}',           [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{id}',        [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+
+    // ── Préstamos ───────────────────────────────────────────────────────
+    Route::get('/prestamos',                [PrestamoController::class, 'index'])->name('prestamos.index');
+    Route::get('/prestamos/crear',          [PrestamoController::class, 'create'])->name('prestamos.create');
+    Route::post('/prestamos',               [PrestamoController::class, 'store'])->name('prestamos.store');
+    Route::get('/prestamos/{id}',           [PrestamoController::class, 'show'])->name('prestamos.show');
+    Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
+    Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
+
+    // ── Devoluciones ────────────────────────────────────────────────────
+    Route::get('/devoluciones',            [PrestamoController::class, 'devoluciones'])->name('devoluciones.index');
+
+    // ── Reservas ────────────────────────────────────────────────────────
+    Route::get('/reservas',                [ReservaController::class, 'index'])->name('reservas.index');
+    Route::get('/reservas/crear',          [ReservaController::class, 'create'])->name('reservas.create');
+    Route::post('/reservas',               [ReservaController::class, 'store'])->name('reservas.store');
+    Route::get('/reservas/{id}',           [ReservaController::class, 'show'])->name('reservas.show');
+    Route::delete('/reservas/{id}',        [ReservaController::class, 'cancelar'])->name('reservas.cancelar');
+
+    // ── Multas ──────────────────────────────────────────────────────────
+    Route::get('/multas',                  [MultaController::class, 'index'])->name('multas.index');
+    Route::post('/multas/{id}/pagar',      [MultaController::class, 'pagar'])->name('multas.pagar');
+
+    // ── Reportes ────────────────────────────────────────────────────────
+    Route::get('/reportes',                [ReporteController::class, 'index'])->name('reportes.index');
+
+    // ── Configuración ───────────────────────────────────────────────────
+    Route::get('/configuracion',           [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::post('/configuracion',          [ConfiguracionController::class, 'update'])->name('configuracion.update');
+
+    // ── Auditoría ───────────────────────────────────────────────────────
+    Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');
 });

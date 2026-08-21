@@ -26,17 +26,20 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditoriaService auditoriaService;
 
     public AuthService(AuthenticationManager authenticationManager,
                        JwtTokenProvider tokenProvider,
                        UsuarioRepository usuarioRepository,
                        RolRepository rolRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       AuditoriaService auditoriaService) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditoriaService = auditoriaService;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -49,6 +52,9 @@ public class AuthService {
 
         String token = tokenProvider.generateToken(usuario.getId(), usuario.getEmail(),
                 usuario.getRol().getNombre());
+
+        auditoriaService.registrar(usuario, "LOGIN", "USUARIO", usuario.getId(),
+                "Inicio de sesión exitoso");
 
         return LoginResponse.builder()
                 .id(usuario.getId())

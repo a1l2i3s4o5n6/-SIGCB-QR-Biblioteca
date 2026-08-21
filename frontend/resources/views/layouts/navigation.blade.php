@@ -90,32 +90,34 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Biblioteca</p>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('catalogo.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('catalogo.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('usuarios.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('usuarios.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
+        @endif
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('prestamos.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('devoluciones.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('devoluciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-undo-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Devoluciones</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reservas.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reservas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
@@ -128,31 +130,37 @@
             <span class="ml-3">Códigos QR</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('multas.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('multas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('reportes.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
+        @endif
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('auditoria.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('auditoria.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
+        @endif
 
-        <a href="#"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('configuracion.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-cog w-5 text-center text-sm"></i>
             <span class="ml-3">Configuración</span>
         </a>
+        @endif
     </nav>
 
     <!-- Sidebar footer -->
@@ -209,28 +217,30 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Biblioteca</p>
 
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('catalogo.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('catalogo.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('usuarios.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('usuarios.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @endif
+        <a href="{{ route('prestamos.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('devoluciones.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('devoluciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-undo-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Devoluciones</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('reservas.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reservas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
@@ -242,29 +252,35 @@
             <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
             <span class="ml-3">Códigos QR</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        <a href="{{ route('multas.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('multas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('reportes.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
         </a>
+        @endif
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('auditoria.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('auditoria.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
-        <a href="#" @click="sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
+        @endif
+        @if (session('rol') === 'ADMIN')
+        <a href="{{ route('configuracion.index') }}" @click="sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-cog w-5 text-center text-sm"></i>
             <span class="ml-3">Configuración</span>
         </a>
+        @endif
     </nav>
 
     <div class="px-5 py-3 border-t border-white/10 mt-2">

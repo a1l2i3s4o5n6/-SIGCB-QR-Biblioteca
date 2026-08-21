@@ -28,12 +28,14 @@ class PrestamoServiceTest {
     private InventarioRepository inventarioRepository;
     @Mock
     private LibroRepository libroRepository;
+    @Mock
+    private AuditoriaService auditoriaService;
 
     private PrestamoService prestamoService;
 
     @BeforeEach
     void setUp() {
-        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository);
+        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository, auditoriaService);
     }
 
     @Test

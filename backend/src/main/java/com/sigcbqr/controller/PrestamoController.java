@@ -26,11 +26,14 @@ public class PrestamoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar préstamos", description = "Obtiene todos los préstamos con paginación")
+    @Operation(summary = "Listar préstamos", description = "Obtiene todos los préstamos con paginación, opcionalmente filtrados por estado")
     @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     public ResponseEntity<PageResponse<PrestamoResponse>> listar(
+            @RequestParam(value = "estado", required = false) String estado,
             @PageableDefault(size = 10, sort = "fechaPrestamo") Pageable pageable) {
-        var page = prestamoService.listar(pageable);
+        var page = (estado != null && !estado.isBlank())
+                ? prestamoService.listarPorEstado(estado, pageable)
+                : prestamoService.listar(pageable);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

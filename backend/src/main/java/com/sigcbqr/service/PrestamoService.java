@@ -20,19 +20,26 @@ public class PrestamoService {
     private final UsuarioRepository usuarioRepository;
     private final InventarioRepository inventarioRepository;
     private final LibroRepository libroRepository;
+    private final AuditoriaService auditoriaService;
 
     public PrestamoService(PrestamoRepository prestamoRepository,
                            UsuarioRepository usuarioRepository,
                            InventarioRepository inventarioRepository,
-                           LibroRepository libroRepository) {
+                           LibroRepository libroRepository,
+                           AuditoriaService auditoriaService) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.inventarioRepository = inventarioRepository;
         this.libroRepository = libroRepository;
+        this.auditoriaService = auditoriaService;
     }
 
     public Page<PrestamoResponse> listar(Pageable pageable) {
         return prestamoRepository.findAll(pageable).map(this::toResponse);
+    }
+
+    public Page<PrestamoResponse> listarPorEstado(String estado, Pageable pageable) {
+        return prestamoRepository.findByEstado(estado, pageable).map(this::toResponse);
     }
 
     public Page<PrestamoResponse> listarPorUsuario(Long usuarioId, Pageable pageable) {
@@ -79,6 +86,8 @@ public class PrestamoService {
         libroRepository.save(libro);
 
         prestamo = prestamoRepository.save(prestamo);
+        auditoriaService.registrar("CREAR", "PRESTAMO", prestamo.getId(),
+                "Préstamo de \"" + libro.getTitulo() + "\" a " + usuario.getNombre());
         return toResponse(prestamo);
     }
 
@@ -108,6 +117,8 @@ public class PrestamoService {
         }
 
         prestamo = prestamoRepository.save(prestamo);
+        auditoriaService.registrar("DEVOLVER", "PRESTAMO", prestamo.getId(),
+                "Devolución de \"" + inventario.getLibro().getTitulo() + "\" de " + prestamo.getUsuario().getNombre());
         return toResponse(prestamo);
     }
 
@@ -134,6 +145,8 @@ public class PrestamoService {
                 .build();
 
         nuevoPrestamo = prestamoRepository.save(nuevoPrestamo);
+        auditoriaService.registrar("RENOVAR", "PRESTAMO", nuevoPrestamo.getId(),
+                "Renovación del préstamo #" + prestamo.getId() + " (" + prestamo.getUsuario().getNombre() + ")");
         return toResponse(nuevoPrestamo);
     }
 

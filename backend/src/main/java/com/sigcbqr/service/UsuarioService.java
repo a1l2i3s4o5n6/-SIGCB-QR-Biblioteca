@@ -20,13 +20,16 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditoriaService auditoriaService;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
                           RolRepository rolRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          AuditoriaService auditoriaService) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditoriaService = auditoriaService;
     }
 
     public Page<UsuarioResponse> listar(Pageable pageable) {
@@ -58,6 +61,8 @@ public class UsuarioService {
                 .build();
 
         usuario = usuarioRepository.save(usuario);
+        auditoriaService.registrar("CREAR", "USUARIO", usuario.getId(),
+                "Usuario \"" + usuario.getNombre() + "\" registrado con rol " + rol.getNombre());
         return toResponse(usuario);
     }
 
@@ -85,6 +90,8 @@ public class UsuarioService {
         }
 
         usuario = usuarioRepository.save(usuario);
+        auditoriaService.registrar("ACTUALIZAR", "USUARIO", usuario.getId(),
+                "Usuario \"" + usuario.getNombre() + "\" actualizado");
         return toResponse(usuario);
     }
 
@@ -94,6 +101,8 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
+        auditoriaService.registrar("ELIMINAR", "USUARIO", usuario.getId(),
+                "Usuario \"" + usuario.getNombre() + "\" desactivado");
     }
 
     private UsuarioResponse toResponse(Usuario usuario) {
