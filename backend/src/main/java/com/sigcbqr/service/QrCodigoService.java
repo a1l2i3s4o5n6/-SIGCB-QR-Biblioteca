@@ -21,6 +21,7 @@ public class QrCodigoService {
 
     private final QrCodigoRepository qrCodigoRepository;
     private final LibroRepository libroRepository;
+    private final AuditoriaService auditoriaService;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     @Transactional(readOnly = true)
@@ -49,7 +50,9 @@ public class QrCodigoService {
                 .imagenUrl(request.getImagenUrl())
                 .activo(true)
                 .build();
-        return toResponse(qrCodigoRepository.save(qr));
+        QrCodigo saved = qrCodigoRepository.save(qr);
+        auditoriaService.registrar("CREAR", "CÓDIGO QR", saved.getId(), "Generado para libro #" + libro.getId());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -57,7 +60,9 @@ public class QrCodigoService {
         QrCodigo qr = qrCodigoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Código QR no encontrado: " + id));
         qr.setCodigo(generarCodigoUnico(qr.getLibro().getId()));
-        return toResponse(qrCodigoRepository.save(qr));
+        QrCodigo saved = qrCodigoRepository.save(qr);
+        auditoriaService.registrar("REGENERAR", "CÓDIGO QR", id, "Código regenerado");
+        return toResponse(saved);
     }
 
     @Transactional
@@ -65,7 +70,10 @@ public class QrCodigoService {
         QrCodigo qr = qrCodigoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Código QR no encontrado: " + id));
         qr.setActivo(activo);
-        return toResponse(qrCodigoRepository.save(qr));
+        QrCodigo saved = qrCodigoRepository.save(qr);
+        auditoriaService.registrar(activo ? "ACTIVAR" : "DESACTIVAR", "CÓDIGO QR", id,
+                activo ? "Código activado" : "Código desactivado");
+        return toResponse(saved);
     }
 
     private String generarCodigoUnico(Long libroId) {

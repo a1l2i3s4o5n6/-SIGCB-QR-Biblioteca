@@ -49,6 +49,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: Doctora2025
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      JAVA_TOOL_OPTIONS: -Duser.timezone=America/Guayaquil
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,6 +66,7 @@ services:
       APP_ENV: local
       APP_DEBUG: true
       APP_URL: http://localhost:8000
+      APP_TIMEZONE: America/Guayaquil
     depends_on:
       - api
 
