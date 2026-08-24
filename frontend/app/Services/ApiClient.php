@@ -316,4 +316,47 @@ class ApiClient
 
         return $response->json('data') ?? [];
     }
+
+    // ─────────────────────────────────────────────
+    // CÓDIGOS QR
+    // ─────────────────────────────────────────────
+
+    public function getQrCodigos(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/qr-codigos', $params);
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function getQrByLibro(int $libroId): array
+    {
+        $response = $this->withAuth()->get("/qr-codigos/libro/{$libroId}");
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function crearQr(int $libroId): array
+    {
+        return $this->withAuth()->post('/qr-codigos', ['libroId' => $libroId])->json() ?? [];
+    }
+
+    public function regenerarQr(int $id): array
+    {
+        return $this->withAuth()->put("/qr-codigos/{$id}/regenerar")->json() ?? [];
+    }
+
+    public function toggleQr(int $id, bool $activo): array
+    {
+        return $this->withAuth()
+            ->put("/qr-codigos/{$id}/activo?activo=" . ($activo ? '1' : '0'))
+            ->json() ?? [];
+    }
 }

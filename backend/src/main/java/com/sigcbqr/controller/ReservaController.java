@@ -68,6 +68,7 @@ public class ReservaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")
     @Operation(summary = "Crear reserva", description = "Registra una nueva reserva de libro")
     public ResponseEntity<ApiResponse> crear(@Valid @RequestBody ReservaRequest request) {
         var usuario = usuarioRepository.findById(request.getUsuarioId())
@@ -95,6 +96,7 @@ public class ReservaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")
     @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente")
     public ResponseEntity<ApiResponse> cancelar(@PathVariable Long id) {
         var reserva = reservaRepository.findById(id)

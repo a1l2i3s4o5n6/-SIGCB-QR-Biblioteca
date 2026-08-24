@@ -10,6 +10,7 @@ public record UserPrincipal(
         String email,
         String password,
         String rol,
+        boolean activo,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
 
@@ -45,6 +46,6 @@ public record UserPrincipal(
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return activo;
     }
 }
