@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/prestamos")
 @Tag(name = "Préstamos", description = "Gestión de préstamos, devoluciones y renovaciones")
@@ -26,14 +28,23 @@ public class PrestamoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar préstamos", description = "Obtiene todos los préstamos con paginación, opcionalmente filtrados por estado")
+    @Operation(summary = "Listar préstamos", description = "Obtiene préstamos con paginación, búsqueda y filtros por estado y rango de fechas")
     @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     public ResponseEntity<PageResponse<PrestamoResponse>> listar(
             @RequestParam(value = "estado", required = false) String estado,
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "desde", required = false) LocalDate desde,
+            @RequestParam(value = "hasta", required = false) LocalDate hasta,
             @PageableDefault(size = 10, sort = "fechaPrestamo") Pageable pageable) {
-        var page = (estado != null && !estado.isBlank())
-                ? prestamoService.listarPorEstado(estado, pageable)
-                : prestamoService.listar(pageable);
+        boolean sinFiltros = estado == null && q == null && desde == null && hasta == null;
+        var page = sinFiltros
+                ? prestamoService.listar(pageable)
+                : prestamoService.listarFiltrado(
+                        q,
+                        estado,
+                        desde != null ? desde.atStartOfDay() : null,
+                        hasta != null ? hasta.plusDays(1).atStartOfDay() : null,
+                        pageable);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

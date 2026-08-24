@@ -201,6 +201,21 @@ class ApiClient
         return $this->withAuth()->get('/inventario/disponibles', $params)->json() ?? [];
     }
 
+    /**
+     * Localiza un ejemplar por su código único (ej. LIB-0001-01).
+     * Retorna null si no existe.
+     */
+    public function buscarInventarioPorCodigo(string $codigo): ?array
+    {
+        $response = $this->withAuth()->get('/inventario/buscar', ['codigo' => $codigo]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        return $response->json();
+    }
+
     public function getReservas(array $params = []): array
     {
         return $this->withAuth()->get('/reservas', $params)->json() ?? [];

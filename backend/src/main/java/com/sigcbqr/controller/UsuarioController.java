@@ -27,10 +27,15 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar usuarios", description = "Obtiene todos los usuarios con paginación")
+    @Operation(summary = "Listar usuarios", description = "Obtiene usuarios con paginación, búsqueda y filtros por rol/estado")
     public ResponseEntity<PageResponse<UsuarioResponse>> listar(
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "rol", required = false) String rol,
+            @RequestParam(value = "activo", required = false) Boolean activo,
             @PageableDefault(size = 10, sort = "nombre") Pageable pageable) {
-        var page = usuarioService.listar(pageable);
+        var page = (q == null && rol == null && activo == null)
+                ? usuarioService.listar(pageable)
+                : usuarioService.listarFiltrado(q, rol, activo, pageable);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

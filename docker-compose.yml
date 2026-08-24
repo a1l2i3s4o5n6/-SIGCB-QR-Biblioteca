@@ -6,6 +6,7 @@ services:
       POSTGRES_DB: sigcbqr
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Doctora2025
+      TZ: America/Guayaquil
     ports:
       - "5432:5432"
     volumes:
@@ -44,11 +45,13 @@ services:
     ports:
       - "8080:8080"
     environment:
+      TZ: America/Guayaquil
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sigcbqr
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: Doctora2025
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      SPRING_MVC_LOG_RESOLVED_EXCEPTION: "true"
     depends_on:
       postgres:
         condition: service_healthy
@@ -61,10 +64,13 @@ services:
     ports:
       - "8000:80"
     environment:
+      TZ: America/Guayaquil
       APP_NAME: "SIGCB-QR"
       APP_ENV: local
       APP_DEBUG: true
       APP_URL: http://localhost:8000
+      APP_TIMEZONE: America/Guayaquil
+      APP_LOCALE: es
     depends_on:
       - api
 

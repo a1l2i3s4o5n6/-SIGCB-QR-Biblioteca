@@ -5,6 +5,7 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DatosController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\PrestamoController;
 use App\Http\Controllers\ReporteController;
@@ -78,4 +79,12 @@ Route::middleware('auth')->group(function () {
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');
+
+    // ── Búsqueda en vivo (fragmentos de tabla para Alpine) ──────────────
+    Route::get('/datos/catalogo',        [DatosController::class, 'catalogo'])->name('datos.catalogo');
+    Route::get('/datos/usuarios',        [DatosController::class, 'usuarios'])->name('datos.usuarios');
+    Route::get('/datos/prestamos',       [DatosController::class, 'prestamos'])->name('datos.prestamos');
+    Route::get('/datos/reservas',        [DatosController::class, 'reservas'])->name('datos.reservas');
+    Route::get('/datos/ejemplares',      [DatosController::class, 'ejemplares'])->name('datos.ejemplares');
+    Route::get('/datos/ejemplar-codigo', [DatosController::class, 'ejemplarPorCodigo'])->name('datos.ejemplar.codigo');
 });

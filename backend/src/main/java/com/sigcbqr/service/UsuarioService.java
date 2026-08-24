@@ -36,6 +36,12 @@ public class UsuarioService {
         return usuarioRepository.findAll(pageable).map(this::toResponse);
     }
 
+    public Page<UsuarioResponse> listarFiltrado(String q, String rol, Boolean activo, Pageable pageable) {
+        String texto = (q != null && !q.isBlank()) ? q.trim() : null;
+        String rolNombre = (rol != null && !rol.isBlank()) ? rol.trim().toUpperCase() : null;
+        return usuarioRepository.buscarConFiltros(texto, rolNombre, activo, pageable).map(this::toResponse);
+    }
+
     public UsuarioResponse obtener(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));

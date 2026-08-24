@@ -189,3 +189,18 @@ body {
         width: 260px !important;
     }
 }
+
+/* ===== App shell (margen según sidebar) ===== */
+.app-shell {
+    transition: padding 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .app-shell {
+        padding-left: 260px;
+    }
+
+    .app-shell.collapsed {
+        padding-left: 0;
+    }
+}

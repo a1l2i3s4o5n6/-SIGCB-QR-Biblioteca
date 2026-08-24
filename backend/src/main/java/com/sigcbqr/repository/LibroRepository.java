@@ -19,6 +19,23 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     long countByActivoTrue();
     long countByEjemplaresDisponiblesGreaterThan(int min);
 
+    @Query("""
+        SELECT l FROM Libro l
+        WHERE l.activo = true
+          AND (CAST(:q AS string) IS NULL OR LOWER(l.titulo) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%'))
+               OR LOWER(COALESCE(l.isbn, '')) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%')))
+          AND (:categoriaId IS NULL OR l.categoria.id = :categoriaId)
+          AND (:editorialId IS NULL OR l.editorial.id = :editorialId)
+          AND (:anio IS NULL OR l.anioPublicacion = :anio)
+          AND (:soloDisponibles = false OR l.ejemplaresDisponibles > 0)
+        """)
+    Page<Libro> buscarConFiltros(@Param("q") String q,
+                                 @Param("categoriaId") Long categoriaId,
+                                 @Param("editorialId") Long editorialId,
+                                 @Param("anio") Integer anio,
+                                 @Param("soloDisponibles") boolean soloDisponibles,
+                                 Pageable pageable);
+
     @Query("SELECT l FROM Libro l WHERE l.ejemplaresDisponibles > 0 AND l.activo = true")
     List<Libro> findDisponibles();
 

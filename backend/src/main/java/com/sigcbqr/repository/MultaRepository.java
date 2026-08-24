@@ -15,6 +15,7 @@ import java.util.List;
 @Repository
 public interface MultaRepository extends JpaRepository<Multa, Long> {
     Page<Multa> findByUsuarioId(Long usuarioId, Pageable pageable);
+    Page<Multa> findByPagada(Boolean pagada, Pageable pageable);
     List<Multa> findByPagadaFalse();
     long countByPagadaFalse();
 

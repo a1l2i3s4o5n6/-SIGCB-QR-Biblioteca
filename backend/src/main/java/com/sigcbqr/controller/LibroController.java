@@ -26,10 +26,19 @@ public class LibroController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar libros", description = "Obtiene todos los libros activos con paginación")
+    @Operation(summary = "Listar libros", description = "Obtiene los libros activos con paginación, búsqueda y filtros combinables")
     public ResponseEntity<PageResponse<LibroResponse>> listar(
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "categoriaId", required = false) Long categoriaId,
+            @RequestParam(value = "editorialId", required = false) Long editorialId,
+            @RequestParam(value = "anio", required = false) Integer anio,
+            @RequestParam(value = "soloDisponibles", required = false) Boolean soloDisponibles,
             @PageableDefault(size = 10, sort = "titulo") Pageable pageable) {
-        var page = libroService.listar(pageable);
+        boolean sinFiltros = q == null && categoriaId == null && editorialId == null
+                && anio == null && soloDisponibles == null;
+        var page = sinFiltros
+                ? libroService.listar(pageable)
+                : libroService.listarFiltrado(q, categoriaId, editorialId, anio, soloDisponibles, pageable);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

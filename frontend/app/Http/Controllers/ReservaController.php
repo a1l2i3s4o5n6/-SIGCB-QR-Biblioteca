@@ -18,7 +18,15 @@ class ReservaController extends Controller
         $page = max(0, (int) $request->query('page', 0));
         $size = min(100, max(5, (int) $request->query('size', 10)));
 
-        $data = $this->api->getReservas(['page' => $page, 'size' => $size]);
+        $params = ['page' => $page, 'size' => $size];
+
+        foreach (['q', 'estado'] as $filtro) {
+            if ($request->filled($filtro)) {
+                $params[$filtro] = $request->query($filtro);
+            }
+        }
+
+        $data = $this->api->getReservas($params);
 
         return view('reservas.index', [
             'reservas'    => $data['content'] ?? [],

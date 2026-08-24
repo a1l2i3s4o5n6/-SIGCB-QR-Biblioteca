@@ -29,124 +29,57 @@
         </div>
     @endif
 
-    <!-- Buscador -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-5">
-        <form method="GET" action="{{ route('catalogo.index') }}" class="flex flex-col sm:flex-row gap-3">
-            <div class="flex-1 relative">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" name="q" value="{{ $q }}"
-                    placeholder="Buscar por título del libro..."
-                    class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+    <div x-data="liveTabla({
+            url: '{{ route('datos.catalogo') }}',
+            container: 'tabla-catalogo',
+            campos: ['q', 'categoriaId', 'editorialId', 'anio', 'soloDisponibles'],
+            iniciales: { q: @js($q) }
+         })">
+        <!-- Búsqueda y filtros -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                <div class="lg:col-span-2 relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" x-model="q" @input="alEscribir()"
+                        placeholder="Buscar por título o ISBN..."
+                        class="w-full pl-9 pr-9 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                    <span x-show="cargando" x-cloak
+                        class="absolute right-3 top-1/2 -translate-y-1/2 fas fa-circle-notch fa-spin text-primary-400 text-sm"></span>
+                </div>
+                <select x-model="categoriaId" @change="cargar(1)"
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                    <option value="">Todas las categorías</option>
+                    @foreach ($categorias as $cat)
+                        <option value="{{ $cat['id'] }}">{{ $cat['nombre'] }}</option>
+                    @endforeach
+                </select>
+                <select x-model="editorialId" @change="cargar(1)"
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                    <option value="">Todas las editoriales</option>
+                    @foreach ($editoriales as $edi)
+                        <option value="{{ $edi['id'] }}">{{ $edi['nombre'] }}</option>
+                    @endforeach
+                </select>
             </div>
-            <div class="flex gap-2">
-                <button type="submit"
-                    class="btn-primary-custom px-5 py-2 rounded-lg text-sm font-semibold text-white">Buscar</button>
-                @if ($q !== '')
-                    <a href="{{ route('catalogo.index') }}"
-                        class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200">Limpiar</a>
-                @endif
+            <div class="flex flex-wrap items-center gap-3">
+                <input type="number" x-model="anio" @input="alEscribir()" min="1500" max="2100"
+                    placeholder="Año de publicación"
+                    class="w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                <label class="inline-flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+                    <input type="checkbox" x-model="soloDisponibles" @change="cargar(1)" value="1"
+                        class="rounded border-gray-300 text-primary-500 focus:ring-primary-400">
+                    Solo con ejemplares disponibles
+                </label>
+                <button type="button" @click="limpiar()"
+                    class="ml-auto px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition">
+                    <i class="fas fa-broom mr-1.5"></i> Limpiar filtros
+                </button>
             </div>
-        </form>
-    </div>
-
-    <!-- Tabla -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left text-gray-500 text-xs uppercase bg-gray-50">
-                        <th class="px-5 py-3 font-medium">Título</th>
-                        <th class="px-5 py-3 font-medium">ISBN</th>
-                        <th class="px-5 py-3 font-medium">Categoría</th>
-                        <th class="px-5 py-3 font-medium">Editorial</th>
-                        <th class="px-5 py-3 font-medium text-center">Año</th>
-                        <th class="px-5 py-3 font-medium text-center">Disponibles</th>
-                        <th class="px-5 py-3 font-medium text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($libros as $libro)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-5 py-3">
-                                <a href="{{ route('catalogo.show', $libro['id']) }}"
-                                    class="font-semibold text-gray-800 hover:text-primary-400">
-                                    {{ $libro['titulo'] ?? 'Sin título' }}
-                                </a>
-                                <p class="text-xs text-gray-400 mt-0.5">
-                                    {{ implode(', ', $libro['autores'] ?? []) ?: 'Sin autores' }}
-                                </p>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ $libro['isbn'] ?? '—' }}</td>
-                            <td class="px-5 py-3">
-                                <span class="px-2 py-1 bg-blue-50 text-blue-700 text-[11px] font-medium rounded-full">{{ $libro['categoria'] ?? 'Sin categoría' }}</span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-600">{{ $libro['editorial'] ?? '—' }}</td>
-                            <td class="px-5 py-3 text-center text-gray-500">{{ $libro['anioPublicacion'] ?? '—' }}</td>
-                            <td class="px-5 py-3 text-center">
-                                @php
-                                    $total = $libro['ejemplaresTotales'] ?? 0;
-                                    $disp = $libro['ejemplaresDisponibles'] ?? 0;
-                                    $badge = $disp > 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700';
-                                @endphp
-                                <span class="px-2 py-1 {{ $badge }} text-[11px] font-semibold rounded-full">{{ $disp }} / {{ $total }}</span>
-                            </td>
-                            <td class="px-5 py-3">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('catalogo.show', $libro['id']) }}"
-                                        title="Ver detalle"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-400 transition">
-                                        <i class="fas fa-eye text-xs"></i>
-                                    </a>
-                                    @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
-                                        <a href="{{ route('catalogo.edit', $libro['id']) }}"
-                                            title="Editar"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-500 transition">
-                                            <i class="fas fa-edit text-xs"></i>
-                                        </a>
-                                    @endif
-                                    @if (session('rol') === 'ADMIN')
-                                        <form method="POST" action="{{ route('catalogo.destroy', $libro['id']) }}"
-                                            onsubmit="return confirm('¿Desactivar este libro?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                title="Desactivar"
-                                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-500 transition">
-                                                <i class="fas fa-trash text-xs"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-5 py-10 text-center">
-                                <i class="fas fa-book-open text-gray-300 text-3xl mb-3"></i>
-                                <p class="text-gray-400">{{ $q !== '' ? 'No se encontraron libros con ese criterio.' : 'Aún no hay libros registrados.' }}</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
         </div>
 
-        @if ($totalPages > 1)
-            <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p class="text-xs text-gray-500">
-                    Mostrando <span class="font-semibold">{{ count($libros) }}</span> de {{ number_format($total) }} libros · Página {{ $page + 1 }} de {{ $totalPages }}
-                </p>
-                <div class="flex gap-1.5">
-                    @if (!$first)
-                        <a href="{{ route('catalogo.index', ['q' => $q, 'page' => $page - 1, 'size' => $size]) }}"
-                            class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition">← Anterior</a>
-                    @endif
-                    @if (!$last)
-                        <a href="{{ route('catalogo.index', ['q' => $q, 'page' => $page + 1, 'size' => $size]) }}"
-                            class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition">Siguiente →</a>
-                    @endif
-                </div>
-            </div>
-        @endif
+        <!-- Tabla (se recarga en vivo) -->
+        <div id="tabla-catalogo">
+            @include('catalogo._tabla')
+        </div>
     </div>
 </x-app-layout>

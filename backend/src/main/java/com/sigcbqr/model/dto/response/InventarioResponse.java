@@ -9,5 +9,6 @@ public class InventarioResponse {
     private String codigoEjemplar;
     private String estado;
     private String ubicacionEstante;
+    private Long libroId;
     private String libroTitulo;
 }

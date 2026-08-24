@@ -38,6 +38,16 @@ public class PrestamoService {
         return prestamoRepository.findAll(pageable).map(this::toResponse);
     }
 
+    public Page<PrestamoResponse> listarFiltrado(String q, String estado,
+                                                 LocalDateTime desde, LocalDateTime hasta,
+                                                 Pageable pageable) {
+        String texto = (q != null && !q.isBlank()) ? q.trim() : null;
+        String est = (estado != null && !estado.isBlank()) ? estado.trim().toUpperCase() : null;
+        LocalDateTime desdeSeguro = desde != null ? desde : LocalDateTime.of(1900, 1, 1, 0, 0);
+        LocalDateTime hastaSegura = hasta != null ? hasta : LocalDateTime.of(2100, 1, 1, 0, 0);
+        return prestamoRepository.buscarConFiltros(texto, est, desdeSeguro, hastaSegura, pageable).map(this::toResponse);
+    }
+
     public Page<PrestamoResponse> listarPorEstado(String estado, Pageable pageable) {
         return prestamoRepository.findByEstado(estado, pageable).map(this::toResponse);
     }

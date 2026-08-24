@@ -19,6 +19,21 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
     List<Prestamo> findByEstadoAndFechaVencimientoBefore(String estado, LocalDateTime fecha);
     long countByEstado(String estado);
 
+    @Query("""
+        SELECT p FROM Prestamo p
+        WHERE (CAST(:q AS string) IS NULL OR LOWER(p.usuario.nombre) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%'))
+               OR LOWER(p.inventario.libro.titulo) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%'))
+               OR LOWER(p.inventario.codigoEjemplar) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%')))
+          AND (CAST(:estado AS string) IS NULL OR p.estado = :estado)
+          AND p.fechaPrestamo >= :desde
+          AND p.fechaPrestamo < :hasta
+        """)
+    Page<Prestamo> buscarConFiltros(@Param("q") String q,
+                                    @Param("estado") String estado,
+                                    @Param("desde") LocalDateTime desde,
+                                    @Param("hasta") LocalDateTime hasta,
+                                    Pageable pageable);
+
     @Query("SELECT COUNT(p) FROM Prestamo p WHERE p.fechaPrestamo >= :inicio AND p.fechaPrestamo <= :fin")
     long countByFechaPrestamoBetween(LocalDateTime inicio, LocalDateTime fin);
 

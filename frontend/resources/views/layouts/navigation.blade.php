@@ -1,17 +1,19 @@
 <!-- ===== TOP NAVBAR ===== -->
-<nav x-data="{ sidebarOpen: false, userMenuOpen: false }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
+<nav x-data="{ userMenuOpen: false }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
     <div class="h-full px-4 sm:px-6 flex items-center justify-between">
         <!-- Left side -->
         <div class="flex items-center space-x-4">
             <!-- Sidebar toggle -->
-            <button @click="sidebarOpen = !sidebarOpen"
-                class="sidebar-toggle text-white/80 hover:text-gold-400 focus:outline-none text-xl transition">
+            <button @click="$store.ui.sidebarOpen = !$store.ui.sidebarOpen"
+                :class="!$store.ui.sidebarOpen && 'rotate-90'"
+                title="Mostrar / ocultar menú"
+                class="sidebar-toggle text-white/80 hover:text-gold-400 focus:outline-none text-xl transition duration-300">
                 <i class="fas fa-bars"></i>
             </button>
 
             <!-- Logo -->
             <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                <x-application-logo class="h-10 w-auto" />
+                <x-application-logo class="h-10 w-auto" on-dark />
             </a>
         </div>
 
@@ -61,9 +63,9 @@
 </nav>
 
 <!-- ===== SIDEBAR ===== -->
-<aside x-data="{ open: false }"
-    :class="{'open': open}"
-    class="sidebar fixed top-16 left-0 h-[calc(100vh-4rem)] w-[260px] overflow-y-auto overflow-x-hidden z-40 transition-all duration-300 hidden md:block">
+<aside x-data
+    class="sidebar fixed top-16 left-0 h-[calc(100vh-4rem)] w-[260px] overflow-y-auto overflow-x-hidden z-40 transition-transform duration-300 hidden md:block"
+    :class="$store.ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
     <!-- Sidebar Header -->
     <div class="px-5 py-4 border-b border-white/10">
@@ -170,8 +172,8 @@
 </aside>
 
 <!-- ===== MOBILE SIDEBAR OVERLAY ===== -->
-<div x-show="sidebarOpen"
-    @click="sidebarOpen = false"
+<div x-data x-show="$store.ui.sidebarOpen"
+    @click="$store.ui.sidebarOpen = false"
     class="fixed inset-0 bg-black/50 z-30 md:hidden"
     style="display: none;"
     x-transition:enter="transition-opacity ease-linear duration-300"
@@ -183,7 +185,7 @@
 </div>
 
 <!-- ===== MOBILE SIDEBAR ===== -->
-<aside x-show="sidebarOpen"
+<aside x-data x-show="$store.ui.sidebarOpen"
     x-transition:enter="transition ease-in-out duration-300 transform"
     x-transition:enter-start="-translate-x-full"
     x-transition:enter-end="translate-x-0"
@@ -209,7 +211,7 @@
     <nav class="px-3 py-4 space-y-1">
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2">Principal</p>
 
-        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false"
+        <a href="{{ route('dashboard') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('dashboard') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-pie w-5 text-center text-sm"></i>
             <span class="ml-3">Dashboard</span>
@@ -217,29 +219,29 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Biblioteca</p>
 
-        <a href="{{ route('catalogo.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('catalogo.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('catalogo.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-book w-5 text-center text-sm"></i>
             <span class="ml-3">Libros</span>
         </a>
         @if (session('rol') === 'ADMIN')
-        <a href="{{ route('usuarios.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('usuarios.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('usuarios.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-users w-5 text-center text-sm"></i>
             <span class="ml-3">Usuarios</span>
         </a>
         @endif
-        <a href="{{ route('prestamos.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('prestamos.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
         </a>
-        <a href="{{ route('devoluciones.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('devoluciones.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('devoluciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-undo-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Devoluciones</span>
         </a>
-        <a href="{{ route('reservas.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('reservas.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reservas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
@@ -247,18 +249,18 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
-        <a href="#" @click="sidebarOpen = false"
+        <a href="#" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition">
             <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
             <span class="ml-3">Códigos QR</span>
         </a>
-        <a href="{{ route('multas.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('multas.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('multas.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
         @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
-        <a href="{{ route('reportes.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('reportes.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
@@ -268,14 +270,14 @@
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Sistema</p>
 
         @if (session('rol') === 'ADMIN')
-        <a href="{{ route('auditoria.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('auditoria.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('auditoria.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-history w-5 text-center text-sm"></i>
             <span class="ml-3">Auditoría</span>
         </a>
         @endif
         @if (session('rol') === 'ADMIN')
-        <a href="{{ route('configuracion.index') }}" @click="sidebarOpen = false"
+        <a href="{{ route('configuracion.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('configuracion.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-cog w-5 text-center text-sm"></i>
             <span class="ml-3">Configuración</span>

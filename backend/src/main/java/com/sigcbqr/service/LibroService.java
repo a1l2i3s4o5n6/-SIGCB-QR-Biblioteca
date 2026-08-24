@@ -46,6 +46,14 @@ public class LibroService {
         return libroRepository.findByTituloContainingIgnoreCase(query, pageable).map(this::toResponse);
     }
 
+    public Page<LibroResponse> listarFiltrado(String q, Long categoriaId, Long editorialId,
+                                              Integer anio, Boolean soloDisponibles, Pageable pageable) {
+        boolean solo = Boolean.TRUE.equals(soloDisponibles);
+        String texto = (q != null && !q.isBlank()) ? q.trim() : null;
+        return libroRepository.buscarConFiltros(texto, categoriaId, editorialId, anio, solo, pageable)
+                .map(this::toResponse);
+    }
+
     public LibroResponse obtener(Long id) {
         Libro libro = libroRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Libro", id));
