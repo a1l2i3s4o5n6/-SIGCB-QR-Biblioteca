@@ -41,10 +41,18 @@ public class ReservaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar reservas", description = "Obtiene todas las reservas con paginación")
+    @Operation(summary = "Listar reservas", description = "Obtiene reservas con paginación, búsqueda y filtro por estado")
     public ResponseEntity<PageResponse<ReservaResponse>> listar(
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "estado", required = false) String estado,
             @PageableDefault(size = 10) Pageable pageable) {
-        var page = reservaRepository.findAll(pageable).map(this::toResponse);
+        boolean sinFiltros = q == null && estado == null;
+        var page = sinFiltros
+                ? reservaRepository.findAll(pageable).map(this::toResponse)
+                : reservaRepository.buscarConFiltros(
+                        (q != null && !q.isBlank()) ? q.trim() : null,
+                        (estado != null && !estado.isBlank()) ? estado.trim().toUpperCase() : null,
+                        pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

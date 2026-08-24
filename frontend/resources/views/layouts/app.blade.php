@@ -19,7 +19,7 @@
     @include('layouts.navigation')
 
     <!-- Main Content -->
-    <div class="pt-16 md:pl-[260px] transition-all duration-300">
+    <div class="pt-16 app-shell" x-data :class="{ collapsed: !$store.ui.sidebarOpen }">
         <!-- Page Heading -->
         @isset($header)
             <header class="bg-white border-b border-gray-200 shadow-sm">

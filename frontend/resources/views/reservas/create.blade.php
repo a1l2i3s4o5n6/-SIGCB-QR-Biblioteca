@@ -21,42 +21,98 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-3xl">
+    @php
+        $oldUsuarioId = old('usuarioId');
+        $oldLibroId = old('libroId');
+    @endphp
+
+    <div class="max-w-3xl"
+        x-data="formularioReserva({
+            usuarios: @js($usuarios),
+            libros: @js($libros),
+            oldUsuarioId: @js($oldUsuarioId ? (int) $oldUsuarioId : null),
+            oldLibroId: @js($oldLibroId ? (int) $oldLibroId : null),
+         })">
         <form method="POST" action="{{ route('reservas.store') }}">
             @csrf
-            <div class="p-6 grid grid-cols-1 gap-5">
-                <!-- Usuario -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 grid grid-cols-1 gap-6">
+
+                <!-- Usuario (combobox buscable) -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Usuario <span class="text-red-500">*</span></label>
-                    <select name="usuarioId" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
-                        <option value="">Selecciona un usuario...</option>
-                        @foreach ($usuarios as $usuario)
-                            <option value="{{ $usuario['id'] }}" @selected(old('usuarioId') == $usuario['id'])>
-                                {{ $usuario['nombre'] }} ({{ $usuario['email'] }})
-                            </option>
-                        @endforeach
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                        Usuario <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative" @click.outside="abiertoU = false">
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+                            <input type="text" x-model="usuarioQ" autocomplete="off"
+                                @focus="abiertoU = true" @input="abiertoU = true; usuarioSel = null"
+                                placeholder="Escribe el nombre o correo del usuario..."
+                                class="w-full pl-9 pr-9 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                            <button type="button" x-show="usuarioQ && !abiertoU" @click="limpiarUsuario()"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times-circle text-xs"></i>
+                            </button>
+                        </div>
+                        <div x-show="abiertoU" x-cloak
+                            class="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            <template x-for="u in usuariosFiltrados" :key="u.id">
+                                <button type="button" @click="elegirUsuario(u)"
+                                    class="w-full text-left px-3 py-2.5 hover:bg-primary-50 transition border-b border-gray-50 last:border-0">
+                                    <span class="block text-sm font-medium text-gray-800" x-text="u.nombre"></span>
+                                    <span class="block text-xs text-gray-400" x-text="u.email"></span>
+                                </button>
+                            </template>
+                            <p x-show="usuariosFiltrados.length === 0" class="px-3 py-3 text-sm text-gray-400 text-center">
+                                Sin resultados
+                            </p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="usuarioId" :value="usuarioId">
+                    @error('usuarioId')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <!-- Libro -->
+                <!-- Libro (combobox buscable) -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Libro <span class="text-red-500">*</span></label>
-                    <select name="libroId" required size="8"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
-                        @forelse ($libros as $libro)
-                            <option value="{{ $libro['id'] }}" @selected(old('libroId') == $libro['id'])>
-                                {{ $libro['titulo'] }} ({{ $libro['isbn'] ?? 's/i' }})
-                            </option>
-                        @empty
-                            <option value="" disabled>No hay libros registrados</option>
-                        @endforelse
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                        Libro <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative" @click.outside="abiertoL = false">
+                        <div class="relative">
+                            <i class="fas fa-book absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+                            <input type="text" x-model="libroQ" autocomplete="off"
+                                @focus="abiertoL = true" @input="abiertoL = true; libroSel = null"
+                                placeholder="Escribe el título del libro..."
+                                class="w-full pl-9 pr-9 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                            <button type="button" x-show="libroQ && !abiertoL" @click="limpiarLibro()"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times-circle text-xs"></i>
+                            </button>
+                        </div>
+                        <div x-show="abiertoL" x-cloak
+                            class="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            <template x-for="l in librosFiltrados" :key="l.id">
+                                <button type="button" @click="elegirLibro(l)"
+                                    class="w-full text-left px-3 py-2.5 hover:bg-primary-50 transition border-b border-gray-50 last:border-0">
+                                    <span class="block text-sm font-medium text-gray-800" x-text="l.titulo"></span>
+                                </button>
+                            </template>
+                            <p x-show="librosFiltrados.length === 0" class="px-3 py-3 text-sm text-gray-400 text-center">
+                                Sin resultados
+                            </p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="libroId" :value="libroId">
                     <p class="text-xs text-gray-400 mt-1">El sistema valida que el libro no tenga una reserva pendiente.</p>
+                    @error('libroId')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
+            <div class="mt-4 rounded-xl shadow-sm border border-gray-200 bg-white px-6 py-4 flex justify-end gap-2">
                 <a href="{{ route('reservas.index') }}"
                     class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-white border border-gray-300 hover:bg-gray-100 transition">Cancelar</a>
                 <button type="submit"

@@ -1,5 +1,6 @@
 package com.sigcbqr.controller;
 
+import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.response.InventarioResponse;
 import com.sigcbqr.model.entity.Inventario;
 import com.sigcbqr.repository.InventarioRepository;
@@ -22,6 +23,14 @@ public class InventarioController {
 
     public InventarioController(InventarioRepository inventarioRepository) {
         this.inventarioRepository = inventarioRepository;
+    }
+
+    @GetMapping("/buscar")
+    @Operation(summary = "Buscar ejemplar por código", description = "Localiza un ejemplar por su código único (ej. LIB-0001-01)")
+    public ResponseEntity<InventarioResponse> buscarPorCodigo(@RequestParam String codigo) {
+        Inventario item = inventarioRepository.findByCodigoEjemplar(codigo.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Ejemplar con código " + codigo + " no encontrado"));
+        return ResponseEntity.ok(toResponse(item));
     }
 
     @GetMapping("/disponibles")
@@ -56,7 +65,8 @@ public class InventarioController {
                 .codigoEjemplar(item.getCodigoEjemplar())
                 .estado(item.getEstado())
                 .ubicacionEstante(item.getUbicacionEstante())
-                .libroTitulo(item.getLibro().getTitulo())
+                .libroId(item.getLibro() != null ? item.getLibro().getId() : null)
+                .libroTitulo(item.getLibro() != null ? item.getLibro().getTitulo() : null)
                 .build();
     }
 }

@@ -29,98 +29,48 @@
         </div>
     @endif
 
-    <!-- Tabla -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left text-gray-500 text-xs uppercase bg-gray-50">
-                        <th class="px-5 py-3 font-medium">Usuario</th>
-                        <th class="px-5 py-3 font-medium">Libro</th>
-                        <th class="px-5 py-3 font-medium">Ejemplar</th>
-                        <th class="px-5 py-3 font-medium">Inicio</th>
-                        <th class="px-5 py-3 font-medium">Vencimiento</th>
-                        <th class="px-5 py-3 font-medium text-center">Estado</th>
-                        <th class="px-5 py-3 font-medium text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse ($prestamos as $prestamo)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-5 py-3">
-                                <a href="{{ route('prestamos.show', $prestamo['id']) }}"
-                                    class="font-semibold text-gray-800 hover:text-primary-400">
-                                    {{ $prestamo['usuarioNombre'] ?? '—' }}
-                                </a>
-                            </td>
-                            <td class="px-5 py-3 text-gray-600">{{ $prestamo['libroTitulo'] ?? '—' }}</td>
-                            <td class="px-5 py-3">
-                                <span class="px-2 py-1 bg-gray-100 text-gray-700 text-[11px] font-mono rounded">{{ $prestamo['codigoEjemplar'] ?? '—' }}</span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ $prestamo['fechaPrestamo'] ? \Carbon\Carbon::parse($prestamo['fechaPrestamo'])->format('d/m/Y') : '—' }}</td>
-                            <td class="px-5 py-3 text-gray-500">{{ $prestamo['fechaVencimiento'] ? \Carbon\Carbon::parse($prestamo['fechaVencimiento'])->format('d/m/Y') : '—' }}</td>
-                            <td class="px-5 py-3 text-center">
-                                @php
-                                    $color = match($prestamo['estado'] ?? '') {
-                                        'ACTIVO' => 'bg-green-50 text-green-700',
-                                        'DEVUELTO' => 'bg-blue-50 text-blue-700',
-                                        'VENCIDO' => 'bg-red-50 text-red-700',
-                                        'RENOVADO' => 'bg-gold-50 text-gold-400',
-                                        default => 'bg-yellow-50 text-yellow-700',
-                                    };
-                                @endphp
-                                <span class="px-2 py-1 {{ $color }} text-[11px] font-medium rounded-full">{{ $prestamo['estado'] ?? '—' }}</span>
-                            </td>
-                            <td class="px-5 py-3">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('prestamos.show', $prestamo['id']) }}"
-                                        title="Ver detalle"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-400 transition">
-                                        <i class="fas fa-eye text-xs"></i>
-                                    </a>
-                                    @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) && ($prestamo['estado'] ?? '') === 'ACTIVO')
-                                        <form method="POST" action="{{ route('prestamos.devolver', $prestamo['id']) }}"
-                                            onsubmit="return confirm('¿Registrar devolución de este préstamo?')">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit"
-                                                title="Devolver"
-                                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-500 transition">
-                                                <i class="fas fa-undo text-xs"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-5 py-10 text-center">
-                                <i class="fas fa-exchange-alt text-gray-300 text-3xl mb-3"></i>
-                                <p class="text-gray-400">No hay préstamos registrados.</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div x-data="liveTabla({
+            url: '{{ route('datos.prestamos') }}',
+            container: 'tabla-prestamos',
+            campos: ['q', 'estado', 'desde', 'hasta']
+         })">
+        <!-- Búsqueda y filtros -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                <div class="lg:col-span-2 relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" x-model="q" @input="alEscribir()"
+                        placeholder="Buscar por estudiante, libro o código de ejemplar..."
+                        class="w-full pl-9 pr-9 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                    <span x-show="cargando" x-cloak
+                        class="absolute right-3 top-1/2 -translate-y-1/2 fas fa-circle-notch fa-spin text-primary-400 text-sm"></span>
+                </div>
+                <select x-model="estado" @change="cargar(1)"
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
+                    <option value="">Todos los estados</option>
+                    <option value="ACTIVO">Activos</option>
+                    <option value="VENCIDO">Vencidos</option>
+                    <option value="RENOVADO">Renovados</option>
+                    <option value="DEVUELTO">Devueltos</option>
+                </select>
+                <button type="button" @click="limpiar()"
+                    class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition">
+                    <i class="fas fa-broom mr-1.5"></i> Limpiar filtros
+                </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="text-xs font-medium uppercase text-gray-400">Registrados entre</span>
+                <input type="date" x-model="desde" @change="cargar(1)"
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400">
+                <span class="text-xs text-gray-400">y</span>
+                <input type="date" x-model="hasta" @change="cargar(1)"
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400">
+            </div>
         </div>
 
-        @if ($totalPages > 1)
-            <div class="px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <p class="text-xs text-gray-500">
-                    Mostrando <span class="font-semibold">{{ count($prestamos) }}</span> de {{ number_format($total) }} préstamos · Página {{ $page + 1 }} de {{ $totalPages }}
-                </p>
-                <div class="flex gap-1.5">
-                    @if (!$first)
-                        <a href="{{ route('prestamos.index', ['page' => $page - 1, 'size' => $size]) }}"
-                            class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition">← Anterior</a>
-                    @endif
-                    @if (!$last)
-                        <a href="{{ route('prestamos.index', ['page' => $page + 1, 'size' => $size]) }}"
-                            class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition">Siguiente →</a>
-                    @endif
-                </div>
-            </div>
-        @endif
+        <!-- Tabla (se recarga en vivo) -->
+        <div id="tabla-prestamos">
+            @include('prestamos._tabla')
+        </div>
     </div>
 </x-app-layout>

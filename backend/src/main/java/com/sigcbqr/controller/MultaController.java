@@ -32,10 +32,13 @@ public class MultaController {
 
     @GetMapping
     @Transactional(readOnly = true)
-    @Operation(summary = "Listar multas", description = "Obtiene todas las multas con paginación")
+    @Operation(summary = "Listar multas", description = "Obtiene multas con paginación y filtro por estado de pago")
     public ResponseEntity<PageResponse<MultaResponse>> listar(
+            @RequestParam(value = "pagada", required = false) Boolean pagada,
             @PageableDefault(size = 10) Pageable pageable) {
-        var page = multaRepository.findAll(pageable).map(this::toResponse);
+        var page = (pagada == null)
+                ? multaRepository.findAll(pageable).map(this::toResponse)
+                : multaRepository.findByPagada(pagada, pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

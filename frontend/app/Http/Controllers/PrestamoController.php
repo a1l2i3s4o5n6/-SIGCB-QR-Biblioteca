@@ -18,7 +18,15 @@ class PrestamoController extends Controller
         $page = max(0, (int) $request->query('page', 0));
         $size = min(50, max(5, (int) $request->query('size', 10)));
 
-        $data = $this->api->getPrestamos(['page' => $page, 'size' => $size]);
+        $params = ['page' => $page, 'size' => $size];
+
+        foreach (['q', 'estado', 'desde', 'hasta'] as $filtro) {
+            if ($request->filled($filtro)) {
+                $params[$filtro] = $request->query($filtro);
+            }
+        }
+
+        $data = $this->api->getPrestamos($params);
 
         return view('prestamos.index', [
             'prestamos'   => $data['content'] ?? [],

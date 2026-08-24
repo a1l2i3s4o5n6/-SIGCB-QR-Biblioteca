@@ -15,17 +15,21 @@ class CatalogoController extends Controller
 
     public function index(Request $request): View
     {
-        $q = $request->query('q', '');
         $page = max(0, (int) $request->query('page', 0));
         $size = min(50, max(5, (int) $request->query('size', 10)));
 
         $params = ['page' => $page, 'size' => $size];
 
-        if ($q !== '') {
-            $data = $this->api->buscarLibros($q, $params);
-        } else {
-            $data = $this->api->getLibros($params);
+        foreach (['q', 'categoriaId', 'editorialId', 'anio', 'soloDisponibles'] as $filtro) {
+            if ($request->filled($filtro)) {
+                $params[$filtro] = $request->query($filtro);
+            }
         }
+
+        $data = $this->api->getLibros($params);
+
+        $categorias = $this->api->getCategorias(['size' => 100]);
+        $editoriales = $this->api->getEditoriales(['size' => 100]);
 
         return view('catalogo.index', [
             'libros'      => $data['content'] ?? [],
@@ -35,7 +39,9 @@ class CatalogoController extends Controller
             'totalPages'  => $data['totalPages'] ?? 0,
             'first'       => $data['first'] ?? true,
             'last'        => $data['last'] ?? true,
-            'q'           => $q,
+            'q'           => $request->query('q', ''),
+            'categorias'  => $categorias['content'] ?? [],
+            'editoriales' => $editoriales['content'] ?? [],
         ]);
     }
 
