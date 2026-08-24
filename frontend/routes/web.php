@@ -7,6 +7,7 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\QrController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\UsuarioController;
@@ -75,6 +76,12 @@ Route::middleware('auth')->group(function () {
     // ── Configuración ───────────────────────────────────────────────────
     Route::get('/configuracion',           [ConfiguracionController::class, 'index'])->name('configuracion.index');
     Route::post('/configuracion',          [ConfiguracionController::class, 'update'])->name('configuracion.update');
+
+    // ── Códigos QR ─────────────────────────────────────────────────────
+    Route::get('/qr-codigos',                  [QrController::class, 'index'])->name('qr-codigos.index');
+    Route::post('/qr-codigos',                 [QrController::class, 'store'])->name('qr-codigos.store');
+    Route::post('/qr-codigos/{id}/toggle',     [QrController::class, 'toggle'])->name('qr-codigos.toggle');
+    Route::post('/qr-codigos/{id}/regenerar',  [QrController::class, 'regenerar'])->name('qr-codigos.regenerar');
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');

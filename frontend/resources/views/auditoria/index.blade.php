@@ -5,6 +5,10 @@
                 <h1 class="text-xl font-bold text-gray-800">Auditoría</h1>
                 <p class="text-sm text-gray-500 mt-0.5">Registro de actividades del sistema</p>
             </div>
+            <button type="button" onclick="window.location.reload()"
+                class="inline-flex items-center px-3 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-700 transition">
+                <i class="fas fa-sync-alt mr-2"></i> Actualizar
+            </button>
         </div>
     </x-slot>
 
@@ -43,6 +47,9 @@
                                 'RENOVAR'    => 'bg-yellow-50 text-yellow-700',
                                 'PAGAR'      => 'bg-emerald-50 text-emerald-700',
                                 'CANCELAR'   => 'bg-orange-50 text-orange-700',
+                                'REGENERAR'  => 'bg-indigo-50 text-indigo-700',
+                                'ACTIVAR'    => 'bg-green-50 text-green-700',
+                                'DESACTIVAR' => 'bg-orange-50 text-orange-700',
                             ];
                             $color = $colores[$accion] ?? 'bg-gray-100 text-gray-600';
                         @endphp
