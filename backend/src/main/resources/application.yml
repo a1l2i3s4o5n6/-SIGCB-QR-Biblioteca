@@ -38,7 +38,7 @@ spring:
 
 app:
   jwt:
-    secret: aG9sYV9tdW5kby5lc3RlX2VzX3VuX3NlY3JldG9fbXV5X3NlZ3Vyb19wYXJhX2xvcyB0b2tlbmVzX2RlbF9zaXN0ZW1hX3NpZ2NiX3FyX2RlbF9wcm95ZWN0b19kZV9sYV91bml2ZXJzaWRhZA==
+    secret: ${JWT_SECRET}
     expiration-ms: 3600000
     issuer: ${JWT_ISSUER:sigcbqr-api}
     audience: ${JWT_AUDIENCE:sigcbqr-frontend}

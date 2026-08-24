@@ -49,6 +49,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: Doctora2025
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      JWT_SECRET: YJmzpR1cx9oYiDuBEFK6U0BNLdB1uymzqpPrINxBzOwUlNp8VNxX7/AL5wTNbbQm
       JAVA_TOOL_OPTIONS: -Duser.timezone=America/Guayaquil
     depends_on:
       postgres:

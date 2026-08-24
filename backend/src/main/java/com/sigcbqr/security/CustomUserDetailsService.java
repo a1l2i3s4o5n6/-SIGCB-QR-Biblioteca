@@ -33,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 usuario.getEmail(),
                 usuario.getPassword(),
                 usuario.getRol().getNombre(),
+                usuario.getActivo(),
                 authorities
         );
     }
