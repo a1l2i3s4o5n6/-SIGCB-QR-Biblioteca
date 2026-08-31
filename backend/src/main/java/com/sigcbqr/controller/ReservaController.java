@@ -1,5 +1,6 @@
 package com.sigcbqr.controller;
 
+import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.request.ReservaRequest;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
@@ -8,13 +9,16 @@ import com.sigcbqr.model.entity.Reserva;
 import com.sigcbqr.repository.LibroRepository;
 import com.sigcbqr.repository.ReservaRepository;
 import com.sigcbqr.repository.UsuarioRepository;
+import com.sigcbqr.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -72,9 +76,9 @@ public class ReservaController {
     @Operation(summary = "Crear reserva", description = "Registra una nueva reserva de libro")
     public ResponseEntity<ApiResponse> crear(@Valid @RequestBody ReservaRequest request) {
         var usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", request.getUsuarioId()));
         var libro = libroRepository.findById(request.getLibroId())
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Libro", request.getLibroId()));
 
         if (reservaRepository.existsByLibroIdAndEstado(request.getLibroId(), "PENDIENTE")) {
             return ResponseEntity.badRequest()
@@ -96,11 +100,18 @@ public class ReservaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")
-    @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente")
-    public ResponseEntity<ApiResponse> cancelar(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO') or hasRole('ESTUDIANTE')")
+    @Operation(summary = "Cancelar reserva", description = "Cancela una reserva existente (el estudiante solo la suya)")
+    public ResponseEntity<ApiResponse> cancelar(@AuthenticationPrincipal UserPrincipal principal,
+                                                @PathVariable Long id) {
         var reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva", id));
+
+        if ("ESTUDIANTE".equals(principal.rol())
+                && !reserva.getUsuario().getId().equals(principal.id())) {
+            throw new AccessDeniedException("No puede cancelar una reserva de otro usuario");
+        }
+
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
         auditoriaService.registrar("CANCELAR", "RESERVA", reserva.getId(),

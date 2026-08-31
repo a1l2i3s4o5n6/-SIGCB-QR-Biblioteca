@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +40,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
+        pd.setType(URI.create(BASE_ERROR_URL + "/unauthorized"));
+        pd.setTitle("No autorizado");
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ProblemDetail handleTooManyRequests(TooManyRequestsException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+        pd.setType(URI.create(BASE_ERROR_URL + "/too-many-requests"));
+        pd.setTitle("Demasiadas solicitudes");
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ProblemDetail handleDisabled(DisabledException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Usuario desactivado");
         pd.setType(URI.create(BASE_ERROR_URL + "/unauthorized"));
         pd.setTitle("No autorizado");
         pd.setProperty("timestamp", System.currentTimeMillis());
