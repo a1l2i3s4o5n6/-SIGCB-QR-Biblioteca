@@ -92,6 +92,9 @@ public class AuthService {
 
         usuario = usuarioRepository.save(usuario);
 
+        auditoriaService.registrar(usuario, "REGISTRAR", "USUARIO", usuario.getId(),
+                "Registro de nuevo usuario: " + usuario.getEmail());
+
         String token = tokenProvider.generateToken(usuario.getId(), usuario.getEmail(),
                 usuario.getRol().getNombre());
 
