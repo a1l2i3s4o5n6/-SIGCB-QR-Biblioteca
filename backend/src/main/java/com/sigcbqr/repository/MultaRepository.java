@@ -3,6 +3,7 @@ package com.sigcbqr.repository;
 import com.sigcbqr.model.entity.Multa;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -14,8 +15,16 @@ import java.util.List;
 
 @Repository
 public interface MultaRepository extends JpaRepository<Multa, Long> {
+    @EntityGraph(attributePaths = {"usuario", "prestamo"})
     Page<Multa> findByUsuarioId(Long usuarioId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"usuario", "prestamo"})
     Page<Multa> findByPagada(Boolean pagada, Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"usuario", "prestamo"})
+    Page<Multa> findAll(Pageable pageable);
+
     List<Multa> findByPagadaFalse();
     long countByPagadaFalse();
 
