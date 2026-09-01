@@ -26,19 +26,25 @@
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
+        <div class="mt-4" x-data="{ mostrar: false }">
             <x-input-label for="password" :value="__('Contraseña')" />
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-lock text-gray-400 text-sm"></i>
                 </div>
                 <x-text-input id="password"
-                    class="block w-full pl-10 pr-3 py-2.5"
-                    type="password"
+                    class="block w-full pl-10 pr-11 py-2.5"
+                    x-bind:type="mostrar ? 'text' : 'password'"
                     name="password"
                     required
                     autocomplete="current-password"
                     placeholder="••••••••" />
+                <button type="button" @click="mostrar = !mostrar"
+                    :aria-label="mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                    title="Mostrar / ocultar contraseña"
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-primary-400 focus:outline-none transition">
+                    <i class="fas text-sm" :class="mostrar ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
