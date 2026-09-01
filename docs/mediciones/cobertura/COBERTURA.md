@@ -38,10 +38,10 @@ mismos servicios como *service containers*.
 ## 2. Resultado de la ejecución
 
 ```
-[INFO] Tests run: 41, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 55, Failures: 0, Errors: 0, Skipped: 0
 [INFO] All coverage checks have been met.
 [INFO] BUILD SUCCESS
-[INFO] Total time:  03:20 min
+[INFO] Total time:  02:52 min
 ```
 
 ### Pruebas por clase
@@ -49,6 +49,7 @@ mismos servicios como *service containers*.
 | Clase de prueba | Pruebas | Tipo |
 |---|---:|---|
 | `CacheSerializationTest` | 2 | Unitaria |
+| `AuditoriaControllerTest` | 5 | `@WebMvcTest` |
 | `AuthControllerTest` | 2 | `@WebMvcTest` |
 | `LibroControllerTest` | 3 | `@WebMvcTest` |
 | `ReporteControllerTest` | 2 | `@WebMvcTest` |
@@ -59,9 +60,11 @@ mismos servicios como *service containers*.
 | `SecurityTest` | 3 | `@SpringBootTest` |
 | `AuthServiceTest` | 2 | Unitaria (Mockito) |
 | `LibroServiceTest` | 5 | Unitaria (Mockito) |
-| `PrestamoServiceTest` | 3 | Unitaria (Mockito) |
+| `NotificacionServiceTest` | 4 | Unitaria (Mockito) |
+| `PrestamoServiceTest` | 4 | Unitaria (Mockito) |
+| `SancionServiceTest` | 4 | Unitaria (Mockito) |
 | `SigcbQrApplicationTests` | 1 | Contexto completo |
-| **Total** | **41** | |
+| **Total** | **55** | |
 
 ---
 
@@ -69,15 +72,15 @@ mismos servicios como *service containers*.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 1 530 | 4 728 | **32,36 %** |
-| Ramas | 34 | 254 | **13,39 %** |
-| **Líneas** | **429** | **1 099** | **39,04 %** |
-| Complejidad ciclomática | 92 | 391 | 23,53 % |
-| Métodos | 83 | 264 | 31,44 % |
-| Clases analizadas | — | 58 | — |
+| Instrucciones | 1 944 | 5 352 | **36,32 %** |
+| Ramas | 49 | 276 | **17,75 %** |
+| **Líneas** | **538** | **1 236** | **43,53 %** |
+| Complejidad ciclomática | 110 | 436 | 25,23 % |
+| Métodos | 96 | 298 | 32,21 % |
+| Clases analizadas | – | 62 | – |
 
 El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (39,04 %). El umbral es bajo a propósito y no debe presentarse
+regla se cumple (43,53 %). El umbral es bajo a propósito y no debe presentarse
 como un objetivo alcanzado: se fijó para que la construcción falle si la
 cobertura *retrocede*, no como meta de calidad.
 
@@ -87,11 +90,11 @@ cobertura *retrocede*, no como meta de calidad.
 |---|---:|---:|---:|
 | `com.sigcbqr.config` | 58/58 | 100,0 % | 0,0 % |
 | `com.sigcbqr.model.dto.response` | 14/23 | 60,9 % | 0,0 % |
-| `com.sigcbqr.exception` | 38/77 | 49,4 % | 0,0 % |
+| `com.sigcbqr.exception` | 44/83 | 53,0 % | 0,0 % |
+| `com.sigcbqr.service` | 271/561 | 48,3 % | 22,1 % |
 | `com.sigcbqr.security` | 56/123 | 45,5 % | 25,0 % |
-| `com.sigcbqr.service` | 187/454 | 41,2 % | 18,3 % |
 | `com.sigcbqr` | 1/3 | 33,3 % | 0,0 % |
-| `com.sigcbqr.controller` | 74/293 | 25,3 % | 10,3 % |
+| `com.sigcbqr.controller` | 93/317 | 29,3 % | 17,9 % |
 | `com.sigcbqr.model.entity` | 1/68 | 1,5 % | 0,0 % |
 
 ---
@@ -101,16 +104,16 @@ cobertura *retrocede*, no como meta de calidad.
 **El reparto importa más que el total.** La cobertura no es uniforme y está
 concentrada donde debe estarlo:
 
-- `security` (45,5 %) y `service` (41,2 %) contienen las reglas cuya rotura
+- `security` (45,5 %) y `service` (48,3 %) contienen las reglas cuya rotura
   tendría consecuencias: emisión y validación de tokens, revocación, límites de
   préstamo, borrado lógico.
 - `model.entity` (1,5 %) son entidades JPA de datos con Lombok. La cifra es baja y
   **carece de significado**: probar un *getter* generado no aporta información.
   Contribuye a hundir el total sin que eso indique riesgo.
-- `controller` (25,3 %) es la zona con déficit real: solo tres de los trece
+- `controller` (29,3 %) es la zona con déficit real: solo cuatro de los quince
   controladores tienen pruebas.
 
-**La cobertura de rama, 13,39 %, es el dato preocupante**, no el 39 % de líneas.
+**La cobertura de rama, 17,75 %, es el dato preocupante**, no el 43,53 % de líneas.
 Significa que las pruebas recorren el camino feliz y dejan casi todas las
 bifurcaciones —validaciones, comprobaciones de estado, ramas de error— sin
 ejercitar. Es coherente con los tres defectos que la construcción no detectó y
