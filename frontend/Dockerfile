@@ -12,7 +12,7 @@ RUN npm ci && npm run build
 FROM php:8.4-apache
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libonig-dev libzip-dev unzip \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring gd zip \
-    && a2enmod rewrite
+    && a2enmod rewrite headers
 
 COPY --from=vendor /app/vendor /var/www/html/vendor
 COPY --from=frontend /app/public/build /var/www/html/public/build

@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @Service
 public class PrestamoService {
 
+    private static final int MAX_PRESTAMOS_ACTIVOS = 5;
+    private static final int DIAS_PRESTAMO = 7;
+
     private final PrestamoRepository prestamoRepository;
     private final UsuarioRepository usuarioRepository;
     private final InventarioRepository inventarioRepository;
@@ -76,7 +79,7 @@ public class PrestamoService {
         }
 
         long prestamosActivos = prestamoRepository.countByUsuarioIdAndEstado(request.getUsuarioId(), "ACTIVO");
-        if (prestamosActivos >= 5) {
+        if (prestamosActivos >= MAX_PRESTAMOS_ACTIVOS) {
             throw new BadRequestException("El usuario tiene demasiados préstamos activos");
         }
 
@@ -84,7 +87,7 @@ public class PrestamoService {
                 .usuario(usuario)
                 .inventario(inventario)
                 .fechaPrestamo(LocalDateTime.now())
-                .fechaVencimiento(LocalDateTime.now().plusDays(7))
+                .fechaVencimiento(LocalDateTime.now().plusDays(DIAS_PRESTAMO))
                 .estado("ACTIVO")
                 .build();
 
@@ -142,14 +145,14 @@ public class PrestamoService {
         }
 
         prestamo.setEstado("RENOVADO");
-        prestamo.setObservaciones("Renovado - nueva fecha: " + LocalDateTime.now().plusDays(7));
+        prestamo.setObservaciones("Renovado - nueva fecha: " + LocalDateTime.now().plusDays(DIAS_PRESTAMO));
         prestamoRepository.save(prestamo);
 
         Prestamo nuevoPrestamo = Prestamo.builder()
                 .usuario(prestamo.getUsuario())
                 .inventario(prestamo.getInventario())
                 .fechaPrestamo(LocalDateTime.now())
-                .fechaVencimiento(LocalDateTime.now().plusDays(7))
+                .fechaVencimiento(LocalDateTime.now().plusDays(DIAS_PRESTAMO))
                 .estado("ACTIVO")
                 .observaciones("Renovación del préstamo #" + prestamo.getId())
                 .build();

@@ -3,6 +3,7 @@ package com.sigcbqr.repository;
 import com.sigcbqr.model.entity.Reserva;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,11 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     long countByUsuarioIdAndEstado(Long usuarioId, String estado);
     boolean existsByLibroIdAndEstado(Long libroId, String estado);
 
+    @Override
+    @EntityGraph(attributePaths = {"usuario", "libro"})
+    Page<Reserva> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"usuario", "libro"})
     @Query("""
         SELECT r FROM Reserva r
         WHERE (CAST(:q AS string) IS NULL OR LOWER(r.usuario.nombre) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%'))

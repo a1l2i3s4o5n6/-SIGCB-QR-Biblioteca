@@ -1,0 +1,6 @@
+app:
+  jwt:
+    secure-cookie: ${JWT_SECURE_COOKIE:true}
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://biblioteca.example.com}

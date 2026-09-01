@@ -1,6 +1,5 @@
 package com.sigcbqr.security;
 
-import com.sigcbqr.model.entity.JwtBlacklist;
 import com.sigcbqr.repository.JwtBlacklistRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,13 +18,7 @@ public class JwtBlacklistService {
 
     @Transactional
     public void blacklist(String jti, LocalDateTime expiration) {
-        if (!repository.existsByJti(jti)) {
-            JwtBlacklist entry = JwtBlacklist.builder()
-                    .jti(jti)
-                    .fechaExpiracion(expiration)
-                    .build();
-            repository.save(entry);
-        }
+        repository.insertIfAbsent(jti, expiration);
     }
 
     public boolean isBlacklisted(String jti) {

@@ -1,5 +1,6 @@
 package com.sigcbqr.controller;
 
+import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.MultaResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
@@ -57,7 +58,7 @@ public class MultaController {
     @Operation(summary = "Pagar multa", description = "Registra el pago de una multa")
     public ResponseEntity<ApiResponse> pagar(@PathVariable Long id) {
         Multa multa = multaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Multa no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Multa", id));
         multa.setPagada(true);
         multa.setFechaPago(LocalDateTime.now());
         multaRepository.save(multa);

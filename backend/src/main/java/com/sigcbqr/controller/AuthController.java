@@ -8,6 +8,7 @@ import com.sigcbqr.model.dto.response.UsuarioResponse;
 import com.sigcbqr.security.JwtTokenProvider;
 import com.sigcbqr.security.UserPrincipal;
 import com.sigcbqr.service.AuthService;
+import com.sigcbqr.service.RateLimitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,16 +28,21 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider tokenProvider;
+    private final RateLimitService rateLimitService;
 
-    public AuthController(AuthService authService, JwtTokenProvider tokenProvider) {
+    public AuthController(AuthService authService, JwtTokenProvider tokenProvider,
+                          RateLimitService rateLimitService) {
         this.authService = authService;
         this.tokenProvider = tokenProvider;
+        this.rateLimitService = rateLimitService;
     }
 
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesión", description = "Autentica al usuario y devuelve un JWT en cookie HttpOnly")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request,
+                                             HttpServletRequest httpServletRequest,
                                              HttpServletResponse response) {
+        rateLimitService.check(httpServletRequest.getRemoteAddr());
         LoginResponse loginResponse = authService.login(request);
 
         String token = tokenProvider.generateToken(
@@ -54,7 +60,9 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Registrar usuario", description = "Registra un nuevo usuario y devuelve JWT en cookie")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request,
+                                                HttpServletRequest httpServletRequest,
                                                 HttpServletResponse response) {
+        rateLimitService.check(httpServletRequest.getRemoteAddr());
         LoginResponse loginResponse = authService.register(request);
 
         String token = tokenProvider.generateToken(

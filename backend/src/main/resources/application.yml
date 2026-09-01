@@ -45,10 +45,26 @@ app:
     secure-cookie: ${JWT_SECURE_COOKIE:false}
 
   cors:
-    allowed-origins: http://localhost:8000,http://127.0.0.1:8000
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8000,http://127.0.0.1:8000}
+
+  security:
+    rate-limit:
+      max-requests: ${RATE_LIMIT_MAX_REQUESTS:5}
+      window-ms: ${RATE_LIMIT_WINDOW_MS:60000}
 
   cache:
     default-ttl-seconds: ${CACHE_DEFAULT_TTL_SECONDS:300}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
 
 logging:
   level:
