@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
 
     // ── Notificaciones ────────────────────────────────────────────────
     Route::get('/notificaciones',                 [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::get('/notificaciones/no-leidas',       [NotificacionController::class, 'noLeidasJson'])->name('notificaciones.no-leidas-json');
     Route::post('/notificaciones',                [NotificacionController::class, 'store'])->name('notificaciones.store');
     Route::post('/notificaciones/{id}/leida',     [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');
     Route::post('/notificaciones/leer-todas',     [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer-todas');

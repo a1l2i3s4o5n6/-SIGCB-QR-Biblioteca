@@ -20,9 +20,15 @@ class SancionController extends Controller
     {
         $page = max(0, (int) $request->query('page', 0));
         $size = min(100, max(5, (int) $request->query('size', 10)));
+        $activa = $request->query('activa');
+
+        $params = ['page' => $page, 'size' => $size];
+        if ($this->esStaff() && in_array($activa, ['0', '1'], true)) {
+            $params['activa'] = (int) $activa;
+        }
 
         $data = $this->esStaff()
-            ? $this->api->getSanciones(['page' => $page, 'size' => $size])
+            ? $this->api->getSanciones($params)
             : $this->api->getSancionesMias(['page' => $page, 'size' => $size]);
 
         $usuarios = [];
@@ -39,6 +45,7 @@ class SancionController extends Controller
             'first'       => $data['first'] ?? true,
             'last'        => $data['last'] ?? true,
             'usuarios'    => $usuarios,
+            'activa'      => $activa,
         ]);
     }
 

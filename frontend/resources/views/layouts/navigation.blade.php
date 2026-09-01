@@ -1,5 +1,19 @@
 <!-- ===== TOP NAVBAR ===== -->
-<nav x-data="{ userMenuOpen: false }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
+<nav x-data="{
+        userMenuOpen: false,
+        notifCount: 0,
+        init() {
+            this.refrescarNotificaciones();
+            setInterval(() => this.refrescarNotificaciones(), 60000);
+        },
+        async refrescarNotificaciones() {
+            try {
+                const r = await fetch('/notificaciones/no-leidas');
+                const j = await r.json();
+                this.notifCount = Number(j.count) || 0;
+            } catch (e) { /* sin cambios si falla */ }
+        }
+    }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
     <div class="h-full px-4 sm:px-6 flex items-center justify-between">
         <!-- Left side -->
         <div class="flex items-center space-x-4">
@@ -23,6 +37,10 @@
             <a href="{{ route('notificaciones.index') }}" title="Notificaciones"
                 class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
                 <i class="fas fa-bell"></i>
+                <span x-show="notifCount > 0"
+                    x-text="notifCount > 99 ? '99+' : notifCount"
+                    class="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
+                    style="display: none;"></span>
             </a>
 
             <!-- User dropdown -->

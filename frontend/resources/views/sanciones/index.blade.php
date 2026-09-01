@@ -10,6 +10,24 @@
         </div>
     </x-slot>
 
+    @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+    <div class="mb-4 flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold text-gray-500 mr-1">Filtrar:</span>
+        <a href="{{ route('sanciones.index', ['size' => $size]) }}"
+            class="px-3 py-1.5 rounded-full text-xs font-medium border transition {{ $activa === null ? 'bg-primary-400 text-white border-primary-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50' }}">
+            Todas
+        </a>
+        <a href="{{ route('sanciones.index', ['activa' => 1, 'size' => $size]) }}"
+            class="px-3 py-1.5 rounded-full text-xs font-medium border transition {{ $activa === '1' ? 'bg-primary-400 text-white border-primary-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50' }}">
+            Activas
+        </a>
+        <a href="{{ route('sanciones.index', ['activa' => 0, 'size' => $size]) }}"
+            class="px-3 py-1.5 rounded-full text-xs font-medium border transition {{ $activa === '0' ? 'bg-primary-400 text-white border-primary-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50' }}">
+            Levantadas
+        </a>
+    </div>
+    @endif
+
     @if (session('success'))
         <div class="mb-4 flex items-center justify-between px-4 py-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg">
             <span><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</span>

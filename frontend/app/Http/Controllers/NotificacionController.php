@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ApiClient;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,9 +21,15 @@ class NotificacionController extends Controller
     {
         $page = max(0, (int) $request->query('page', 0));
         $size = min(100, max(5, (int) $request->query('size', 10)));
+        $leida = $request->query('leida');
+
+        $params = ['page' => $page, 'size' => $size];
+        if ($this->esStaff() && in_array($leida, ['0', '1'], true)) {
+            $params['leida'] = (int) $leida;
+        }
 
         $data = $this->esStaff()
-            ? $this->api->getNotificacionesTodas(['page' => $page, 'size' => $size])
+            ? $this->api->getNotificacionesTodas($params)
             : $this->api->getNotificaciones(['page' => $page, 'size' => $size]);
 
         $usuarios = [];
@@ -40,7 +47,18 @@ class NotificacionController extends Controller
             'last'           => $data['last'] ?? true,
             'usuarios'       => $usuarios,
             'noLeidas'       => $this->api->contarNotificacionesNoLeidas(),
+            'leida'          => $leida,
         ]);
+    }
+
+    public function noLeidasJson(): JsonResponse
+    {
+        try {
+            $count = (int) $this->api->contarNotificacionesNoLeidas();
+            return response()->json(['count' => $count]);
+        } catch (\Exception $e) {
+            return response()->json(['count' => 0]);
+        }
     }
 
     public function store(Request $request): RedirectResponse
