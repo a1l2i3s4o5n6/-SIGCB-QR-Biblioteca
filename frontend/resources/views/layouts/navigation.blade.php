@@ -20,10 +20,10 @@
         <!-- Right side -->
         <div class="flex items-center space-x-4">
             <!-- Notifications -->
-            <button class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
+            <a href="{{ route('notificaciones.index') }}" title="Notificaciones"
+                class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
                 <i class="fas fa-bell"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">3</span>
-            </button>
+            </a>
 
             <!-- User dropdown -->
             <div class="relative" x-data="{ open: false }">
@@ -124,6 +124,12 @@
             <span class="ml-3">Reservas</span>
         </a>
 
+        <a href="{{ route('notificaciones.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-bell w-5 text-center text-sm"></i>
+            <span class="ml-3">Notificaciones</span>
+        </a>
+
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
         <a href="{{ route('qr-codigos.index') }}"
@@ -137,6 +143,14 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
+
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('sanciones.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
+            <span class="ml-3">Sanciones</span>
+        </a>
+        @endif
 
         @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}"
@@ -246,6 +260,11 @@
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
+        <a href="{{ route('notificaciones.index') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-bell w-5 text-center text-sm"></i>
+            <span class="ml-3">Notificaciones</span>
+        </a>
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
@@ -259,6 +278,13 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('sanciones.index') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
+            <span class="ml-3">Sanciones</span>
+        </a>
+        @endif
         @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
