@@ -1,36 +1,74 @@
 # SIGCB-QR — Sistema Integral de Gestión de Biblioteca con Códigos QR
 
-## Tercer Avance del Proyecto — App Web
+Sistema de gestión bibliotecaria que automatiza la autenticación, catálogo, préstamos, reservas, multas, sanciones, notificaciones y auditoría. Aplicación web con arquitectura cliente-servidor.
 
-Sistema de gestión bibliotecaria que automatiza los procesos de autenticación, catálogo, préstamos, reservas, multas y reportes. Aplicación web con arquitectura cliente-servidor.
+## Stack
 
-## Stack Tecnológico
-
-- **Backend:** Java 21 + Spring Boot 3.4 (API REST, JWT en cookie HttpOnly)
-- **Frontend:** Laravel 13 (Bootstrap 5, Blade)
-- **Base de datos:** PostgreSQL 16 + Redis 7 (caché)
+- **Backend:** Java 21 + Spring Boot 3.4 (API REST, JWT, PostgreSQL, Redis, Flyway)
+- **Frontend:** Laravel 13 + Vite (Blade, Alpine.js, Bootstrap 5)
+- **Base de datos:** PostgreSQL 16 + Redis 7
 - **Infraestructura:** Docker Compose (PostgreSQL, Redis, API, Frontend, pgAdmin)
-
-## Avances del Proyecto
-
-- **Primer avance (v0.3.0):** SRS, casos de uso, arquitectura C4
-- **Segundo avance (v0.7.0):** Autenticación JWT, CRUD de usuarios y libros, préstamos y devoluciones, Docker Compose
-- **Tercer avance (v0.9.0-rc):** Claims JWT estándar, errores RFC 7807 (ProblemDetail), caché Redis, stored procedures, ingeniería de requisitos (ISO/IEC/IEEE 29148), historias de usuario, matriz de trazabilidad, pruebas automatizadas (JUnit 5, JaCoCo), CI/CD (GitHub Actions), pruebas de carga (k6), reproducibilidad (Makefile, CITATION.cff, digests de imágenes)
 
 ## Estructura del Repositorio
 
 | Ruta | Contenido |
 |---|---|
-| `sigcb-qr-api/` | Backend Spring Boot (controllers, services, security, entities, tests) |
-| `SIGCB-QR/` | Frontend Laravel |
+| `backend/` | API Spring Boot (código, migraciones Flyway, tests JUnit) |
+| `frontend/` | Aplicación Laravel |
 | `db/` | Schema, seed y stored procedures |
-| `docs/` | SRS, casos de uso, historias, matriz, observaciones |
-| `scripts/` | Pruebas de carga (k6), análisis de rendimiento, validación CI |
+| `docs/` | Documentación (SRS, casos de uso, matriz de trazabilidad, informe) |
 | `docker-compose.yml` | Infraestructura completa |
+
+## Requisitos
+
+Solo **Docker** con el plugin **Docker Compose**.
 
 ## Cómo Ejecutar
 
-1. Clonar el repositorio
-2. Copiar `.env.example` a `.env`
-3. `make up` (o `docker compose up -d`)
-4. Documentación API en `sigcb-qr-api` (OpenAPI)
+```bash
+git clone <url-del-repositorio>
+cd SIGCB-QR-Biblioteca
+
+# Opcional: variables de entorno (docker compose trae valores por defecto)
+cp .env.example .env
+
+# Levantar todos los servicios (la primera vez construye las imágenes)
+make up
+# o equivalentemente:
+docker compose up -d --build
+
+# La API tarda ~60 segundos en arrancar
+curl http://localhost:8080/actuator/health   # → {"status":"UP",...}
+```
+
+## Acceso
+
+| Servicio | URL |
+|---|---|
+| **Aplicación web (frontend)** | http://localhost:8000 |
+| **API REST** | http://localhost:8080 |
+| **Swagger UI** | http://localhost:8080/swagger-ui.html |
+| **pgAdmin** | http://localhost:5050 (admin@sigcbqr.com / admin123) |
+
+## Credenciales de la aplicación
+
+Los usuarios se crean automáticamente con las migraciones Flyway.
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| **ADMIN** | admin@biblioteca.com | admin123 |
+| **BIBLIOTECARIO** | biblio@biblioteca.com | biblio123 |
+| **ESTUDIANTE** | carlos.garcia@estudiante.com | estudiante123 |
+
+Otros estudiantes: `ana.martinez@estudiante.com`, `pedro.ramirez@estudiante.com`, `laura.sanchez@estudiante.com`.
+
+> El token de sesión expira a la 1 hora; al agotarse hay que volver a iniciar sesión.
+
+## Comandos útiles
+
+```bash
+make up       # construir y levantar los servicios
+make down     # detener los contenedores
+make logs     # logs en vivo
+make clean    # detener, borrar volúmenes e imágenes
+```

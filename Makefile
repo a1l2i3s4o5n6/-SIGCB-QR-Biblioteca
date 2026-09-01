@@ -1,5 +1,8 @@
 # SIGCB-QR — Makefile para reproducibilidad
 # Uso: make up | make down | make test | make logs | make metrics
+# Comprobar contraseña: make test DB_PASSWORD=MiClave
+
+DB_PASSWORD ?= Doctora2025
 
 .PHONY: up down test logs metrics clean
 
@@ -11,7 +14,7 @@ down:
 	docker compose down
 
 test:
-	cd sigcb-qr-api && mvn clean test
+	cd backend && TEST_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sigcbqr_test TEST_DATASOURCE_USERNAME=postgres TEST_DATASOURCE_PASSWORD=$(DB_PASSWORD) mvn clean test
 
 logs:
 	docker compose logs -f
