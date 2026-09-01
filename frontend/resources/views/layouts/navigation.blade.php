@@ -19,12 +19,6 @@
 
         <!-- Right side -->
         <div class="flex items-center space-x-4">
-            <!-- Notifications -->
-            <button class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
-                <i class="fas fa-bell"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">3</span>
-            </button>
-
             <!-- User dropdown -->
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
