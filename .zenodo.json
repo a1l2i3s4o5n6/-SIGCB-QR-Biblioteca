@@ -1,0 +1,40 @@
+{
+  "title": "SIGCB-QR: Sistema Integral de Gestión de Biblioteca con Códigos QR",
+  "description": "<p>Sistema de gestión bibliotecaria universitaria con arquitectura cliente-servidor: API REST en Java 21 / Spring Boot 3.5 y frontend en PHP 8.3 / Laravel 13 actuando como <em>Backend for Frontend</em>, sobre PostgreSQL 16 y Redis 7.</p><p>Automatiza autenticación (JWT en cookie HttpOnly con revocación por lista negra de jti), catálogo, préstamos, devoluciones, reservas, multas, códigos QR, auditoría y reportes. Las agregaciones y las operaciones de varios pasos se resuelven mediante procedimientos almacenados; el acceso elemental, por ORM.</p><p>El depósito incluye la especificación de requisitos conforme a ISO/IEC/IEEE 29148, nueve registros de decisiones de arquitectura (ADR), la matriz de trazabilidad requisito-código-prueba-evidencia validada automáticamente, y evidencia empírica reproducible en cinco bloques: auditoría de seguridad OWASP con curl (42 comprobaciones), cobertura de pruebas con JaCoCo, pruebas de carga con k6, auditoría de frontend con Lighthouse e instrumento SUS de usabilidad.</p><p>Todas las imágenes de contenedor están ancladas por digest SHA256 para garantizar la reproducibilidad de las mediciones.</p>",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "language": "spa",
+  "version": "1.0.0-rc",
+  "creators": [
+    {
+      "name": "Equipo SIGCB-QR",
+      "affiliation": "Universidad Técnica Estatal de Quevedo (UTEQ)"
+    }
+  ],
+  "keywords": [
+    "gestión bibliotecaria",
+    "biblioteca universitaria",
+    "códigos QR",
+    "Spring Boot",
+    "Laravel",
+    "backend for frontend",
+    "JWT",
+    "PostgreSQL",
+    "Redis",
+    "OWASP API Security Top 10",
+    "ingeniería de requisitos",
+    "ISO/IEC/IEEE 29148",
+    "registros de decisiones de arquitectura",
+    "reproducibilidad",
+    "trazabilidad"
+  ],
+  "notes": "Proyecto académico desarrollado como trabajo de asignatura en la Universidad Técnica Estatal de Quevedo. El conjunto de datos incluido es sintético: no contiene datos de personas reales (ver ETHICS.md).",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/EQUIPO/sigcb-qr",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
