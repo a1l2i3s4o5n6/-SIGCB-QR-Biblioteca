@@ -4,6 +4,7 @@ import com.sigcbqr.exception.BadRequestException;
 import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.request.LibroRequest;
 import com.sigcbqr.model.dto.response.LibroResponse;
+import com.sigcbqr.model.dto.response.PageResponse;
 import com.sigcbqr.model.entity.*;
 import com.sigcbqr.repository.*;
 import org.springframework.cache.annotation.CacheEvict;
@@ -37,9 +38,18 @@ public class LibroService {
         this.auditoriaService = auditoriaService;
     }
 
-    @Cacheable(value = "libros", key = "#pageable.pageNumber + '-' + #pageable.pageSize", unless = "#result.content.isEmpty()")
-    public Page<LibroResponse> listar(Pageable pageable) {
-        return libroRepository.findByActivoTrue(pageable).map(this::toResponse);
+    /**
+     * Devuelve PageResponse (DTO plano) y no Page/PageImpl: PageImpl carece de
+     * constructor sin argumentos, por lo que Redis lo serializa pero no puede
+     * deserializarlo y toda lectura de cache fallaba con 500.
+     * La clave incluye el orden porque dos peticiones con el mismo numero y
+     * tamano de pagina pero distinto sort no son intercambiables.
+     */
+    @Cacheable(value = "libros",
+               key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()",
+               unless = "#result.content.isEmpty()")
+    public PageResponse<LibroResponse> listar(Pageable pageable) {
+        return PageResponse.from(libroRepository.findByActivoTrue(pageable).map(this::toResponse));
     }
 
     public Page<LibroResponse> buscar(String query, Pageable pageable) {

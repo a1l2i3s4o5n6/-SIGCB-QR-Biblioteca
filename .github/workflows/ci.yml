@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: sigcb-qr-api
+        working-directory: backend
 
     services:
       postgres:
-        image: postgres:16-alpine
+        image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
         env:
           POSTGRES_DB: sigcbqr_test
           POSTGRES_USER: postgres
@@ -33,7 +33,7 @@ jobs:
           - 5432:5432
 
       redis:
-        image: redis:7-alpine
+        image: redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s
@@ -73,11 +73,46 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: sigcb-qr-api/target/site/jacoco/
+          path: backend/target/site/jacoco/
 
-  validate-traceability:
+  validate-docs:
+    name: Validar documentación y trazabilidad
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate traceability matrix
+
+      # Falla si la matriz cita una prueba o una evidencia que no existe en el
+      # repositorio. Es la comprobación que impide repetir el problema de la
+      # Tercera Entrega, donde se declararon como verificadas cuatro clases de
+      # prueba inexistentes.
+      - name: Matriz de trazabilidad
         run: bash scripts/validate-traceability.sh
+
+      # Falla si un digest no tiene 64 caracteres hexadecimales o si una imagen
+      # no está anclada. Un digest truncado rompe 'make up' al descargar.
+      - name: Digests SHA256 de las imágenes
+        run: python3 scripts/validate-digests.py
+
+      # Falla si el índice de ADR y los archivos del directorio se desincronizan.
+      - name: Índice de ADR
+        run: bash scripts/validate-adr.sh
+
+      # Verifica la fórmula del SUS contra los casos canónicos de la literatura.
+      - name: Fórmula SUS
+        run: python3 scripts/sus-score.py --autotest
+
+      # Los archivos de gobernanza que la guía de la entrega exige.
+      - name: Archivos de gobernanza presentes
+        run: |
+          faltan=0
+          for f in LICENSE ETHICS.md CHANGELOG.md CITATION.cff .zenodo.json \
+                   docs/basedatos/DICCIONARIO-DATOS.md \
+                   docs/mediciones/seguridad/OWASP-AUDIT.md \
+                   docs/mediciones/cobertura/COBERTURA.md \
+                   docs/mediciones/perf/REPORT.md \
+                   docs/mediciones/frontend/LIGHTHOUSE.md \
+                   docs/mediciones/usabilidad/SUS.md; do
+            if [ ! -f "$f" ]; then echo "FALTA: $f"; faltan=$((faltan+1)); fi
+          done
+          if [ "$faltan" -gt 0 ]; then echo "Faltan $faltan archivo(s)"; exit 1; fi
+          echo "Todos los archivos de gobernanza están presentes."

@@ -45,6 +45,11 @@ class AuthControllerTest {
     @MockBean
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    // AuthController limita la tasa de login/registro; sin este doble el contexto
+    // de @WebMvcTest no arranca (NoSuchBeanDefinitionException: RateLimitService).
+    @MockBean
+    private RateLimitService rateLimitService;
+
     @Test
     void loginExitoso() throws Exception {
         LoginRequest request = new LoginRequest();

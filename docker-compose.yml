@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
     container_name: sigcbqr-postgres
     environment:
       POSTGRES_DB: sigcbqr
@@ -18,7 +18,7 @@ services:
       retries: 5
 
   redis:
-    image: redis:7
+    image: redis:7@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7
     container_name: sigcbqr-redis
     ports:
       - "6379:6379"
@@ -29,7 +29,7 @@ services:
       retries: 5
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:latest@sha256:2f4ce946ddf8360680d7eff4eaba1d91859eb6b4003e6623bad5c63a322c2f4d
     container_name: sigcbqr-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@sigcbqr.com

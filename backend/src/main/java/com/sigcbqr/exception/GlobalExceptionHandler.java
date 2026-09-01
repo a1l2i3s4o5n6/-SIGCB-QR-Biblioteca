@@ -2,6 +2,8 @@ package com.sigcbqr.exception;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,9 +11,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -19,6 +24,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     public static final String BASE_ERROR_URL = "https://api.sigcbqr.com/errors";
 
@@ -105,7 +112,7 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+@ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
                 "Parámetro inválido: " + ex.getName());
@@ -115,10 +122,43 @@ public class GlobalExceptionHandler {
         return pd;
     }
 
+    /**
+     * Una ruta que no existe es 404, no 500. Sin este manejador, Spring lanza
+     * NoResourceFoundException ("No static resource ..."), que caia en
+     * handleGeneral y convertia cualquier URL mal escrita en un error interno,
+     * ademas de filtrar el mensaje del framework al cliente.
+     */
+    @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+    public ProblemDetail handleRutaNoEncontrada(Exception ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
+                "El recurso solicitado no existe");
+        pd.setType(URI.create(BASE_ERROR_URL + "/not-found"));
+        pd.setTitle("Recurso no encontrado");
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ProblemDetail handleMetodoNoPermitido(HttpRequestMethodNotSupportedException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.METHOD_NOT_ALLOWED,
+                "El metodo " + ex.getMethod() + " no esta permitido en este recurso");
+        pd.setType(URI.create(BASE_ERROR_URL + "/method-not-allowed"));
+        pd.setTitle("Metodo no permitido");
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    /**
+     * Ultimo recurso. El detalle que se devuelve al cliente es generico a
+     * proposito: el mensaje de la excepcion puede contener rutas, nombres de
+     * clase o fragmentos de consulta. Se registra completo en el servidor,
+     * donde si es util, y no se expone.
+     */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneral(Exception ex) {
+        log.error("Error no controlado", ex);
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Error interno del servidor: " + ex.getMessage());
+                "Error interno del servidor");
         pd.setType(URI.create(BASE_ERROR_URL + "/internal-error"));
         pd.setTitle("Error interno");
         pd.setProperty("timestamp", System.currentTimeMillis());
