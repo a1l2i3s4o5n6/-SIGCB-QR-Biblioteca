@@ -359,4 +359,107 @@ class ApiClient
             ->put("/qr-codigos/{$id}/activo?activo=" . ($activo ? '1' : '0'))
             ->json() ?? [];
     }
+
+    /**
+     * Valida un código QR (escaneado/ingresado) y devuelve la información del libro.
+     * @throws \Exception si el código no existe o está inactivo.
+     */
+    public function validarQr(string $codigo): array
+    {
+        $response = $this->withAuth()->post('/qr-codigos/validar', ['codigo' => $codigo]);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'Código QR no válido.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    // ─────────────────────────────────────────────
+    // NOTIFICACIONES
+    // ─────────────────────────────────────────────
+
+    public function getNotificaciones(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/notificaciones', $params);
+        return $response->successful() ? ($response->json() ?? []) : [];
+    }
+
+    public function getNotificacionesTodas(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/notificaciones/todas', $params);
+        return $response->successful() ? ($response->json() ?? []) : [];
+    }
+
+    public function contarNotificacionesNoLeidas(): int
+    {
+        $response = $this->withAuth()->get('/notificaciones/no-leidas');
+        $data = $response->successful() ? $response->json('data') : null;
+        return is_numeric($data) ? (int) $data : 0;
+    }
+
+    public function crearNotificacion(array $data): array
+    {
+        $response = $this->withAuth()->post('/notificaciones', $data);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo crear la notificación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function marcarNotificacionLeida(int $id): array
+    {
+        return $this->withAuth()->put("/notificaciones/{$id}/leida")->json() ?? [];
+    }
+
+    public function marcarTodasNotificacionesLeidas(): array
+    {
+        return $this->withAuth()->put('/notificaciones/leer-todas')->json() ?? [];
+    }
+
+    // ─────────────────────────────────────────────
+    // SANCIONES
+    // ─────────────────────────────────────────────
+
+    public function getSanciones(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/sanciones', $params);
+        return $response->successful() ? ($response->json() ?? []) : [];
+    }
+
+    public function getSancionesMias(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/sanciones/mis', $params);
+        return $response->successful() ? ($response->json() ?? []) : [];
+    }
+
+    public function getSancionesPorUsuario(int $usuarioId, array $params = []): array
+    {
+        $response = $this->withAuth()->get("/sanciones/usuario/{$usuarioId}", $params);
+        return $response->successful() ? ($response->json() ?? []) : [];
+    }
+
+    public function crearSancion(array $data): array
+    {
+        $response = $this->withAuth()->post('/sanciones', $data);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo aplicar la sanción.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function levantarSancion(int $id): array
+    {
+        $response = $this->withAuth()->put("/sanciones/{$id}/levantar");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo levantar la sanción.');
+        }
+
+        return $response->json('data') ?? [];
+    }
 }

@@ -68,4 +68,25 @@ class QrController extends Controller
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
+
+    public function validar(Request $request): View
+    {
+        $codigo = trim((string) $request->query('codigo', ''));
+        $resultado = null;
+        $error = null;
+
+        if ($codigo !== '') {
+            try {
+                $resultado = $this->api->validarQr($codigo);
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
+            }
+        }
+
+        return view('qr-codigos.validar', [
+            'codigo'    => $codigo,
+            'resultado' => $resultado,
+            'error'     => $error,
+        ]);
+    }
 }

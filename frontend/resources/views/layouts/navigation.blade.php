@@ -1,5 +1,19 @@
 <!-- ===== TOP NAVBAR ===== -->
-<nav x-data="{ userMenuOpen: false }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
+<nav x-data="{
+        userMenuOpen: false,
+        notifCount: 0,
+        init() {
+            this.refrescarNotificaciones();
+            setInterval(() => this.refrescarNotificaciones(), 60000);
+        },
+        async refrescarNotificaciones() {
+            try {
+                const r = await fetch('/notificaciones/no-leidas');
+                const j = await r.json();
+                this.notifCount = Number(j.count) || 0;
+            } catch (e) { /* sin cambios si falla */ }
+        }
+    }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
     <div class="h-full px-4 sm:px-6 flex items-center justify-between">
         <!-- Left side -->
         <div class="flex items-center space-x-4">
@@ -20,13 +34,17 @@
         <!-- Right side -->
         <div class="flex items-center space-x-4">
             <!-- Notifications -->
-            <button class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
+            <a href="{{ route('notificaciones.index') }}" title="Notificaciones"
+                class="text-white/80 hover:text-gold-400 focus:outline-none text-lg transition relative">
                 <i class="fas fa-bell"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">3</span>
-            </button>
+                <span x-show="notifCount > 0"
+                    x-text="notifCount > 99 ? '99+' : notifCount"
+                    class="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
+                    style="display: none;"></span>
+            </a>
 
             <!-- User dropdown -->
-            <div class="relative" x-data="{ open: false }">
+            <div class="relative" x-data="{ open: false }" @click.away="open = false">
                 <button @click="open = !open"
                     class="flex items-center space-x-2 text-white/90 hover:text-white focus:outline-none transition group">
                     <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold text-white">
@@ -37,7 +55,7 @@
                 </button>
 
                 <!-- Dropdown menu -->
-                <div x-show="open" @click.away="open = false"
+                <div x-show="open"
                     class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="transform opacity-0 scale-95"
@@ -124,6 +142,12 @@
             <span class="ml-3">Reservas</span>
         </a>
 
+        <a href="{{ route('notificaciones.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-bell w-5 text-center text-sm"></i>
+            <span class="ml-3">Notificaciones</span>
+        </a>
+
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
         <a href="{{ route('qr-codigos.index') }}"
@@ -137,6 +161,14 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
+
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('sanciones.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
+            <span class="ml-3">Sanciones</span>
+        </a>
+        @endif
 
         @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}"
@@ -246,6 +278,11 @@
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
+        <a href="{{ route('notificaciones.index') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-bell w-5 text-center text-sm"></i>
+            <span class="ml-3">Notificaciones</span>
+        </a>
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
@@ -259,6 +296,13 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+        <a href="{{ route('sanciones.index') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
+            <span class="ml-3">Sanciones</span>
+        </a>
+        @endif
         @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">

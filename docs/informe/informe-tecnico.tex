@@ -1,0 +1,714 @@
+%==============================================================================
+% Informe técnico — SIGCB-QR — Entrega Final
+%
+% Compilación:
+%   latexmk -pdf informe-tecnico.tex
+% o bien:
+%   pdflatex informe-tecnico && bibtex informe-tecnico && pdflatex informe-tecnico x2
+%==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{grisclaro}{gray}{0.96}
+\definecolor{grisborde}{gray}{0.45}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{grisclaro},
+  frame=single,
+  rulecolor=\color{grisborde},
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false,
+  captionpos=b,
+  xleftmargin=0.5em,
+  framexleftmargin=0.5em
+}
+
+\newcommand{\req}[1]{\texttt{#1}}
+\newcommand{\adr}[1]{\textbf{ADR-#1}}
+
+\title{\textbf{SIGCB-QR}\\[0.3em]
+\large Sistema Integral de Gestión de Biblioteca con Códigos QR\\[0.8em]
+\normalsize Informe técnico --- Entrega Final}
+\author{Equipo SIGCB-QR\\
+\small Universidad Técnica Estatal de Quevedo (UTEQ)}
+\date{1 de septiembre de 2026 \\ \small Versión 1.0.0-rc}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Se presenta SIGCB-QR, un sistema de gestión bibliotecaria universitaria
+construido como API REST en Spring~Boot con un frontend Laravel que actúa como
+\emph{Backend for Frontend}. El informe documenta la arquitectura y sus
+decisiones, y sobre todo el \textbf{estudio empírico} realizado sobre el sistema
+en marcha: una auditoría de seguridad de 42 comprobaciones basada en OWASP API
+Security Top~10~\cite{owaspapi2023}, la medición de cobertura con JaCoCo, cuatro
+corridas de carga con k6 y una auditoría de frontend con Lighthouse.
+
+El resultado principal no son las cifras favorables, sino los \textbf{tres
+defectos} que las auditorías descubrieron en un sistema cuya suite de pruebas se
+daba por correcta: el endpoint del catálogo devolvía \texttt{500} en todo acierto
+de caché, toda ruta inexistente devolvía \texttt{500} filtrando mensajes internos
+del framework, y la política de seguridad de contenido bloqueaba los iconos, la
+tipografía y el módulo de códigos QR de la propia aplicación. Ninguno era
+detectable midiendo cobertura. Se analiza por qué, se declaran las amenazas a la
+validez de cada medición y se documenta un caso en que el propio instrumento de
+medida produjo un resultado falso.
+
+\medskip
+\noindent\textbf{Palabras clave:} gestión bibliotecaria, arquitectura de
+software, ADR, OWASP, evidencia empírica, reproducibilidad, validez.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%==============================================================================
+\section{Introducción}
+%==============================================================================
+
+\subsection{Contexto y problema}
+
+La gestión manual del préstamo bibliotecario en la UTEQ obliga a registrar en
+papel o en hojas de cálculo cada entrega y devolución de ejemplares, lo que
+dificulta conocer la disponibilidad real del acervo, aplicar el reglamento de
+multas de forma consistente y obtener indicadores de uso.
+
+SIGCB-QR automatiza autenticación, catálogo, inventario, préstamos, devoluciones,
+reservas, multas, códigos QR, auditoría y reportes.
+
+\subsection{Objetivos}
+
+\begin{enumerate}[label=\textbf{O\arabic*.},leftmargin=*]
+  \item Construir un sistema web funcional que cubra el ciclo completo del
+        préstamo bibliotecario.
+  \item Aplicar ingeniería de requisitos conforme a ISO/IEC/IEEE
+        29148:2018~\cite{iso29148}, con trazabilidad verificable entre requisito,
+        código, prueba y evidencia.
+  \item Documentar las decisiones de arquitectura con sus alternativas y su coste,
+        siguiendo la práctica de los ADR~\cite{nygard2011adr}.
+  \item Producir \textbf{evidencia empírica reproducible} de seguridad, cobertura,
+        rendimiento y calidad del frontend.
+  \item Garantizar la reproducibilidad del entorno de medición~\cite{boettiger2015introduction}.
+\end{enumerate}
+
+\subsection{Estructura del informe}
+
+La sección~\ref{sec:arquitectura} describe la arquitectura y sus decisiones. La
+sección~\ref{sec:metodo} expone el método empírico. Las
+secciones~\ref{sec:seguridad} a~\ref{sec:frontend} presentan los cuatro bloques de
+medición. La sección~\ref{sec:defectos} analiza los tres defectos encontrados. La
+sección~\ref{sec:validez} declara las amenazas a la validez, y
+la~\ref{sec:conclusiones}, las conclusiones.
+
+%==============================================================================
+\section{Arquitectura}\label{sec:arquitectura}
+%==============================================================================
+
+\subsection{Visión general}
+
+El sistema consta de dos aplicaciones de servidor separadas por una frontera HTTP:
+
+\begin{lstlisting}
+Navegador --HTTP--> Laravel 13 (BFF) --HTTP/JWT--> Spring Boot 3.5 --> PostgreSQL 16
+                    Blade + Alpine                 JPA + procedimientos   Redis 7
+\end{lstlisting}
+
+\subsection{Por qué dos pilas: el patrón Backend for Frontend}
+
+La convivencia de Java y PHP en un mismo repositorio requiere justificación
+explícita; sin ella parece incoherencia y no diseño. La decisión completa está en
+\adr{0002}; se resume aquí.
+
+Laravel no contiene lógica de negocio: renderiza vistas y delega todo acceso a
+datos en la API. Es el patrón \emph{Backend for
+Frontend}~\cite{newman2021building}, y se sostiene sobre tres reglas que pueden
+auditarse en el repositorio, no sobre buenas intenciones:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Laravel no habla con PostgreSQL.} No hay modelos Eloquent de
+        dominio ni migraciones de negocio; las únicas tablas que conoce son las de
+        su propia infraestructura.
+  \item \textbf{Todo acceso a datos pasa por \texttt{ApiClient}}, un único punto de
+        salida HTTP.
+  \item \textbf{Ninguna regla de negocio se duplica.} La interfaz puede ocultar un
+        botón por comodidad, pero la decisión que cuenta es la del servidor: un
+        estudiante que llame directamente al endpoint recibe \texttt{403}, y así
+        se verifica empíricamente en la sección~\ref{sec:seguridad}.
+\end{enumerate}
+
+Es una aplicación del principio de ocultación de información de
+Parnas~\cite{parnas1972criteria}: el frontend desconoce el modelo de datos, de
+modo que puede sustituirse sin tocar el dominio.
+
+El coste es real y se declara: dos entornos de ejecución que mantener, un salto
+de red adicional por petición y el riesgo permanente de que la lógica se filtre
+hacia el BFF.
+
+\subsection{Decisiones registradas}
+
+\begin{longtable}{@{}p{1.6cm}p{8.6cm}p{4.3cm}@{}}
+\toprule
+\textbf{ADR} & \textbf{Decisión} & \textbf{Coste asumido} \\
+\midrule
+\endhead
+0001 & Registrar las decisiones como ADR & 15--30 min por decisión \\
+0002 & Laravel como BFF sobre la API Spring Boot & Dos pilas; salto de red extra \\
+0003 & JWT en cookie \texttt{HttpOnly} + sesión del BFF & Superficie de CSRF \\
+0004 & Errores como \texttt{ProblemDetail} (RFC 7807) & Dos formas de cuerpo en la API \\
+0005 & CRUD por ORM; agregaciones por procedimientos & Lógica en dos lenguajes \\
+0006 & Cachear sólo tipos con ida y vuelta demostrada & Una prueba por tipo cacheado \\
+0007 & Anclar imágenes por digest SHA256 & Las actualizaciones dejan de llegar solas \\
+0008 & Flyway como fuente única del esquema & Corregir exige otra migración \\
+0009 & Revocar JWT por lista negra de \texttt{jti} & Una consulta por petición \\
+\bottomrule
+\caption{Decisiones de arquitectura y su coste. Detalle en \texttt{docs/adr/}.}
+\end{longtable}
+
+Cada ADR declara consecuencias negativas de forma obligatoria: una decisión sin
+coste probablemente no era una decisión.
+
+\subsection{Seguridad}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Autenticación.} JWT firmado con HS384~\cite{rfc7519}, con los
+        claims \texttt{iss}, \texttt{aud}, \texttt{nbf}, \texttt{iat} y
+        \texttt{jti}. Se transporta en cookie \texttt{HttpOnly} con
+        \texttt{SameSite=Strict}~\cite{rfc6265bis}, de modo que no es accesible
+        desde JavaScript (\adr{0003}).
+  \item \textbf{Revocación.} La lista negra de \texttt{jti} en PostgreSQL hace
+        efectivo el cierre de sesión. Se eligió la base de datos y no Redis porque
+        una decisión de seguridad no debe depender de un componente cuyo contrato
+        es poder perder datos (\adr{0009}).
+  \item \textbf{Contraseñas.} bcrypt con coste 10 y salt único por
+        usuario~\cite{provos1999bcrypt}.
+  \item \textbf{Autorización.} Por rol con \texttt{@PreAuthorize}, aplicada en el
+        servidor.
+  \item \textbf{Errores.} \texttt{application/problem+json} conforme a RFC
+        7807~\cite{rfc7807}, hoy obsoleta por la RFC 9457~\cite{rfc9457}.
+\end{itemize}
+
+\subsection{Acceso a datos}
+
+Reparto según la naturaleza de la operación (\adr{0005}): ORM para el CRUD
+elemental; trece procedimientos y funciones almacenados para las agregaciones y
+para las operaciones de varios pasos que deben ser atómicas. El esquema lo
+gobierna Flyway como fuente única~\cite{ambler2006refactoring}, con
+\texttt{ddl-auto: validate} para que una divergencia entre entidad y tabla impida
+el arranque (\adr{0008}).
+
+%==============================================================================
+\section{Método empírico}\label{sec:metodo}
+%==============================================================================
+
+\subsection{Diseño}
+
+El estudio es un \textbf{caso único con mediciones
+instrumentadas}~\cite{runeson2009guidelines}, no un experimento controlado: no
+hay grupo de comparación ni asignación aleatoria. Las afirmaciones son
+descriptivas y no causales, salvo donde se indique lo contrario y se justifique.
+
+\subsection{Reglas de reporte}
+
+Se aplican tres reglas, declaradas en \texttt{ETHICS.md} y adoptadas a raíz de
+observaciones formales recibidas en entregas anteriores:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Ninguna cifra se publica sin la orden que la produjo}, con fecha,
+        entorno y salida cruda~\cite{sandve2013ten}.
+  \item \textbf{Lo no medido se marca como no medido.} Una casilla «pendiente» es
+        una respuesta legítima; un número plausible sin medición no lo es.
+  \item \textbf{Los hallazgos negativos se publican}, incluidos los defectos del
+        propio instrumento.
+\end{enumerate}
+
+\subsection{Entorno}
+
+\begin{longtable}{@{}p{4cm}p{10.5cm}@{}}
+\toprule
+\textbf{Componente} & \textbf{Versión} \\
+\midrule
+\endhead
+Anfitrión & Windows 11 Pro 26200; Docker 29.5.2 sobre WSL2 \\
+API & Java 21 (Temurin), Spring Boot 3.5.16 \\
+Frontend & PHP 8.3, Laravel 13.8, Apache 2.4.68 \\
+Base de datos & PostgreSQL 16.15 (anclada por digest) \\
+Caché & Redis 7 (anclada por digest) \\
+Instrumentos & curl 8.19.0; k6 (\texttt{grafana/k6}); Lighthouse 12.8.2; JaCoCo 0.8.12 \\
+Datos & Semilla sintética: 20 libros, 69 ejemplares, 6 usuarios \\
+\bottomrule
+\caption{Entorno de medición. Las imágenes están ancladas por digest SHA256
+(\adr{0007}), de modo que las corridas son comparables entre sí.}
+\end{longtable}
+
+\subsection{Reproducibilidad}
+
+\begin{lstlisting}
+make up        # levanta el sistema con imagenes ancladas por digest
+make verify    # valida digests, matriz de trazabilidad e indice de ADR
+make test      # 41 pruebas con cobertura
+make audit     # 42 comprobaciones de seguridad OWASP
+\end{lstlisting}
+
+%==============================================================================
+\section{Bloque 1: auditoría de seguridad}\label{sec:seguridad}
+%==============================================================================
+
+\subsection{Instrumento}
+
+\texttt{scripts/owasp-audit.sh} ejecuta 42 comprobaciones sobre el sistema en
+marcha, cada una una petición HTTP real cuyo código de estado o cabecera se
+compara con el valor esperado. Cubre los bloques API1, API2, API3, API5, API8 y
+API4 de OWASP API Security Top~10~\cite{owaspapi2023} y A03 y A05 de OWASP
+Top~10~\cite{owasptop102021}.
+
+\subsection{Resultados}
+
+\begin{longtable}{@{}p{7.2cm}rp{5.5cm}@{}}
+\toprule
+\textbf{Bloque} & \textbf{N} & \textbf{Resultado} \\
+\midrule
+\endhead
+API1 --- Autorización a nivel de objeto & 4 & Superado \\
+API2 --- Autenticación rota & 9 & Superado \\
+API3 --- Exposición excesiva de propiedades & 2 & Superado \\
+API5 --- Autorización a nivel de función & 4 & Superado \\
+API8 / A05 --- Configuración incorrecta & 16 & Superado \\
+A03 --- Inyección & 6 & Superado \\
+API4 --- Consumo sin restricción & 1 & Superado \\
+\midrule
+\textbf{Total} & \textbf{42} & \textbf{42 superadas, 0 fallidas} \\
+\bottomrule
+\caption{Auditoría OWASP. Salida cruda en
+\texttt{docs/mediciones/seguridad/owasp-audit-raw.txt}.}
+\end{longtable}
+
+Tres verificaciones merecen mención por su diseño:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Comprobación de control.} Junto a cada \texttt{403} esperado se
+        verifica que la misma petición con credenciales de administrador devuelve
+        \texttt{200}. Sin ella, un \texttt{403} constante por cualquier motivo
+        --un servicio caído-- pasaría por seguridad correcta.
+  \item \textbf{Cuerpo válido en la prueba de BFLA.} Con un cuerpo vacío la API
+        responde \texttt{400}, porque la validación se ejecuta antes que
+        \texttt{@PreAuthorize}; una auditoría que enviara \texttt{\{\}} no habría
+        probado nada sobre la autorización.
+  \item \textbf{Verificación del efecto, no sólo del código.} Tras el intento de
+        creación no autorizada se comprueba que \emph{no se creó ningún usuario}.
+        Un \texttt{403} sería inútil si el recurso se hubiese creado igualmente.
+\end{itemize}
+
+\subsection{Limitaciones declaradas}
+
+No es una prueba de penetración: sin \emph{fuzzing}, sin inyección ciega o
+temporal, sin análisis de dependencias y sin escáner automatizado. Todo se midió
+sobre HTTP local, de modo que \texttt{Secure}, HSTS y TLS quedan sin verificar.
+La CSP admite \texttt{'unsafe-inline'}~\cite{cspl3}, lo que limita su eficacia
+real frente a XSS. El límite de tasa es en memoria y por instancia: con varias
+réplicas, el límite efectivo se multiplica.
+
+%==============================================================================
+\section{Bloque 2: pruebas y cobertura}\label{sec:cobertura}
+%==============================================================================
+
+\subsection{Estado de partida}
+
+Al iniciar esta entrega, la suite \textbf{no estaba en verde}, pese a lo declarado
+en la entrega anterior: \texttt{mvn verify} terminaba en \texttt{BUILD FAILURE}
+con 4 errores sobre 36 pruebas. Dos venían de que \texttt{AuthController} pasó a
+depender de \texttt{RateLimitService} sin actualizar el doble del test, y dos de
+que las pruebas del filtro JWT simulaban un método que el filtro ya no llamaba
+--es decir, no ejercitaban el camino real~\cite{meszaros2007xunit}. Ambos casos
+son cambios en producción cuyas pruebas no se volvieron a ejecutar, que es
+justamente lo que la integración continua existe para impedir~\cite{humble2010continuous}.
+
+\subsection{Resultados tras la corrección}
+
+\begin{longtable}{@{}p{5.5cm}rrr@{}}
+\toprule
+\textbf{Contador} & \textbf{Cubierto} & \textbf{Total} & \textbf{\%} \\
+\midrule
+\endhead
+Instrucciones & 1\,530 & 4\,728 & 32,36 \\
+Ramas & 34 & 254 & \textbf{13,39} \\
+Líneas & 429 & 1\,099 & \textbf{39,04} \\
+Complejidad ciclomática & 92 & 391 & 23,53 \\
+Métodos & 83 & 264 & 31,44 \\
+\bottomrule
+\caption{Cobertura JaCoCo sobre 41 pruebas, 0 fallos. Umbral configurado: 30\,\%
+de líneas.}
+\end{longtable}
+
+\subsection{Interpretación}
+
+El reparto importa más que el total: \texttt{security} (45,5\,\%) y
+\texttt{service} (41,2\,\%) concentran las reglas cuya rotura tendría
+consecuencias, mientras que \texttt{model.entity} (1,5\,\%) son entidades con
+Lombok cuya cobertura carece de significado --probar un \emph{getter} generado no
+aporta información.
+
+El dato preocupante no es el 39\,\% de líneas sino el \textbf{13,39\,\% de ramas}:
+las pruebas recorren el camino feliz y dejan casi todas las bifurcaciones sin
+ejercitar. Es coherente con el resultado de la sección~\ref{sec:defectos} y con la
+evidencia de que la cobertura no está fuertemente correlacionada con la
+efectividad de una suite~\cite{inozemtseva2014coverage}: mide qué líneas se
+ejecutan, no si el sistema hace lo que debe~\cite{zhu1997software}.
+
+%==============================================================================
+\section{Bloque 3: rendimiento}\label{sec:rendimiento}
+%==============================================================================
+
+\subsection{Un defecto del instrumento, corregido antes de medir}
+
+La versión previa del arnés de k6 iniciaba sesión \emph{en cada iteración de cada
+usuario virtual}. Con el límite de 5 intentos por IP y minuto, a partir del quinto
+login todo eran respuestas \texttt{429}, que se sirven sin tocar la base de datos.
+El resultado habría sido inválido en dos direcciones: la tasa de error se dispara
+y \textbf{el p95 sale artificialmente bajo}. La prueba habría medido la velocidad
+del limitador de tasa presentándola como velocidad del catálogo. El inicio de
+sesión se movió a \texttt{setup()}, fuera de la ventana de medición.
+
+\subsection{Resultados}
+
+Carga: 0$\to$5 usuarios virtuales (10\,s), 5$\to$20 (20\,s), 20$\to$0 (10\,s);
+$\approx$370 iteraciones por corrida sobre \texttt{GET /api/libros}.
+
+\begin{longtable}{@{}clllrrr@{}}
+\toprule
+\textbf{\#} & \textbf{Caché} & \textbf{JVM} & \textbf{p95} & \textbf{media} & \textbf{mediana} & \textbf{errores} \\
+\midrule
+\endhead
+1 & fría & fría & 83,43\,ms & 57,19\,ms & 17,28\,ms & 0\,\% \\
+2 & caliente & templada & 73,02\,ms & 28,21\,ms & 20,48\,ms & 0\,\% \\
+3 & caliente & caliente & 64,89\,ms & 25,61\,ms & 17,79\,ms & 0\,\% \\
+4 & \textbf{fría} & caliente & \textbf{26,41\,ms} & 12,66\,ms & 9,40\,ms & 0\,\% \\
+\bottomrule
+\caption{Corridas de k6, en orden cronológico real. Umbral REQ-NF-001:
+p95 $\le$ 200\,ms. Salidas crudas en \texttt{docs/mediciones/perf/}.}
+\end{longtable}
+
+Todas cumplen el umbral con holgura, y ninguna registró un solo error en 1\,474
+peticiones. El hit ratio de Redis fue del 99,73\,\% (376 aciertos, 1 fallo).
+
+\subsection{Un resultado contrario a la hipótesis}
+
+La corrida 4 tiene la caché \textbf{vacía} y es la más rápida de todas: su p95 es
+menos de la mitad que el de las corridas con caché llena. La conclusión es
+incómoda pero es la que sostienen los datos:
+
+\begin{quote}
+A esta escala, el p95 lo determina el calentamiento de la JVM, no el estado de la
+caché de Redis.
+\end{quote}
+
+La explicación es sencilla y comprobable: la semilla tiene 20 libros. Una página
+de diez filas se resuelve en PostgreSQL con un índice y un \texttt{LIMIT}, y ese
+trabajo es comparable --o menor-- al de serializar el resultado y hacer un viaje
+de ida y vuelta a Redis. Lo caro al principio es que el JIT compile las rutas de
+Hibernate, Jackson y Spring Security, tal como advierte la literatura sobre
+medición rigurosa en Java~\cite{georges2007statistically}.
+
+Por tanto, \textbf{no puede afirmarse que la caché mejore el rendimiento de este
+sistema}. Sigue justificada por \adr{0006} como mecanismo que escalará con un
+acervo real de decenas de miles de títulos, pero eso es una previsión, no una
+medición. Afirmar lo contrario sería exactamente el tipo de conclusión que estas
+reglas de reporte pretenden evitar.
+
+%==============================================================================
+\section{Bloque 4: calidad del frontend}\label{sec:frontend}
+%==============================================================================
+
+Lighthouse 12.8.2 sobre \texttt{/login}, factor de forma móvil con
+estrangulamiento simulado.
+
+\begin{longtable}{@{}p{6cm}rr@{}}
+\toprule
+\textbf{Categoría} & \textbf{CSP rota} & \textbf{CSP corregida} \\
+\midrule
+\endhead
+Rendimiento & 100 & \textbf{82} \\
+Accesibilidad & 100 & 100 \\
+Buenas prácticas & 93 & \textbf{100} \\
+SEO & 91 & 91 \\
+\bottomrule
+\caption{Lighthouse antes y después de corregir la política de seguridad de
+contenido. La cifra válida es la de la derecha.}
+\end{longtable}
+
+\subsection{Por qué el rendimiento \emph{bajó} al corregir un defecto}
+
+El 100 de la primera corrida no era mérito de la aplicación: era el efecto de que
+el navegador estuviera bloqueando sus propias hojas de estilo y tipografías. Una
+página que no llega a cargar Font Awesome ni Poppins pinta antes. Al corregir la
+CSP, la página hace lo que siempre debió hacer --descargar dos hojas de estilo y
+seis archivos de tipografía desde tres dominios externos-- y el First Contentful
+Paint pasa de 1,4\,s a 3,6\,s.
+
+Es decir: \textbf{la primera corrida midió una página rota y la premió por ello.}
+Una métrica de rendimiento aislada, sin comprobar que la página funciona, puede
+recompensar el defecto que debería denunciar. El 82 es la línea base honesta.
+
+%==============================================================================
+\section{Defectos encontrados}\label{sec:defectos}
+%==============================================================================
+
+Las auditorías descubrieron tres defectos reales en un sistema cuya suite estaba,
+en apariencia, en verde. Ninguno era detectable midiendo cobertura.
+
+\subsection{D1 --- El acierto de caché devolvía \texttt{500}}
+
+El método cacheado devolvía \texttt{Page}/\texttt{PageImpl}. El serializador JSON
+de Redis \emph{escribe} ese objeto sin problema pero \emph{no puede volver a
+leerlo}: \texttt{PageImpl} carece de constructor sin argumentos.
+
+\begin{lstlisting}
+$ curl -o /dev/null -w '%{http_code}\n' -b cookie.txt localhost:8080/api/libros
+200          # fallo de cache: se sirve de la base y se escribe en Redis
+$ curl -o /dev/null -w '%{http_code}\n' -b cookie.txt localhost:8080/api/libros
+500          # acierto de cache: no se puede leer lo escrito
+\end{lstlisting}
+
+El endpoint principal del catálogo fallaba \textbf{en todo acierto de caché},
+justo el caso que la caché existía para acelerar. Como la primera petición tras
+cada expiración del TTL funcionaba, el fallo parecía intermitente.
+
+\textbf{Por qué no lo vio la cobertura.} El método figuraba como cubierto: las
+pruebas lo llamaban con Mockito, sin pasar por el proxy de \texttt{@Cacheable}. La
+línea estaba cubierta; el comportamiento, no.
+
+\textbf{Corrección.} El método devuelve \texttt{PageResponse<LibroResponse>}, un
+DTO con ida y vuelta demostrada por la prueba
+\texttt{CacheSerializationTest}, que además fija la causa raíz: si
+\texttt{PageImpl} dejara de fallar, el motivo del \adr{0006} habría cambiado. Se
+descubrió de paso un segundo defecto latente: la clave de caché ignoraba el
+criterio de orden, de modo que dos peticiones con distinto \texttt{sort}
+compartían entrada.
+
+\subsection{D2 --- Toda ruta inexistente devolvía \texttt{500}}
+
+\texttt{NoResourceFoundException} no tenía manejador propio y caía en el
+manejador genérico, que además construía el detalle concatenando el mensaje de la
+excepción:
+
+\begin{lstlisting}
+{"status":500,"detail":"Error interno del servidor: No static resource actuator/env."}
+\end{lstlisting}
+
+Dos consecuencias: una URL mal escrita era indistinguible de un fallo real del
+servidor, lo que contradice el propósito de la RFC 7807~\cite{rfc7807}; y el
+manejador devolvía sin filtrar el mensaje de cualquier excepción no controlada a
+cualquier cliente --el mismo camino por el que se expusieron trazas internas
+durante el diagnóstico de D1.
+
+\textbf{Corrección.} Manejadores propios para \texttt{404} y \texttt{405}, y
+detalle genérico en el manejador de último recurso, con la traza registrada en el
+servidor. La prueba de regresión envía una excepción cuyo mensaje contiene una
+cadena de conexión con credenciales y verifica que no aparece en la respuesta.
+
+\subsection{D3 --- La CSP bloqueaba los recursos de la propia aplicación}
+
+La política sólo admitía \texttt{'self'}, mientras que ambos \emph{layouts} cargan
+Font Awesome y la tipografía Poppins desde CDN, y el módulo de códigos QR carga su
+biblioteca desde cdnjs. En el navegador no se dibujaba ningún icono, la tipografía
+caía a la de reserva y el módulo QR quedaba inoperativo, en \emph{todas} las
+páginas.
+
+\textbf{El fallo era silencioso}: el servidor respondía \texttt{200} y el HTML era
+correcto. Sólo la consola del navegador lo delataba, por lo que ni las pruebas ni
+la auditoría con \texttt{curl} podían detectarlo. Hizo falta un navegador real.
+
+\subsection{Lectura conjunta}
+
+Los tres defectos comparten un patrón: \textbf{se manifiestan en la integración
+entre componentes}, no dentro de una unidad. Caché y serializador; framework web y
+manejador de excepciones; navegador y política de seguridad. Una suite compuesta
+casi enteramente de pruebas unitarias con dobles --como la de este proyecto, según
+la sección~\ref{sec:cobertura}-- es ciega por construcción ante esa clase de fallo.
+Es la explicación concreta, en este sistema, de por qué la cobertura no predice la
+efectividad de una suite~\cite{inozemtseva2014coverage}.
+
+%==============================================================================
+\section{Amenazas a la validez}\label{sec:validez}
+%==============================================================================
+
+Se sigue la clasificación de Wohlin et
+al.~\cite{wohlin2012experimentation}, basada en Cook y
+Campbell~\cite{cook1979quasi}.
+
+\subsection{Validez de constructo}
+
+\emph{¿Miden los instrumentos lo que dicen medir?}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{La cobertura no mide calidad.} Mide qué líneas ejecutan las
+        pruebas. Los tres defectos de la sección~\ref{sec:defectos} ocurrieron en
+        código contabilizado como cubierto~\cite{inozemtseva2014coverage}.
+  \item \textbf{42 comprobaciones superadas no significan «sistema seguro».}
+        Significa que 42 controles concretos se comportan como se espera. La
+        ausencia de evidencia de vulnerabilidad no es evidencia de ausencia.
+  \item \textbf{El SUS mide percepción, no eficacia}~\cite{brooke1996sus}. Un
+        sistema puede puntuar alto y aun así hacer que la gente tarde el doble.
+  \item \textbf{La puntuación de Lighthouse puede premiar un defecto}, como quedó
+        demostrado en la sección~\ref{sec:frontend}.
+\end{itemize}
+
+\subsection{Validez interna}
+
+\emph{¿Están las conclusiones causalmente justificadas?}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{El orden de las corridas se confunde con el calentamiento de la
+        JVM.} Las corridas no se aleatorizaron, así que el efecto de la caché y el
+        del calentamiento están confundidos~\cite{georges2007statistically}. Por
+        eso la sección~\ref{sec:rendimiento} se abstiene de atribuir la mejora a la
+        caché.
+  \item \textbf{Cliente y sistema comparten máquina.} La carga del generador
+        compite por CPU con lo medido, un sesgo de medición
+        conocido~\cite{mytkowicz2009producing}.
+  \item \textbf{Sin repeticiones suficientes.} Tres corridas comparables no
+        permiten un intervalo de confianza defendible; las cifras son
+        descriptivas.
+  \item \textbf{El instrumento produjo un resultado falso.} La primera corrida de
+        la auditoría marcó tres \texttt{401} donde esperaba \texttt{403}, y el
+        fallo estaba en el propio script: creaba la sesión del bloque de cierre de
+        sesión \emph{copiando} el archivo de cookies del estudiante, de modo que
+        ambos compartían token y la revocación por \texttt{jti} invalidaba también
+        la sesión del estudiante. La revocación funcionaba tan bien que rompió la
+        auditoría. Interpretar aquellos \texttt{401} como fallo de autorización
+        habría llevado a «arreglar» algo que no estaba roto.
+\end{itemize}
+
+\subsection{Validez externa}
+
+\emph{¿Hasta dónde se generalizan los resultados?}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{El volumen de datos no es representativo}: 20 libros y 69
+        ejemplares, frente a los varios órdenes de magnitud de una biblioteca
+        universitaria real. Es la limitación más severa, y afecta directamente a
+        la conclusión sobre la caché~\cite{kleppmann2017designing}.
+  \item \textbf{Despliegue de una sola máquina}, sin latencia de red entre
+        componentes ni réplicas.
+  \item \textbf{20 usuarios virtuales} es carga baja: no se localizó el punto de
+        saturación.
+  \item \textbf{Un solo endpoint medido.} Préstamos y reportes, que ejecutan
+        procedimientos almacenados, tienen otro perfil y no se midieron.
+  \item \textbf{Una sola página auditada con Lighthouse}, y sin sesión.
+\end{itemize}
+
+\subsection{Validez de conclusión}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Sin análisis estadístico inferencial.} No hay contraste de
+        hipótesis ni tamaño del efecto; los percentiles son descriptivos.
+  \item \textbf{El SUS no tiene datos.} Ninguna afirmación sobre usabilidad
+        percibida está respaldada, y así se declara en lugar de rellenarlo.
+  \item \textbf{Los autores son los evaluadores.} Quien construyó el sistema
+        diseñó las comprobaciones, eligió los umbrales y decidió qué medir. Es la
+        amenaza más difícil de mitigar, y el protocolo del SUS
+        (sección~\ref{sec:frontend} y \texttt{docs/mediciones/usabilidad/}) la
+        reconoce explícitamente como sesgo de cortesía~\cite{nielsen1993usability}.
+        La contramedida aplicada es hacer cada medición reproducible por un
+        tercero con una sola orden.
+\end{itemize}
+
+%==============================================================================
+\section{Ética y tratamiento de datos}
+%==============================================================================
+
+El conjunto de datos es sintético: no hay datos de personas reales. Aun así, el
+sistema está diseñado bajo el supuesto de que el \textbf{historial de préstamos es
+un dato sensible}: lo que una persona lee permite inferir su ideología, su estado
+de salud o sus creencias, principio largamente sostenido por la tradición
+bibliotecaria~\cite{ala2019privacy}. Se aplican minimización, limitación de la
+finalidad y confidencialidad por defecto.
+
+\texttt{ETHICS.md} declara también lo que el sistema \emph{no} protege todavía:
+no hay cifrado en reposo del historial, no existe flujo de acceso ni de supresión
+a petición del titular, y no hay política de retención. Declarar las carencias
+forma parte de la responsabilidad profesional~\cite{acm2018code}.
+
+Se usaron asistentes de programación basados en modelos de lenguaje como apoyo a
+la documentación, la generación de pruebas y la revisión de código. Todo artefacto
+generado fue ejecutado y verificado antes de incorporarse; la responsabilidad
+sobre lo entregado es del equipo.
+
+%==============================================================================
+\section{Conclusiones}\label{sec:conclusiones}
+%==============================================================================
+
+\begin{enumerate}[label=\textbf{C\arabic*.},leftmargin=*]
+  \item \textbf{El sistema cumple sus requisitos medibles.} 42/42 comprobaciones
+        de seguridad, p95 entre 26 y 83\,ms frente a un umbral de 200\,ms, 0\,\% de
+        error en 1\,474 peticiones, 41 pruebas en verde y accesibilidad de 100 en
+        las comprobaciones automáticas.
+
+  \item \textbf{Auditar el sistema en marcha encontró lo que las pruebas no.} Tres
+        defectos reales --uno de ellos rompía el endpoint principal en todo
+        acierto de caché-- aparecieron al ejercitar el sistema con \texttt{curl},
+        con k6 y con un navegador. Los tres viven en las costuras entre
+        componentes, donde una suite de pruebas unitarias con dobles es ciega por
+        construcción.
+
+  \item \textbf{Una métrica puede premiar un defecto.} Lighthouse dio 100 en
+        rendimiento a una página cuyos recursos el navegador bloqueaba, y el arnés
+        de carga original habría dado un p95 excelente midiendo el limitador de
+        tasa. Una métrica sin comprobación de que el sistema funciona no es
+        evidencia.
+
+  \item \textbf{El instrumento tiene sus propias amenazas a la validez.} El script
+        de auditoría produjo tres falsos positivos por un defecto propio. Se
+        documenta porque un instrumento que no se audita a sí mismo es tan poco
+        fiable como el sistema que mide.
+
+  \item \textbf{La trazabilidad debe ser ejecutable.} Una matriz que declaraba
+        como verificadas cuatro clases de prueba inexistentes se corrigió, pero lo
+        que impide que vuelva a ocurrir no es la corrección: es que
+        \texttt{validate-traceability.sh} extraiga el inventario real de pruebas
+        del repositorio y falle en CI si la matriz cita algo que no existe. Lo
+        mismo vale para los digest de imagen, el índice de ADR y el diccionario de
+        datos, todos verificados automáticamente.
+
+  \item \textbf{No puede afirmarse que la caché mejore el rendimiento a esta
+        escala.} Los datos sugieren lo contrario, y la conclusión se declara
+        aunque contradiga la motivación de haberla implementado.
+\end{enumerate}
+
+\subsection{Trabajo futuro}
+
+\begin{enumerate}[leftmargin=*]
+  \item Pruebas de integración con caché activa y con base real, que habrían
+        detectado D1.
+  \item Pruebas de rama en los servicios, hoy al 13,39\,\%.
+  \item Administrar el SUS a los 12 participantes previstos.
+  \item Repetir las mediciones de rendimiento con un acervo de decenas de miles de
+        títulos, único modo de contrastar la hipótesis sobre la caché.
+  \item Alojar tipografías, iconos y \texttt{qrcode.js} en el propio contenedor,
+        para volver a \texttt{'self'} en toda la CSP y quitar tres dominios de la
+        ruta crítica.
+  \item Implementar acceso, portabilidad y supresión de datos personales, y una
+        política de retención.
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{referencias}
+
+\end{document}

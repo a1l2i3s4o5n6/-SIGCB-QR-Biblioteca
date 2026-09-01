@@ -1,24 +1,36 @@
-﻿id_requisito,tipo,prioridad_moscow,historia_usuario,caso_de_uso,modulo_codigo,endpoint_api,prueba_automatizada,tipo_acceso,evidencia_empirica,estado
-REQ-F-001,Funcional,Must,HU-01,CU-01,AuthController,POST /api/auth/login,AuthControllerTest.login_exitoso,CRUD-ORM,,verificado
-REQ-F-001,Funcional,Must,HU-01,CU-01,JwtTokenProvider,,JwtTokenProviderTest.genera_token_con_claims,CRUD-ORM,,verificado
-REQ-F-002,Funcional,Must,HU-02,CU-01,AuthController,POST /api/auth/register,AuthControllerTest.registro_exitoso,CRUD-ORM,,verificado
-REQ-F-003,Funcional,Must,HU-03,CU-01,AuthController,POST /api/auth/logout,AuthControllerTest.logout_invalida_token,CRUD-ORM,,verificado
-REQ-F-004,Funcional,Must,HU-04,,UsuarioController,GET/POST/PUT/DELETE /api/usuarios,UsuarioControllerTest.crud,CRUD-ORM,,verificado
-REQ-F-005,Funcional,Must,HU-05,CU-02,LibroController,GET/POST/PUT/DELETE /api/libros,LibroControllerTest.crud,CRUD-ORM,,verificado
-REQ-F-006,Funcional,Must,HU-06,CU-03,PrestamoController,POST /api/prestamos,PrestamoServiceTest.crear_prestamo,SP,docs/mediciones/perf/REPORT.md,verificado
-REQ-F-007,Funcional,Must,HU-07,CU-04,PrestamoController,PUT /api/prestamos/{id}/devolver,PrestamoServiceTest.devolver_prestamo,SP,,verificado
+id_requisito,tipo,prioridad_moscow,historia_usuario,caso_de_uso,modulo_codigo,endpoint_api,prueba_automatizada,tipo_acceso,evidencia_empirica,estado
+REQ-F-001,Funcional,Must,HU-01,CU-01,AuthController,POST /api/auth/login,AuthControllerTest.loginExitoso,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-F-001,Funcional,Must,HU-01,CU-01,JwtTokenProvider,,JwtTokenProviderTest.generaTokenConTodosLosClaimsEstandar,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-F-002,Funcional,Must,HU-02,CU-01,AuthController,POST /api/auth/register,AuthControllerTest.registroExitoso,CRUD-ORM,,verificado
+REQ-F-002,Funcional,Must,HU-02,CU-01,AuthService,POST /api/auth/register,AuthServiceTest.registerCreaUsuarioConRolEstudiantePorDefecto,CRUD-ORM,,verificado
+REQ-F-003,Funcional,Must,HU-03,CU-01,JwtBlacklistService,POST /api/auth/logout,JwtBlacklistServiceTest.blacklistRegistraElJTIEnElRepositorio,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-F-004,Funcional,Must,HU-04,,UsuarioController,GET/POST/PUT/DELETE /api/usuarios,,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,implementado
+REQ-F-005,Funcional,Must,HU-05,CU-02,LibroController,GET /api/libros,LibroControllerTest.listarLibros,CRUD-ORM,docs/mediciones/cobertura/COBERTURA.md,verificado
+REQ-F-005,Funcional,Must,HU-05,CU-02,LibroService,POST /api/libros,LibroServiceTest.crearLibroConDatosValidos,CRUD-ORM,,verificado
+REQ-F-005,Funcional,Must,HU-05,CU-02,LibroService,DELETE /api/libros/{id},LibroServiceTest.eliminarLibroRealizaSoftDelete,CRUD-ORM,,verificado
+REQ-F-006,Funcional,Must,HU-06,CU-03,PrestamoService,POST /api/prestamos,PrestamoServiceTest.crearPrestamoConDatosValidos,SP,,verificado
+REQ-F-006,Funcional,Must,HU-06,CU-03,PrestamoService,POST /api/prestamos,PrestamoServiceTest.crearPrestamoConInventarioNoDisponibleLanzaExcepcion,SP,,verificado
+REQ-F-007,Funcional,Must,HU-07,CU-04,PrestamoService,PUT /api/prestamos/{id}/devolver,PrestamoServiceTest.devolverPrestamoConExito,SP,,verificado
 REQ-F-008,Funcional,Should,HU-08,,PrestamoController,PUT /api/prestamos/{id}/renovar,,SP,,implementado
-REQ-F-009,Funcional,Should,HU-09,CU-05,ReporteController,GET /api/reportes/prestamos-diarios,ReporteControllerTest.prestamosDiariosComoBibliotecario,SP,,implementado
-REQ-F-010,Funcional,Must,HU-10,,DashboardController,GET /api/dashboard/stats,,SP,,verificado
-REQ-F-011,Funcional,Should,,,ReservaController,POST/DELETE /api/reservas/,,CRUD-ORM,,implementado
-REQ-NF-001,No funcional,Must,HU-05,,LibroService,GET /api/libros,LibroPerfTest.p95_200ms,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
-REQ-NF-002,No funcional,Must,HU-01,CU-01,SecurityConfig,,SecurityTest.endpoints_protegidos,CRUD-ORM,,verificado
-REQ-NF-003,No funcional,Must,,,GlobalExceptionHandler,,SecurityTest.sql_injection_prevenido,CRUD-ORM,,verificado
-REQ-NF-004,No funcional,Must,,,,docker-compose.yml,,,,docs/mediciones/perf/startup-time.md,pendiente
-REQ-NF-005,No funcional,Should,,,,pom.xml,,JaCoCo,,verificado
-REQ-NF-006,No funcional,Must,HU-04,CU-01,SecurityConfig,@PreAuthorize,ReporteControllerTest.prestamosDiariosComoEstudiante,CRUD-ORM,,verificado
-REQ-NF-007,No funcional,Must,HU-03,,JwtBlacklistService,,JwtBlacklistServiceTest,CRUD-ORM,,verificado
-REQ-R-001,Rendimiento,Must,,,AuthController,POST /api/auth/login,,CRUD-ORM,docs/mediciones/perf/,pendiente
-REQ-R-002,Rendimiento,Must,,,LibroController,GET/POST/PUT/DELETE /api/libros,,CRUD-ORM,docs/mediciones/perf/,pendiente
-REQ-R-003,Rendimiento,Should,,,PrestamoController,POST /api/prestamos,,SP,docs/mediciones/perf/,pendiente
-REQ-R-004,Rendimiento,Should,,,LibroService,GET /api/libros,,CRUD-ORM,docs/mediciones/perf/REPORT.md,pendiente
+REQ-F-009,Funcional,Should,HU-09,CU-05,ReporteController,GET /api/reportes/prestamos-diarios,ReporteControllerTest.prestamosDiariosComoBibliotecario,SP,,verificado
+REQ-F-010,Funcional,Must,HU-10,,DashboardController,GET /api/dashboard/stats,,SP,,implementado
+REQ-F-011,Funcional,Should,,,ReservaController,POST/DELETE /api/reservas,,CRUD-ORM,,implementado
+REQ-NF-001,No funcional,Must,HU-05,,LibroService,GET /api/libros,,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
+REQ-NF-002,No funcional,Must,HU-01,CU-01,SecurityConfig,,SecurityTest.endpointsProtegidosRechazanPeticionesSinAutenticacion,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-003,No funcional,Must,,,LibroRepository,GET /api/libros/buscar,SecurityTest.sqlInjectionEsTratadaComoDatoYNoRompeElEndpoint,SP,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-003,No funcional,Must,,,LibroRepository,GET /api/libros/buscar,SecurityTest.buscarConPayloadDeInyeccionSQLNoProvocaErrorInterno,SP,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-004,No funcional,Must,,,docker-compose.yml,,,,docs/adr/0007-anclar-imagenes-por-digest-sha256.md,verificado
+REQ-NF-005,No funcional,Should,,,pom.xml,,,,docs/mediciones/cobertura/COBERTURA.md,verificado
+REQ-NF-006,No funcional,Must,HU-04,CU-01,ReporteController,GET /api/reportes/prestamos-diarios,ReporteControllerTest.prestamosDiariosComoEstudianteRetorna403,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-007,No funcional,Must,HU-03,,JwtBlacklistService,,JwtBlacklistServiceTest.isBlacklistedDevuelveTrueCuandoElJTIEstaRegistrado,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-007,No funcional,Must,HU-03,,JwtBlacklistService,,JwtBlacklistServiceTest.cleanExpiredEntriesEliminaLasEntradasVencidas,CRUD-ORM,,verificado
+REQ-NF-008,No funcional,Must,,,GlobalExceptionHandler,,GlobalExceptionHandlerTest.handleNotFoundRetornaProblemDetail,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-008,No funcional,Must,,,GlobalExceptionHandler,,GlobalExceptionHandlerTest.rutaInexistenteEs404YNo500,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-009,No funcional,Must,,,GlobalExceptionHandler,,GlobalExceptionHandlerTest.handleGeneralNoFiltraElMensajeInternoAlCliente,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-010,No funcional,Must,HU-05,,LibroService,GET /api/libros,CacheSerializationTest.pageResponseHaceRoundTripPorElSerializadorDeRedis,CRUD-ORM,docs/adr/0006-cache-redis-con-tipo-serializable.md,verificado
+REQ-R-001,Rendimiento,Must,,,AuthController,POST /api/auth/login,,CRUD-ORM,docs/mediciones/perf/REPORT.md,pendiente
+REQ-R-002,Rendimiento,Must,,,LibroController,GET /api/libros,,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
+REQ-R-003,Rendimiento,Should,,,PrestamoController,POST /api/prestamos,,SP,docs/mediciones/perf/REPORT.md,pendiente
+REQ-R-004,Rendimiento,Should,,,LibroService,GET /api/libros,CacheSerializationTest.pageImplNoSePuedeDeserializarYPorEsoNoSeCachea,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
+REQ-U-001,Usabilidad,Should,,,frontend,,,,docs/mediciones/usabilidad/SUS.md,pendiente
+REQ-U-002,Usabilidad,Should,,,frontend,,,,docs/mediciones/frontend/LIGHTHOUSE.md,verificado

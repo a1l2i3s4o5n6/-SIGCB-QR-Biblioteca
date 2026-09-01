@@ -39,10 +39,10 @@ public class LibroController {
             @PageableDefault(size = 10, sort = "titulo") Pageable pageable) {
         boolean sinFiltros = q == null && categoriaId == null && editorialId == null
                 && anio == null && soloDisponibles == null;
-        var page = sinFiltros
+        var body = sinFiltros
                 ? libroService.listar(pageable)
-                : libroService.listarFiltrado(q, categoriaId, editorialId, anio, soloDisponibles, pageable);
-        return ResponseEntity.ok(PageResponse.from(page));
+                : PageResponse.from(libroService.listarFiltrado(q, categoriaId, editorialId, anio, soloDisponibles, pageable));
+        return ResponseEntity.ok(body);
     }
 
     @GetMapping("/buscar")

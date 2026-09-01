@@ -29,13 +29,15 @@ class PrestamoServiceTest {
     @Mock
     private LibroRepository libroRepository;
     @Mock
+    private SancionRepository sancionRepository;
+    @Mock
     private AuditoriaService auditoriaService;
 
     private PrestamoService prestamoService;
 
     @BeforeEach
     void setUp() {
-        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository, auditoriaService);
+        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository, sancionRepository, auditoriaService);
     }
 
     @Test
@@ -64,6 +66,28 @@ class PrestamoServiceTest {
         var response = prestamoService.crear(request);
         assertNotNull(response);
         verify(prestamoRepository).save(any(Prestamo.class));
+    }
+
+    @Test
+    void crearPrestamoConSancionActivaLanzaExcepcion() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Inventario inventario = new Inventario();
+        inventario.setId(1L);
+        inventario.setEstado("DISPONIBLE");
+
+        PrestamoRequest request = new PrestamoRequest();
+        request.setUsuarioId(1L);
+        request.setInventarioId(1L);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(inventarioRepository.findById(1L)).thenReturn(Optional.of(inventario));
+        when(prestamoRepository.countByUsuarioIdAndEstado(1L, "ACTIVO")).thenReturn(0L);
+        when(sancionRepository.existsByUsuarioIdAndActivaTrue(1L)).thenReturn(true);
+
+        assertThrows(BadRequestException.class, () -> prestamoService.crear(request));
+        verify(prestamoRepository, never()).save(any(Prestamo.class));
     }
 
     @Test

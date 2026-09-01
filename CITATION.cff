@@ -1,16 +1,50 @@
 cff-version: 1.2.0
 message: "Por favor, cita este software si lo usas en tu investigación."
-title: "SIGCB-QR: Sistema Integral de Gestión Bibliotecaria"
-version: 0.9.0-rc
-date-released: 2026-07-30
+title: "SIGCB-QR: Sistema Integral de Gestión de Biblioteca con Códigos QR"
+abstract: >-
+  Sistema de gestión bibliotecaria universitaria con API REST en Spring Boot y
+  frontend Laravel como Backend for Frontend, sobre PostgreSQL y Redis. Incluye
+  especificación de requisitos ISO/IEC/IEEE 29148, registros de decisiones de
+  arquitectura, matriz de trazabilidad validada automáticamente y evidencia
+  empírica reproducible de seguridad, cobertura, rendimiento y usabilidad.
+type: software
+version: 1.0.0-rc
+date-released: 2026-09-01
+license: MIT
 authors:
   - name: "Equipo SIGCB-QR"
     affiliation: "Universidad Técnica Estatal de Quevedo (UTEQ)"
-repository-code: "https://github.com/<equipo>/sigcb-qr"
-license: "MIT"
+repository-code: "https://github.com/EQUIPO/sigcb-qr"
 keywords:
-  - "biblioteca"
-  - "gestion"
-  - "qr"
+  - "gestión bibliotecaria"
+  - "biblioteca universitaria"
+  - "códigos QR"
   - "spring-boot"
   - "laravel"
+  - "jwt"
+  - "postgresql"
+  - "redis"
+  - "reproducibilidad"
+  - "trazabilidad"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DOI
+#
+# Este archivo NO declara todavía un DOI porque el depósito en Zenodo aún no se
+# ha publicado, y un identificador inventado sería peor que la ausencia de uno:
+# no resolvería, y una cita que no resuelve es una cita falsa.
+#
+# Procedimiento para obtenerlo (docs/PUBLICACION-ZENODO.md):
+#   1. Activar el repositorio en https://zenodo.org/account/settings/github/
+#   2. Publicar la etiqueta v1.0.0 en GitHub; Zenodo archiva y asigna el DOI
+#      leyendo los metadatos de .zenodo.json
+#   3. Añadir aquí las dos líneas siguientes con el DOI de concepto que Zenodo
+#      devuelva (el que apunta siempre a la última versión):
+#
+#         identifiers:
+#           - type: doi
+#             value: 10.5281/zenodo.XXXXXXX
+#             description: "DOI de concepto (todas las versiones)"
+#
+#   4. Añadir la insignia del DOI al README.
+# ─────────────────────────────────────────────────────────────────────────────

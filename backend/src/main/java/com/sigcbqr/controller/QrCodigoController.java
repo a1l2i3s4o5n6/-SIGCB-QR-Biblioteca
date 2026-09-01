@@ -1,6 +1,7 @@
 package com.sigcbqr.controller;
 
 import com.sigcbqr.model.dto.request.QrCodigoRequest;
+import com.sigcbqr.model.dto.request.ValidarQrRequest;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.QrCodigoResponse;
 import com.sigcbqr.service.QrCodigoService;
@@ -52,5 +53,12 @@ public class QrCodigoController {
     @Operation(summary = "Activar o desactivar código QR")
     public ResponseEntity<ApiResponse> cambiarEstado(@PathVariable Long id, @RequestParam boolean activo) {
         return ResponseEntity.ok(ApiResponse.success("Estado actualizado", qrCodigoService.cambiarEstado(id, activo)));
+    }
+
+    @PostMapping("/validar")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Validar código QR", description = "Valida un código QR escaneado y devuelve la información del libro")
+    public ResponseEntity<ApiResponse> validar(@Valid @RequestBody ValidarQrRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Código QR válido", qrCodigoService.validarCodigo(request.getCodigo())));
     }
 }

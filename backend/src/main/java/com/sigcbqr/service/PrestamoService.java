@@ -23,17 +23,20 @@ public class PrestamoService {
     private final UsuarioRepository usuarioRepository;
     private final InventarioRepository inventarioRepository;
     private final LibroRepository libroRepository;
+    private final SancionRepository sancionRepository;
     private final AuditoriaService auditoriaService;
 
     public PrestamoService(PrestamoRepository prestamoRepository,
                            UsuarioRepository usuarioRepository,
                            InventarioRepository inventarioRepository,
                            LibroRepository libroRepository,
+                           SancionRepository sancionRepository,
                            AuditoriaService auditoriaService) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.inventarioRepository = inventarioRepository;
         this.libroRepository = libroRepository;
+        this.sancionRepository = sancionRepository;
         this.auditoriaService = auditoriaService;
     }
 
@@ -81,6 +84,10 @@ public class PrestamoService {
         long prestamosActivos = prestamoRepository.countByUsuarioIdAndEstado(request.getUsuarioId(), "ACTIVO");
         if (prestamosActivos >= MAX_PRESTAMOS_ACTIVOS) {
             throw new BadRequestException("El usuario tiene demasiados préstamos activos");
+        }
+
+        if (sancionRepository.existsByUsuarioIdAndActivaTrue(request.getUsuarioId())) {
+            throw new BadRequestException("El usuario tiene una sanción activa y no puede realizar nuevos préstamos");
         }
 
         Prestamo prestamo = Prestamo.builder()

@@ -3,6 +3,7 @@ package com.sigcbqr.service;
 import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.request.LibroRequest;
 import com.sigcbqr.model.dto.response.LibroResponse;
+import com.sigcbqr.model.dto.response.PageResponse;
 import com.sigcbqr.model.entity.*;
 import com.sigcbqr.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,9 +54,9 @@ class LibroServiceTest {
         Page<Libro> page = new PageImpl<>(List.of(libro));
         when(libroRepository.findByActivoTrue(any(PageRequest.class))).thenReturn(page);
 
-        Page<LibroResponse> result = libroService.listar(PageRequest.of(0, 10));
+        PageResponse<LibroResponse> result = libroService.listar(PageRequest.of(0, 10));
 
-        assertFalse(result.isEmpty());
+        assertFalse(result.getContent().isEmpty());
         assertEquals("Test Book", result.getContent().get(0).getTitulo());
     }
 

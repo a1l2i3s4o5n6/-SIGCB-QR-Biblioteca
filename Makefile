@@ -1,7 +1,10 @@
 # SIGCB-QR — Makefile para reproducibilidad
-# Uso: make up | make down | make test | make logs | make metrics
+# Uso: make up | down | test | verify | audit | metrics | logs | clean
+# Comprobar contraseña: make test DB_PASSWORD=MiClave
 
-.PHONY: up down test logs metrics clean
+DB_PASSWORD ?= Doctora2025
+
+.PHONY: up down test logs metrics clean verify audit docs-check
 
 up:
 	docker compose up --build -d
@@ -11,10 +14,30 @@ down:
 	docker compose down
 
 test:
-	cd sigcb-qr-api && mvn clean test
+	cd backend && TEST_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sigcbqr_test TEST_DATASOURCE_USERNAME=postgres TEST_DATASOURCE_PASSWORD=$(DB_PASSWORD) mvn clean test
 
 logs:
 	docker compose logs -f
+
+# Comprobaciones que no necesitan el sistema levantado.
+verify:
+	@echo "=== Digests SHA256 de las imágenes (64 hex) ==="
+	@python scripts/validate-digests.py
+	@echo ""
+	@echo "=== Matriz de trazabilidad (toda prueba citada debe existir) ==="
+	@bash scripts/validate-traceability.sh
+	@echo ""
+	@echo "=== Índice de ADR ==="
+	@bash scripts/validate-adr.sh
+
+# Comprueba que el diccionario de datos no se haya quedado desfasado.
+# Necesita el contenedor de PostgreSQL en marcha.
+docs-check:
+	@python scripts/generar-diccionario-datos.py --check
+
+# Auditoría de seguridad contra el sistema en marcha. Requiere 'make up'.
+audit:
+	@bash scripts/owasp-audit.sh
 
 metrics:
 	@echo "=== Hit Ratio Redis ==="
