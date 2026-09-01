@@ -1,0 +1,11 @@
+# El build de assets se hace dentro del Dockerfile (stage node) y se copia
+# al final desde /app/public/build. Excluir los assets locales del contexto
+# para que un build viejo/incompleto no pise el build correcto de Docker.
+public/build
+node_modules
+.env
+.git
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
