@@ -18,6 +18,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LibroController.class)
@@ -44,11 +45,12 @@ class LibroControllerTest {
         PageResponse<LibroResponse> pageResponse = PageResponse.from(
                 new PageImpl<>(List.of(libro), PageRequest.of(0, 10), 1));
 
-        when(libroService.listar(any())).thenReturn(
-                new PageImpl<>(List.of(libro), PageRequest.of(0, 10), 1));
+        when(libroService.listar(any())).thenReturn(pageResponse);
 
         mockMvc.perform(get("/api/libros"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].titulo").value("Test Book"))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 
     @Test
