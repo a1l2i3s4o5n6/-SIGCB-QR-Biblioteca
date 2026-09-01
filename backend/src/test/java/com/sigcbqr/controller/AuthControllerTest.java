@@ -7,6 +7,7 @@ import com.sigcbqr.model.dto.response.LoginResponse;
 import com.sigcbqr.security.JwtAuthenticationEntryPoint;
 import com.sigcbqr.security.JwtTokenProvider;
 import com.sigcbqr.service.AuthService;
+import com.sigcbqr.service.RateLimitService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private RateLimitService rateLimitService;
 
     @MockBean
     private JwtTokenProvider tokenProvider;
