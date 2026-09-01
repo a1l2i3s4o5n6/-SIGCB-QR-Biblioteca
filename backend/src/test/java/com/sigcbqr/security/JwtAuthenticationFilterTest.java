@@ -38,14 +38,14 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void doFilterSinAccessTokenCookieContinuaLaCadena() throws Exception {
-        when(tokenProvider.extractTokenFromCookie(request)).thenReturn(null);
+        when(tokenProvider.extractTokenFromRequest(request)).thenReturn(null);
         filter.doFilterInternal(request, response, filterChain);
         verify(filterChain).doFilter(request, response);
     }
 
     @Test
     void doFilterConAccessTokenCookieInvalido() throws Exception {
-        when(tokenProvider.extractTokenFromCookie(request)).thenReturn("invalid-token");
+        when(tokenProvider.extractTokenFromRequest(request)).thenReturn("invalid-token");
         when(tokenProvider.validateToken("invalid-token")).thenReturn(false);
 
         filter.doFilterInternal(request, response, filterChain);

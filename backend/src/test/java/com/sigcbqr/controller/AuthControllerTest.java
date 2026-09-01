@@ -7,6 +7,7 @@ import com.sigcbqr.model.dto.response.LoginResponse;
 import com.sigcbqr.security.JwtAuthenticationEntryPoint;
 import com.sigcbqr.security.JwtTokenProvider;
 import com.sigcbqr.service.AuthService;
+import com.sigcbqr.service.RateLimitService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,11 @@ class AuthControllerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    // AuthController limita la tasa de login/registro; sin este doble el contexto
+    // de @WebMvcTest no arranca (NoSuchBeanDefinitionException: RateLimitService).
+    @MockBean
+    private RateLimitService rateLimitService;
 
     @Test
     void loginExitoso() throws Exception {
