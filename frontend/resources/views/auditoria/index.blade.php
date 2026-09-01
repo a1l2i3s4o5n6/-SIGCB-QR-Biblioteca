@@ -12,6 +12,38 @@
         </div>
     </x-slot>
 
+    <!-- Filtro por rango de fechas -->
+    <form method="GET" action="{{ route('auditoria.index') }}"
+        class="mb-4 bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 flex flex-col sm:flex-row items-end sm:items-center gap-3">
+        <div>
+            <label for="desde" class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Desde</label>
+            <input type="date" id="desde" name="desde" value="{{ $desde ?? '' }}"
+                class="border-gray-300 focus:border-primary-400 focus:ring-primary-400 rounded-md shadow-sm text-sm">
+        </div>
+        <div>
+            <label for="hasta" class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">Hasta</label>
+            <input type="date" id="hasta" name="hasta" value="{{ $hasta ?? '' }}"
+                class="border-gray-300 focus:border-primary-400 focus:ring-primary-400 rounded-md shadow-sm text-sm">
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="submit"
+                class="inline-flex items-center px-3 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-700 transition">
+                <i class="fas fa-filter mr-2"></i> Filtrar
+            </button>
+            <button type="submit" formaction="{{ route('auditoria.reporte') }}"
+                class="inline-flex items-center px-3 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition">
+                <i class="fas fa-file-pdf mr-2"></i> Generar PDF
+            </button>
+            @if (($desde ?? '') !== '' || ($hasta ?? '') !== '')
+                <a href="{{ route('auditoria.index') }}"
+                    class="inline-flex items-center px-3 py-2 rounded-lg bg-gray-100 text-gray-600 text-sm hover:bg-gray-200 transition"
+                    title="Quitar filtro">
+                    <i class="fas fa-times mr-1"></i> Limpiar
+                </a>
+            @endif
+        </div>
+    </form>
+
     @if ($errors->any())
         <div class="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
             <i class="fas fa-exclamation-circle mr-2"></i>

@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -100,6 +101,16 @@ public class GlobalExceptionHandler {
         pd.setType(URI.create(BASE_ERROR_URL + "/validation"));
         pd.setTitle("Error de validación");
         pd.setProperty("errors", errors);
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                "Parámetro inválido: " + ex.getName());
+        pd.setType(URI.create(BASE_ERROR_URL + "/bad-request"));
+        pd.setTitle("Solicitud inválida");
         pd.setProperty("timestamp", System.currentTimeMillis());
         return pd;
     }

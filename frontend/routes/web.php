@@ -101,6 +101,7 @@ Route::middleware('auth')->group(function () {
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');
+    Route::get('/auditoria/reporte',       [AuditoriaController::class, 'pdf'])->name('auditoria.reporte');
 
     // ── Búsqueda en vivo (fragmentos de tabla para Alpine) ──────────────
     Route::get('/datos/catalogo',        [DatosController::class, 'catalogo'])->name('datos.catalogo');

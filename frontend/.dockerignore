@@ -5,6 +5,10 @@ public/build
 node_modules
 .env
 .git
+# El vendor local (del host) no debe pisar el vendor construido en la imagen
+# por el stage composer del Dockerfile (puede estar incompleto/corrupto).
+vendor
+bootstrap/cache/*
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*

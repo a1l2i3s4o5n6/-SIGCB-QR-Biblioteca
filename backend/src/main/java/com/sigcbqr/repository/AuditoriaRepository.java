@@ -11,5 +11,6 @@ import java.time.LocalDateTime;
 @Repository
 public interface AuditoriaRepository extends JpaRepository<Auditoria, Long> {
     Page<Auditoria> findByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin, Pageable pageable);
+    Page<Auditoria> findByUsuarioIdAndCreatedAtBetween(Long usuarioId, LocalDateTime inicio, LocalDateTime fin, Pageable pageable);
     Page<Auditoria> findByUsuarioId(Long usuarioId, Pageable pageable);
 }
