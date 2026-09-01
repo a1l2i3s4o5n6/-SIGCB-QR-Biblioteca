@@ -55,6 +55,17 @@ app:
   cache:
     default-ttl-seconds: ${CACHE_DEFAULT_TTL_SECONDS:300}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+
 logging:
   level:
     com.sigcbqr: DEBUG

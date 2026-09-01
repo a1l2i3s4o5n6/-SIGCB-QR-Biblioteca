@@ -1,5 +1,7 @@
 package com.sigcbqr.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -81,6 +83,20 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage());
         }
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Error de validación");
+        pd.setType(URI.create(BASE_ERROR_URL + "/validation"));
+        pd.setTitle("Error de validación");
+        pd.setProperty("errors", errors);
+        pd.setProperty("timestamp", System.currentTimeMillis());
+        return pd;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+        }
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Parámetro inválido");
         pd.setType(URI.create(BASE_ERROR_URL + "/validation"));
         pd.setTitle("Error de validación");
         pd.setProperty("errors", errors);

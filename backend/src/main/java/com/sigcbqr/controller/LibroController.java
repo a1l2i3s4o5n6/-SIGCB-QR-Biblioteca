@@ -8,15 +8,18 @@ import com.sigcbqr.service.LibroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/libros")
 @Tag(name = "Libros", description = "CRUD de material bibliográfico")
+@Validated
 public class LibroController {
 
     private final LibroService libroService;
@@ -28,7 +31,7 @@ public class LibroController {
     @GetMapping
     @Operation(summary = "Listar libros", description = "Obtiene los libros activos con paginación, búsqueda y filtros combinables")
     public ResponseEntity<PageResponse<LibroResponse>> listar(
-            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "q", required = false) @Size(max = 100) String q,
             @RequestParam(value = "categoriaId", required = false) Long categoriaId,
             @RequestParam(value = "editorialId", required = false) Long editorialId,
             @RequestParam(value = "anio", required = false) Integer anio,
@@ -45,7 +48,7 @@ public class LibroController {
     @GetMapping("/buscar")
     @Operation(summary = "Buscar libros", description = "Busca libros por título")
     public ResponseEntity<PageResponse<LibroResponse>> buscar(
-            @RequestParam String q,
+            @RequestParam @Size(max = 100) String q,
             @PageableDefault(size = 10) Pageable pageable) {
         var page = libroService.buscar(q, pageable);
         return ResponseEntity.ok(PageResponse.from(page));
