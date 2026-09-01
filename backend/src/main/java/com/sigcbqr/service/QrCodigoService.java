@@ -76,6 +76,18 @@ public class QrCodigoService {
         return toResponse(saved);
     }
 
+    @Transactional
+    public QrCodigoResponse validarCodigo(String codigo) {
+        QrCodigo qr = qrCodigoRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new ResourceNotFoundException("Código QR no encontrado"));
+        if (!Boolean.TRUE.equals(qr.getActivo())) {
+            throw new BadRequestException("El código QR está inactivo");
+        }
+        auditoriaService.registrar("VALIDAR", "CÓDIGO QR", qr.getId(),
+                "Código QR validado para el libro \"" + qr.getLibro().getTitulo() + "\"");
+        return toResponse(qr);
+    }
+
     private String generarCodigoUnico(Long libroId) {
         for (int i = 0; i < 10; i++) {
             String candidato = "QR-LIB-" + libroId + "-" + generarAleatorio(6);

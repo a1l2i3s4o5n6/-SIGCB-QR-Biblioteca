@@ -7,10 +7,12 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatosController;
 use App\Http\Controllers\MultaController;
+use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\PrestamoController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ReservaController;
+use App\Http\Controllers\SancionController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,9 +82,21 @@ Route::middleware('auth')->group(function () {
 
     // ── Códigos QR ─────────────────────────────────────────────────────
     Route::get('/qr-codigos',                  [QrController::class, 'index'])->name('qr-codigos.index');
+    Route::get('/qr-codigos/escanear',         [QrController::class, 'validar'])->name('qr-codigos.validar');
     Route::post('/qr-codigos',                 [QrController::class, 'store'])->name('qr-codigos.store');
     Route::post('/qr-codigos/{id}/toggle',     [QrController::class, 'toggle'])->name('qr-codigos.toggle');
     Route::post('/qr-codigos/{id}/regenerar',  [QrController::class, 'regenerar'])->name('qr-codigos.regenerar');
+
+    // ── Notificaciones ────────────────────────────────────────────────
+    Route::get('/notificaciones',                 [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::post('/notificaciones',                [NotificacionController::class, 'store'])->name('notificaciones.store');
+    Route::post('/notificaciones/{id}/leida',     [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');
+    Route::post('/notificaciones/leer-todas',     [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer-todas');
+
+    // ── Sanciones ─────────────────────────────────────────────────────
+    Route::get('/sanciones',                  [SancionController::class, 'index'])->name('sanciones.index');
+    Route::post('/sanciones',                 [SancionController::class, 'store'])->name('sanciones.store');
+    Route::post('/sanciones/{id}/levantar',   [SancionController::class, 'levantar'])->name('sanciones.levantar');
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');
