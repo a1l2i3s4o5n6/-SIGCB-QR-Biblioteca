@@ -174,11 +174,12 @@ class ApiClient
         return $this->withAuth()->get("/prestamos/{$id}")->json() ?? [];
     }
 
-    public function crearPrestamo(int $usuarioId, int $inventarioId): array
+    public function crearPrestamo(int $usuarioId, int $inventarioId, ?string $codigoQr = null): array
     {
         return $this->withAuth()->post('/prestamos', [
             'usuarioId'    => $usuarioId,
             'inventarioId' => $inventarioId,
+            'codigoQr'     => $codigoQr,
         ])->json() ?? [];
     }
 
