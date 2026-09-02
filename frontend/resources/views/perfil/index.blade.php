@@ -32,6 +32,7 @@
              fotoPreview: '',
              quitar: @json(old('quitar_foto') ? true : false),
              urlValue: '',
+             tieneActual: @json((bool) !empty($perfil['foto'])),
              init() {
                  const actual = this.$el.dataset.fotoActual || '';
                  if (!this.quitar && actual) this.fotoPreview = actual;
@@ -72,15 +73,17 @@
                 <!-- Foto de perfil -->
                 <div class="p-5 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/70 flex flex-col sm:flex-row items-center gap-5">
                     <div class="relative shrink-0">
-                        <template x-if="fotoPreview">
-                            <img :src="fotoPreview" alt="Foto de perfil"
-                                class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md">
-                        </template>
-                        <template x-if="!fotoPreview">
-                            <div class="w-24 h-24 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary-600 border-4 border-white shadow-sm">
-                                {{ substr(old('nombre', $perfil['nombre'] ?? '?'), 0, 1) }}
-                            </div>
-                        </template>
+                        <img x-show="!quitar && (fotoPreview || tieneActual)"
+                            x-bind:src="fotoPreview"
+                            src="@if (!empty($perfil['foto'])){{ asset($perfil['foto']) }}@endif"
+                            alt="Foto de perfil"
+                            class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+                            style="{{ empty($perfil['foto']) ? 'display:none' : '' }}">
+                        <div x-show="quitar || !(fotoPreview || tieneActual)"
+                            class="w-24 h-24 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary-600 border-4 border-white shadow-sm"
+                            style="{{ !empty($perfil['foto']) && empty(old('quitar_foto')) ? 'display:none' : '' }}">
+                            {{ substr(old('nombre', $perfil['nombre'] ?? '?'), 0, 1) }}
+                        </div>
                         <span x-show="quitar"
                             class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-semibold uppercase tracking-wide"
                             style="display: none;">eliminada</span>
