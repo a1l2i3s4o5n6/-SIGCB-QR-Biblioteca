@@ -79,12 +79,15 @@ class PrestamoController extends Controller
         $request->validate([
             'usuarioId'    => ['required', 'integer'],
             'inventarioId' => ['required', 'integer'],
+            'codigoQr'     => ['nullable', 'string', 'max:100'],
         ]);
 
         try {
+            $codigoQr = $request->input('codigoQr');
             $this->api->crearPrestamo(
                 (int) $request->input('usuarioId'),
-                (int) $request->input('inventarioId')
+                (int) $request->input('inventarioId'),
+                $codigoQr === '' || $codigoQr === null ? null : trim($codigoQr)
             );
 
             return redirect()->route('prestamos.index')

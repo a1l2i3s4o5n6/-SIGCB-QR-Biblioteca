@@ -11,4 +11,10 @@ public class PrestamoRequest {
 
     @NotNull(message = "El inventario es obligatorio")
     private Long inventarioId;
+
+    /**
+     * Código QR escaneado/tecleado (opcional). Si se envía, el sistema valida
+     * que exista, esté activo y corresponda al libro del ejemplar prestado.
+     */
+    private String codigoQr;
 }

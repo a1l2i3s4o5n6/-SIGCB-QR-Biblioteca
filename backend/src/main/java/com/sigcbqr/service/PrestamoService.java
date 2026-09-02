@@ -25,19 +25,22 @@ public class PrestamoService {
     private final LibroRepository libroRepository;
     private final SancionRepository sancionRepository;
     private final AuditoriaService auditoriaService;
+    private final QrCodigoRepository qrCodigoRepository;
 
     public PrestamoService(PrestamoRepository prestamoRepository,
                            UsuarioRepository usuarioRepository,
                            InventarioRepository inventarioRepository,
                            LibroRepository libroRepository,
                            SancionRepository sancionRepository,
-                           AuditoriaService auditoriaService) {
+                           AuditoriaService auditoriaService,
+                           QrCodigoRepository qrCodigoRepository) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.inventarioRepository = inventarioRepository;
         this.libroRepository = libroRepository;
         this.sancionRepository = sancionRepository;
         this.auditoriaService = auditoriaService;
+        this.qrCodigoRepository = qrCodigoRepository;
     }
 
     public Page<PrestamoResponse> listar(Pageable pageable) {
@@ -80,6 +83,8 @@ public class PrestamoService {
         if (!"DISPONIBLE".equals(inventario.getEstado())) {
             throw new BadRequestException("El ejemplar no está disponible");
         }
+
+        validarCodigoQr(request, inventario);
 
         long prestamosActivos = prestamoRepository.countByUsuarioIdAndEstado(request.getUsuarioId(), "ACTIVO");
         if (prestamosActivos >= MAX_PRESTAMOS_ACTIVOS) {
@@ -140,6 +145,24 @@ public class PrestamoService {
         auditoriaService.registrar("DEVOLVER", "PRESTAMO", prestamo.getId(),
                 "Devolución de \"" + inventario.getLibro().getTitulo() + "\" de " + prestamo.getUsuario().getNombre());
         return toResponse(prestamo);
+    }
+
+    private void validarCodigoQr(PrestamoRequest request, Inventario inventario) {
+        String codigoQr = request.getCodigoQr();
+        if (codigoQr == null || codigoQr.isBlank()) {
+            return;
+        }
+
+        QrCodigo qr = qrCodigoRepository.findByCodigo(codigoQr.trim())
+                .orElseThrow(() -> new BadRequestException("El código QR '" + codigoQr.trim() + "' no está registrado"));
+
+        if (!Boolean.TRUE.equals(qr.getActivo())) {
+            throw new BadRequestException("El código QR '" + codigoQr.trim() + "' está desactivado");
+        }
+
+        if (!qr.getLibro().getId().equals(inventario.getLibro().getId())) {
+            throw new BadRequestException("El código QR no corresponde al libro del ejemplar seleccionado");
+        }
     }
 
     @Transactional
