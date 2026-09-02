@@ -117,6 +117,7 @@ public class UsuarioService {
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
                 .telefono(usuario.getTelefono())
+                .foto(usuario.getFoto())
                 .rol(usuario.getRol().getNombre())
                 .activo(usuario.getActivo())
                 .createdAt(usuario.getCreatedAt())

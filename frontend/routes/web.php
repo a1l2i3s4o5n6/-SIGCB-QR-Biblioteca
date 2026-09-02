@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatosController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\PrestamoController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\ReporteController;
@@ -98,6 +99,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/sanciones',                  [SancionController::class, 'index'])->name('sanciones.index');
     Route::post('/sanciones',                 [SancionController::class, 'store'])->name('sanciones.store');
     Route::post('/sanciones/{id}/levantar',   [SancionController::class, 'levantar'])->name('sanciones.levantar');
+
+    // ── Mi Perfil ─────────────────────────────────────────────────────
+    Route::get('/perfil',                     [PerfilController::class, 'index'])->name('perfil.index');
+    Route::put('/perfil',                     [PerfilController::class, 'update'])->name('perfil.update');
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');

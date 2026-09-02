@@ -474,4 +474,30 @@ class ApiClient
 
         return $response->json('data') ?? [];
     }
+
+    // ─────────────────────────────────────────────
+    // PERFIL (usuario autenticado)
+    // ─────────────────────────────────────────────
+
+    public function getMiPerfil(): array
+    {
+        $response = $this->withAuth()->get('/perfil');
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo obtener el perfil.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function actualizarMiPerfil(array $data): array
+    {
+        $response = $this->withAuth()->put('/perfil', $data);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo actualizar el perfil.');
+        }
+
+        return $response->json('data') ?? [];
+    }
 }

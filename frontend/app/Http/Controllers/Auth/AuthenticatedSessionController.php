@@ -44,6 +44,7 @@ class AuthenticatedSessionController extends Controller
                 'id'     => $data['id']     ?? null,
                 'nombre' => $data['nombre'] ?? null,
                 'email'  => $data['email']  ?? null,
+                'foto'   => $data['foto']   ?? null,
             ]);
             $request->session()->put('rol', $data['rol'] ?? 'LECTOR');
 

@@ -3,8 +3,10 @@ package com.sigcbqr.service;
 import com.sigcbqr.exception.BadRequestException;
 import com.sigcbqr.exception.ResourceNotFoundException;
 import com.sigcbqr.model.dto.request.LoginRequest;
+import com.sigcbqr.model.dto.request.PerfilRequest;
 import com.sigcbqr.model.dto.request.RegisterRequest;
 import com.sigcbqr.model.dto.response.LoginResponse;
+import com.sigcbqr.model.dto.response.UsuarioResponse;
 import com.sigcbqr.model.entity.Rol;
 import com.sigcbqr.model.entity.Usuario;
 import com.sigcbqr.repository.RolRepository;
@@ -61,6 +63,7 @@ public class AuthService {
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
                 .rol(usuario.getRol().getNombre())
+                .foto(usuario.getFoto())
                 .token(token)
                 .mensaje("Inicio de sesión exitoso")
                 .build();
@@ -115,5 +118,52 @@ public class AuthService {
     public Usuario getCurrentUser(Long userId) {
         return usuarioRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", userId));
+    }
+
+    @Transactional
+    public UsuarioResponse actualizarPerfil(Long userId, PerfilRequest request) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", userId));
+
+        String nuevoEmail = request.getEmail().trim().toLowerCase();
+        usuarioRepository.findByEmail(nuevoEmail)
+                .filter(u -> !u.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new BadRequestException("El correo ya está registrado");
+                });
+
+        usuario.setNombre(request.getNombre().trim());
+        usuario.setEmail(nuevoEmail);
+        usuario.setTelefono(request.getTelefono() == null ? null : request.getTelefono().trim());
+        usuario.setFoto(request.getFoto() == null ? null : request.getFoto().trim());
+
+        String nuevaPassword = request.getPasswordNueva();
+        if (nuevaPassword != null && !nuevaPassword.isBlank()) {
+            String actual = request.getPasswordActual();
+            if (actual == null || actual.isBlank()
+                    || !passwordEncoder.matches(actual, usuario.getPassword())) {
+                throw new BadRequestException("La contraseña actual es incorrecta");
+            }
+            if (nuevaPassword.length() < 6) {
+                throw new BadRequestException("La nueva contraseña debe tener al menos 6 caracteres");
+            }
+            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        }
+
+        usuarioRepository.save(usuario);
+
+        auditoriaService.registrar(usuario, "ACTUALIZAR", "PERFIL", usuario.getId(),
+                "Actualización de perfil por " + usuario.getEmail());
+
+        return UsuarioResponse.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .foto(usuario.getFoto())
+                .rol(usuario.getRol().getNombre())
+                .activo(usuario.getActivo())
+                .createdAt(usuario.getCreatedAt())
+                .build();
     }
 }

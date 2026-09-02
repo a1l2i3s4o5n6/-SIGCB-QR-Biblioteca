@@ -47,9 +47,14 @@
             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                 <button @click="open = !open"
                     class="flex items-center space-x-2 text-white/90 hover:text-white focus:outline-none transition group">
-                    <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold text-white">
-                        {{ substr(session('user.nombre', '?'), 0, 1) }}
-                    </div>
+                    @if (session('user.foto'))
+                        <img src="{{ asset(session('user.foto')) }}" alt="Foto de perfil"
+                            class="w-8 h-8 rounded-full object-cover border border-white/30">
+                    @else
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold text-white">
+                            {{ substr(session('user.nombre', '?'), 0, 1) }}
+                        </div>
+                    @endif
                     <span class="hidden sm:block text-sm font-medium">{{ session('user.nombre', 'Usuario') }}</span>
                     <i class="fas fa-chevron-down text-xs transition" :class="{'rotate-180': open}"></i>
                 </button>
@@ -62,9 +67,26 @@
                     x-transition:enter-end="transform opacity-100 scale-100"
                     style="display: none;">
                     <div class="px-4 py-2 border-b border-gray-100">
-                        <p class="text-sm font-semibold text-gray-800">{{ session('user.nombre', 'Usuario') }}</p>
-                        <p class="text-xs text-gray-500">{{ session('user.email', '') }}</p>
+                        @if (session('user.foto'))
+                            <div class="flex items-center gap-3 mb-2">
+                                <img src="{{ asset(session('user.foto')) }}" alt="Foto de perfil"
+                                    class="w-9 h-9 rounded-full object-cover">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">{{ session('user.nombre', 'Usuario') }}</p>
+                                    <p class="text-xs text-gray-500">{{ session('user.email', '') }}</p>
+                                </div>
+                            </div>
+                        @else
+                            <p class="text-sm font-semibold text-gray-800">{{ session('user.nombre', 'Usuario') }}</p>
+                            <p class="text-xs text-gray-500">{{ session('user.email', '') }}</p>
+                        @endif
                     </div>
+
+                    <a href="{{ route('perfil.index') }}"
+                        class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <i class="fas fa-user-edit w-5 text-gray-400"></i>
+                        <span class="ml-2">Mi Perfil</span>
+                    </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
