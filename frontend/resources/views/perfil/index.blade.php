@@ -27,12 +27,13 @@
     @endif
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-3xl"
+         data-foto-actual="{{ $perfil['foto'] ?? '' }}"
          x-data="{
              fotoPreview: '',
              quitar: @json(old('quitar_foto') ? true : false),
              urlValue: '',
              init() {
-                 const actual = @json(old('quitar_foto') ? '' : ($perfil['foto'] ?? ''));
+                 const actual = this.$el.dataset.fotoActual || '';
                  if (!this.quitar && actual) this.fotoPreview = actual;
              },
              onFile(e) {
@@ -52,8 +53,7 @@
              limpiarUrl() {
                  this.urlValue = '';
                  this.quitar = false;
-                 const actual = @json($perfil['foto'] ?? '');
-                 this.fotoPreview = actual || '';
+                 this.fotoPreview = this.$el.dataset.fotoActual || '';
              },
              eliminarFoto() {
                  this.quitar = true;
