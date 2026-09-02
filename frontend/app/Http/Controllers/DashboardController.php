@@ -3,22 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Services\ApiClient;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     public function __construct(protected ApiClient $api) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $stats = $this->api->getEstadisticas();
-        $reservas = $this->api->getReservas(['page' => 0, 'size' => 3]);
-        $prestamos = $this->api->getPrestamos(['page' => 0, 'size' => 4]);
+        $params = [];
+        if ($request->filled('desde')) {
+            $params['desde'] = $request->query('desde');
+        }
+        if ($request->filled('hasta')) {
+            $params['hasta'] = $request->query('hasta');
+        }
+
+        $resumen = $this->api->getDashboardResumen($params);
 
         return view('dashboard', [
-            'stats' => $stats,
-            'reservas' => $reservas['content'] ?? [],
-            'prestamos' => $prestamos['content'] ?? [],
+            'resumen' => $resumen,
+            'rol'     => session('rol'),
         ]);
     }
 }

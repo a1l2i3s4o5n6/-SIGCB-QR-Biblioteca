@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,6 +17,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
     boolean existsByEmail(String email);
     long countByActivoTrue();
+    long countByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin);
+    List<Usuario> findByRol_Nombre(String rolNombre);
+    List<Usuario> findByActivoTrue();
+
+    @Query("SELECT COUNT(DISTINCT s.usuario.id) FROM Sancion s WHERE s.activa = true")
+    long countUsuariosConSancionActiva();
 
     @Query("""
         SELECT u FROM Usuario u

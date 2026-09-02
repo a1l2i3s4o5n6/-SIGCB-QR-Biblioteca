@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -18,6 +19,7 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
     Page<Libro> findByCategoriaId(Long categoriaId, Pageable pageable);
     long countByActivoTrue();
     long countByEjemplaresDisponiblesGreaterThan(int min);
+    long countByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin);
 
     @Query("""
         SELECT l FROM Libro l
@@ -41,6 +43,10 @@ public interface LibroRepository extends JpaRepository<Libro, Long> {
 
     @Query("SELECT l FROM Libro l ORDER BY (l.ejemplaresTotales - l.ejemplaresDisponibles) DESC")
     List<Libro> findMasPrestados(Pageable pageable);
+
+    @Query("SELECT l.categoria.nombre, COUNT(l) FROM Libro l " +
+            "WHERE l.categoria IS NOT NULL GROUP BY l.categoria.nombre ORDER BY COUNT(l) DESC")
+    List<Object[]> countPorCategoria();
 
     // Stored procedures
     @Procedure("sp_reporte_libros_mas_prestados")

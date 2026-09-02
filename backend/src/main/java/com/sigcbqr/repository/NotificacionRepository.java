@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -15,4 +16,5 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
     Page<Notificacion> findByLeida(Boolean leida, Pageable pageable);
     List<Notificacion> findByUsuarioIdAndLeidaFalse(Long usuarioId);
     long countByUsuarioIdAndLeidaFalse(Long usuarioId);
+    long countByUsuarioIdAndTituloContainingAndCreatedAtAfter(Long usuarioId, String texto, LocalDateTime despues);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -16,7 +17,13 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     Page<Reserva> findByUsuarioId(Long usuarioId, Pageable pageable);
     List<Reserva> findByEstado(String estado);
     long countByEstado(String estado);
+    long countByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin);
     long countByUsuarioIdAndEstado(Long usuarioId, String estado);
+
+    @Query("SELECT FUNCTION('date', r.createdAt), COUNT(r) FROM Reserva r " +
+            "WHERE r.createdAt >= :inicio AND r.createdAt <= :fin " +
+            "GROUP BY FUNCTION('date', r.createdAt) ORDER BY FUNCTION('date', r.createdAt)")
+    List<Object[]> countReservasPorDia(LocalDateTime inicio, LocalDateTime fin);
     boolean existsByLibroIdAndEstado(Long libroId, String estado);
 
     @Override

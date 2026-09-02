@@ -317,6 +317,17 @@ class ApiClient
         return $response->json('data') ?? [];
     }
 
+    public function getDashboardResumen(array $params = []): array
+    {
+        $response = $this->withAuth()->get('/dashboard/resumen', $params);
+
+        if (!$response->successful()) {
+            return [];
+        }
+
+        return $response->json('data') ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // CÓDIGOS QR
     // ─────────────────────────────────────────────

@@ -27,6 +27,9 @@ public interface MultaRepository extends JpaRepository<Multa, Long> {
 
     List<Multa> findByPagadaFalse();
     long countByPagadaFalse();
+    long countByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin);
+    long countByPagadaTrueAndFechaPagoBetween(LocalDateTime inicio, LocalDateTime fin);
+    long countByUsuarioIdAndPagadaFalse(Long usuarioId);
 
     @Query("SELECT COALESCE(SUM(m.monto), 0) FROM Multa m WHERE m.pagada = false")
     double totalMultasPendientes();
