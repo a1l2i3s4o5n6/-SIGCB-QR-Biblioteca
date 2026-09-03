@@ -1,0 +1,138 @@
+============================================================
+ Auditoría OWASP — SIGCB-QR
+ Fecha:    2026-09-03T23:01:51Z (UTC)
+ API:      http://localhost:8090
+ Frontend: http://localhost:8000
+ curl:     curl 8.19.0 (x86_64-w64-mingw32) libcurl/8.19.0 Schannel zlib/1.3.2 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.5 libssh2/1.11.1 WinLDAP
+============================================================
+
+------------------------------------------------------------
+API1:2023 — Autorización a nivel de objeto (BOLA)
+------------------------------------------------------------
+  [PASA] GET /api/auditoria como estudiante                       esperado=403                      obtenido=403
+  [PASA] GET /api/usuarios como estudiante                        esperado=403                      obtenido=403
+  [PASA] GET /api/usuarios/1 como estudiante                      esperado=403                      obtenido=403
+  [PASA] GET /api/usuarios como admin                             esperado=200                      obtenido=200
+
+------------------------------------------------------------
+API2:2023 — Autenticación rota
+------------------------------------------------------------
+  [PASA] GET /api/libros sin token                                esperado=401                      obtenido=401
+  [PASA] GET /api/libros con token con formato inválido          esperado=401                      obtenido=401
+  [PASA] GET /api/libros con firma manipulada                     esperado=401                      obtenido=401
+  [PASA] GET /api/libros con Bearer vacío                        esperado=401                      obtenido=401
+
+  Atributos de la cookie de sesión emitida por POST /api/auth/login:
+    Set-Cookie: access_token=eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiIyZjAwNmFiNC1kYTVjLTRjM2EtYjk0Zi0wMTNiNmIyYmMxMzMiLCJpc3MiOiJzaWdjYnFyLWFwaSIsInN1YiI6IjEiLCJhdWQiOlsic2lnY2Jxci1mcm9udGVuZCJdLCJlbWFpbCI6ImFkbWluQGJpYmxpb3RlY2EuY29tIiwicm9sIjoiQURNSU4iLCJpYXQiOjE3ODg0NzY1MTIsIm5iZiI6MTc4ODQ3NjUxMiwiZXhwIjoxNzg4NDgwMTEyfQ.EASkF9ZSDmEivCzIGrh--0JDSuQsogRLnDnFVY_ANYb8QQD_2E_RIrKUn6Sl9Zci_5f-vzBINeWv-ICPL-BEUg; Max-Age=3600; Expires=Fri, 04 Sep 2026 00:01:52 GMT; Path=/; HttpOnly; SameSite=Strict
+  [PASA] cookie access_token con HttpOnly                         esperado=si                       obtenido=si
+  [PASA] cookie access_token con SameSite=Strict                  esperado=si                       obtenido=si
+  [NOTA] cookie access_token con Secure                           ausente (esperado en HTTP local; app.jwt.secure-cookie=true en el perfil prod)
+
+  Revocación efectiva del token en el cierre de sesión (ADR-0009):
+  [PASA] antes del logout, la cookie sirve                        esperado=200                      obtenido=200
+  [PASA] POST /api/auth/logout                                    esperado=200                      obtenido=200
+  [PASA] tras el logout, la misma cookie ya no sirve              esperado=401                      obtenido=401
+
+------------------------------------------------------------
+API3:2023 — Exposición excesiva de propiedades
+------------------------------------------------------------
+  [PASA] la respuesta de login no expone password                 esperado=no                       obtenido=no
+  [PASA] el listado de usuarios no expone hashes bcrypt           esperado=no                       obtenido=no
+
+------------------------------------------------------------
+API5:2023 — Autorización a nivel de función (BFLA)
+------------------------------------------------------------
+  [PASA] POST /api/usuarios como estudiante (cuerpo válido)      esperado=403                      obtenido=403
+  [PASA] GET /api/reportes/prestamos-diarios como estudiante      esperado=403                      obtenido=403
+  [PASA] GET /api/configuracion como estudiante                   esperado=403                      obtenido=403
+  [PASA] el intento BFLA no creó ningún usuario                 esperado=0                        obtenido=0
+
+  Endpoints de escritura del catálogo como ESTUDIANTE (deben dar 403):
+  [PASA] POST   /api/autores como estudiante                      esperado=403                      obtenido=403
+  [PASA] PUT    /api/autores/1 como estudiante                    esperado=403                      obtenido=403
+  [PASA] POST   /api/editoriales como estudiante                  esperado=403                      obtenido=403
+  [PASA] PUT    /api/editoriales/1 como estudiante                esperado=403                      obtenido=403
+  [PASA] DELETE /api/editoriales/1 como estudiante                esperado=403                      obtenido=403
+  [PASA] POST   /api/categorias como estudiante                   esperado=403                      obtenido=403
+  [PASA] PUT    /api/categorias/1 como estudiante                 esperado=403                      obtenido=403
+  [PASA] DELETE /api/categorias/1 como estudiante                 esperado=403                      obtenido=403
+  [PASA] el intento sobre el catálogo no creó ningún autor     esperado=0                        obtenido=0
+
+------------------------------------------------------------
+API8:2023 / A05:2021 — Configuración incorrecta
+------------------------------------------------------------
+  Cabeceras de seguridad de la API (GET /api/libros, sin autenticar):
+    X-Content-Type-Options: nosniff
+    Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+    X-Frame-Options: DENY
+    Content-Type: application/problem+json
+  [PASA] API: X-Content-Type-Options nosniff                      esperado=si                       obtenido=si
+  [PASA] API: X-Frame-Options DENY                                esperado=si                       obtenido=si
+  [PASA] API: errores en formato RFC 7807                         esperado=si                       obtenido=si
+
+  Cabeceras de seguridad del frontend (GET /login):
+    Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-in
+    X-Content-Type-Options: nosniff
+    Referrer-Policy: strict-origin-when-cross-origin
+  [PASA] Frontend: Content-Security-Policy                        esperado=si                       obtenido=si
+  [PASA] Frontend: Referrer-Policy                                esperado=si                       obtenido=si
+  [PASA] Frontend: X-Content-Type-Options nosniff                 esperado=si                       obtenido=si
+
+  CORS (ADR-0002): solo se admiten los orígenes declarados.
+  [PASA] preflight desde http://evil.example                      esperado=403                      obtenido=403
+  [PASA] preflight desde el origen del frontend                   esperado=200                      obtenido=200
+
+  Superficie expuesta por actuator (solo health e info deben estar activos):
+  [PASA] GET /actuator/health                                     esperado=200                      obtenido=200
+  [PASA] GET /actuator/env                                        esperado=404                      obtenido=404
+  [PASA] GET /actuator/beans                                      esperado=404                      obtenido=404
+  [PASA] GET /actuator/heapdump                                   esperado=404                      obtenido=404
+
+  Semántica de los errores: una ruta inexistente debe ser 404, no 500.
+  Un 500 aquí impide distinguir un fallo real de una URL mal escrita y,
+  con el manejador genérico anterior, filtraba el mensaje del framework.
+  [PASA] GET /api/ruta-que-no-existe                              esperado=404                      obtenido=404
+  [PASA] GET /ruta/fuera/del/api                                  esperado=404                      obtenido=404
+  [PASA] DELETE /api/auth/login (método no permitido)            esperado=405                      obtenido=405
+    cuerpo: {"type":"https://api.sigcbqr.com/errors/not-found","title":"Recurso no encontrado","status":404,"detail":"El recurso solicitado no existe","instance":"/api/ruta-que-no-existe","timestamp":1788476517210}
+  [PASA] el 404 no filtra el mensaje interno de Spring            esperado=no                       obtenido=no
+
+------------------------------------------------------------
+A03:2021 — Inyección
+------------------------------------------------------------
+  [PASA] buscar q=[' OR 1=1--] no provoca 500                     esperado=200                      obtenido=200
+  [PASA] buscar q=['; DROP TABLE libros;--] no provoca 500        esperado=200                      obtenido=200
+  [PASA] buscar q=[1' UNION SELECT NULL,NULL,NULL--] no provoca 500 esperado=200                      obtenido=200
+  [PASA] buscar q=[admin'--] no provoca 500                       esperado=200                      obtenido=200
+  [PASA] buscar q=[%' OR '1'='1] no provoca 500                   esperado=200                      obtenido=200
+  [PASA] el catálogo sigue operativo tras las cargas             esperado=200                      obtenido=200
+
+------------------------------------------------------------
+API4:2023 — Consumo de recursos sin restricción
+------------------------------------------------------------
+  Límite de tamaño de página (evita que un cliente pida el catálogo entero):
+  [NOTA] GET /api/libros?size=5000 devuelve size                  2000
+
+  Límite de tasa en el login (5 intentos por IP y minuto).
+  Esta auditoría ya consumió 3 inicios de sesión válidos, así que
+  el corte debe aparecer en los primeros intentos de esta ráfaga.
+    intento 1 -> 401
+    intento 2 -> 401
+    intento 3 -> 429
+    intento 4 -> 429
+    intento 5 -> 429
+    intento 6 -> 429
+    intento 7 -> 429
+    intento 8 -> 429
+  [PASA] el login limita la tasa (aparece 429)                    esperado=si                       obtenido=si
+  [NOTA] primer 429 en el intento                                 3 de la ráfaga (tras 3 logins previos)
+
+------------------------------------------------------------
+Resumen
+------------------------------------------------------------
+  Comprobaciones ejecutadas : 51
+  Superadas                 : 51
+  Fallidas                  : 0
+  Observaciones sin puntuar : 3
+
+RESULTADO: todas las comprobaciones superadas.

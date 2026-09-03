@@ -7,11 +7,11 @@
 
 | Indicador | Valor |
 |-----------|-------|
-| Total observaciones | 22 |
-| Resueltas | 20 |
+| Total observaciones | 24 |
+| Resueltas | 22 |
 | Resueltas parcialmente | 2 |
 | No resueltas | 0 |
-| % Resuelto | 90,9 % completo, 9,1 % parcial |
+| % Resuelto | 91,7 % completo, 8,3 % parcial |
 
 > **Corrección de una discrepancia propia.** Hasta esta entrega el resumen
 > declaraba 21 observaciones y 19 resueltas, cuando los códigos van de OBS-01 a
@@ -86,9 +86,19 @@ afirmar como verificado lo que no se había comprobado.
 
 ---
 
+## Observaciones de la Entrega Final
+
+| Código | Observación | Decisión | Verificación |
+|--------|-------------|----------|--------------|
+| OBS-23 | «Contraseñas de dev en 4 archivos» (el docente estimó 4; el trazado halló secretos en más ubicaciones). Desglose real: `docker-compose.yml` (defaults `postgres` y JWT dev), `backend/src/test/resources/application.yml` (secreto JWT hardcodeado y `test123`), `.github/workflows/ci.yml` (`test123`), migraciones Flyway `V3`/`V5`/`V7` (`admin123`/`biblio123`/`estudiante123` en claro), colección Postman, `README.md`, seeder y docs. El `.env` local con `Doctora2025` está en `.gitignore` y **no** se versiona. | **Resuelta (trazado; limpieza pendiente).** Se documenta la ubicación exacta de cada secreto versionado y un plan de remediación (rotación, variables de entorno, `gitleaks`/`trufflehog` en CI) en `docs/seguridad/SECRETOS.md`. La limpieza real se acordó ejecutar en una tarea posterior porque rotar las credenciales semilla rompe los despliegues existentes. | `docs/seguridad/SECRETOS.md` |
+| OBS-24 | «8 endpoints write sin autorización en catálogo». **No se corresponde con el estado del código**: los 8 endpoints write de `CatalogoController` (3 POST, 3 PUT, 2 DELETE sobre autores/editoriales/categorías) **sí** tienen `@PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")` y `@EnableMethodSecurity` está activo. La causa del matiz es que `SecurityConfig` solo exigía `authenticated()` a nivel URL, por lo que toda la autorización recaía en las anotaciones de método. | **Resuelta (reforzada por defense-in-depth).** Se aclara el falso positivo y, además, se añaden `requestMatchers` por rol a nivel URL en `SecurityConfig` (POST/PUT/DELETE de autores, editoriales y categorías exigen ADMIN o BIBLIOTECARIO), de modo que un rol sin permiso recibe `403` incluso si se omitiera una anotación. Se mantienen los `@PreAuthorize` como redundancia intencional. | `SecurityConfig.java`; `CatalogoSecurityTest` |
+
+---
+
 ## Historial de cambios
 
 | Fecha | Autor | Cambio |
 |-------|-------|--------|
 | 2026-07-30 | Equipo SIGCB-QR | Creación inicial con las 7 observaciones de las Entregas 1A y 1B. |
 | 2026-09-01 | Equipo SIGCB-QR | Añadidas las 15 observaciones de la Tercera Entrega (OBS-08 a OBS-22) y los 7 hallazgos propios (HAL-01 a HAL-07). Añadida la columna de verificación: toda observación resuelta apunta al artefacto donde comprobarlo. |
+| 2026-09-03 | Equipo SIGCB-QR | Añadidas las observaciones de la Entrega Final (OBS-23, credenciales; OBS-24, autorización en catálogo). La OBS-24 resultó ser un falso positivo y se reforzó por defense-in-depth. Creado `docs/seguridad/SECRETOS.md`. |

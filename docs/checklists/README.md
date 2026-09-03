@@ -5,7 +5,7 @@ cumplimentadas ítem por ítem contra el estado real del repositorio.
 
 | Lista | Fichero | Ámbito | Cumplidos |
 |---|---|---|---|
-| Ralph et al. — estándares de reporte empírico | [`RALPH.md`](RALPH.md) | Informe técnico | 19 / 28 |
+| Ralph et al. — estándares de reporte empírico | [`RALPH.md`](RALPH.md) | Informe técnico | 21 / 28 |
 | FAIR — datos hallables, accesibles, interoperables, reutilizables | [`FAIR.md`](FAIR.md) | Datos y metadatos | 10 / 15 |
 | PRISMA 2020 — reporte de revisiones | [`PRISMA.md`](PRISMA.md) | Capítulo de trabajos relacionados | 18 / 31 |
 | INCOSE — calidad de requisitos | [`INCOSE.md`](INCOSE.md) | SRS y matriz de trazabilidad | 19 / 24 |
@@ -22,10 +22,10 @@ Cada ítem lleva una de tres marcas:
 
 Las casillas negativas están marcadas como negativas. Una lista de comprobación
 en la que todo sale bien no es una lista de comprobación: es una declaración de
-intenciones. El valor de estos cuatro documentos está justamente en los 32 ítems
+intenciones. El valor de estos cuatro documentos está justamente en los 30 ítems
 que salen mal, porque son la lista de trabajo pendiente.
 
 ## Recuento global
 
-De 98 ítems evaluados, **66 se cumplen**, 13 se cumplen parcialmente y 19 no se
+De 98 ítems evaluados, **68 se cumplen**, 12 se cumplen parcialmente y 18 no se
 cumplen.

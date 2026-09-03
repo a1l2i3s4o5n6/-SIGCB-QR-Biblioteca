@@ -360,6 +360,7 @@ SIGCB-QR es un sistema independiente que reemplaza procesos manuales bibliotecar
 | Rationale | Es la operacion mas frecuente del sistema |
 | Criterio de aceptacion | p95 < 200 ms |
 | Metodo de verificacion | Medicion (k6, metrica catalogo_duracion) |
+| Resultado | **Cumplido.** Cinco corridas con 50 VU sostenidos 30 s: p95 medio 5,55 ms, IC 95 % [4,07, 7,03] ms, 10 750 iteraciones, 0 errores |
 | Trazabilidad | docs/mediciones/perf/REPORT.md |
 
 ### REQ-R-003 -- Latencia del registro de prestamo
@@ -411,7 +412,7 @@ SIGCB-QR es un sistema independiente que reemplaza procesos manuales bibliotecar
 | Rationale | La accesibilidad es exigible en un servicio universitario |
 | Criterio de aceptacion | Los cuatro umbrales se superan |
 | Metodo de verificacion | Medicion (Lighthouse 12.8.2) |
-| Observacion | Superado en la unica corrida movil disponible (82 / 100 / 100 / 91). **No hay corrida de escritorio** y la URL auditada es localhost |
+| Observacion | **NO CUMPLIDO.** Seis corridas (3 escritorio + 3 movil) con Lighthouse 13.4.1: rendimiento 97/89, accesibilidad 98, SEO 91 -- los tres superan su umbral. **Buenas practicas da 78, por debajo del umbral de 90.** Las dos unicas auditorias que fallan son is-on-https y redirects-http, por medirse sobre HTTP sin TLS. Se cerrara cuando exista despliegue con certificado |
 | Trazabilidad | docs/mediciones/frontend/LIGHTHOUSE.md |
 
 ---

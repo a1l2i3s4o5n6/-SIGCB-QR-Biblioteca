@@ -77,7 +77,7 @@ almacenados. La investigación adopta la metodología \emph{Design Science
 Research} de Peffers y se enmarca en cuatro preguntas de investigación. El
 informe documenta la arquitectura y sus decisiones (nueve ADR), y sobre todo el
 \textbf{estudio empírico} realizado sobre el sistema en marcha: una auditoría de
-seguridad de 42 comprobaciones basada en OWASP API Security Top~10, la medición
+seguridad de 51 comprobaciones basada en OWASP API Security Top~10, la medición
 de cobertura con JaCoCo, cuatro corridas de carga con k6, una auditoría de
 frontend con Lighthouse y un instrumento SUS de usabilidad.
 
@@ -413,8 +413,9 @@ si la métrica llegó a obtenerse.
 \textbf{RQ} & \textbf{Objetivo (Goal)} & \textbf{Métrica} & \textbf{¿Se obtuvo?} \\
 \midrule
 RQ1 & Reducir el tiempo de procesamiento del préstamo & Tiempo por operación de préstamo, con QR y sin QR & \textbf{No.} Sin línea base manual con la que comparar \\
-RQ2 & Determinar el nivel de seguridad alcanzado & 42 comprobaciones OWASP API Top 10; auditoría de SQL dinámico & Sí, parcialmente: sin ZAP ni SpotBugs \\
-RQ3 & Caracterizar el efecto de la caché & p95 de latencia del catálogo; hit ratio de Redis & Sí, en tres corridas \\
+RQ2 & Determinar el nivel de seguridad alcanzado & 51 comprobaciones OWASP API Top 10; auditoría de SQL dinámico & Sí, parcialmente: sin ZAP ni SpotBugs \\
+RQ3 & Caracterizar el efecto de la caché & p95 de latencia del catálogo; hit ratio de Redis & Sí, con reservas (véase §
+ef{sec:discusion}) \\
 RQ4 & Medir la usabilidad percibida & Puntuación SUS (Brooke) & \textbf{No.} Cero participantes \\
 \bottomrule
 \end{tabular}
@@ -575,11 +576,11 @@ características tienen medición y cuatro no.
 \midrule
 \endhead
 Adecuación funcional & \req{REQ-F-001}--\req{REQ-F-011} & 55 pruebas automatizadas; 9 de 11 requisitos funcionales verificados \\
-Eficiencia de desempeño & \req{REQ-R-001}--\req{REQ-R-004} & Medido parcialmente: p95 del catálogo en tres corridas k6. Login y préstamo sin medir \\
+Eficiencia de desempeño & \req{REQ-R-001}--\req{REQ-R-004} & Medido: cinco corridas a 50 VU, p95 medio 5,55\,ms, IC 95\,\% [4,07, 7,03]\,ms. Login y préstamo sin medir \\
 Compatibilidad & \req{REQ-NF-004} & Imágenes ancladas por digest SHA-256; cinco servicios en Docker Compose \\
-Usabilidad & \req{REQ-U-001}, \req{REQ-U-002} & Lighthouse: 82/100/100/91 en una corrida móvil. SUS: \textbf{sin medir}, cero participantes \\
+Usabilidad & \req{REQ-U-001}, \req{REQ-U-002} & Lighthouse, seis corridas: 97/89 de rendimiento, 98 de accesibilidad, 91 de SEO; \textbf{78 en buenas prácticas, por debajo del umbral de 90}. SUS: \textbf{sin medir}, cero participantes \\
 Fiabilidad & \req{REQ-NF-008}, \req{REQ-NF-010} & Tres defectos corregidos con prueba de regresión; 17 corridas de CI sin fallo \\
-Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 42 comprobaciones; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado. \textbf{Sin ZAP} \\
+Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado. \textbf{Sin ZAP} \\
 Mantenibilidad & \req{REQ-NF-005} & Cobertura 38,85\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
 Portabilidad & \req{REQ-NF-004} & Reproducción en un comando (\texttt{make all}); entorno fijado por digest \\
 \bottomrule
@@ -731,7 +732,7 @@ el arranque (\adr{0008}).
 
 \subsection{Instrumento}
 
-\texttt{scripts/owasp-audit.sh} ejecuta 42 comprobaciones sobre el sistema en
+\texttt{scripts/owasp-audit.sh} ejecuta 51 comprobaciones sobre el sistema en
 marcha, cada una una petición HTTP real cuyo código de estado o cabecera se
 compara con el valor esperado. Cubre los bloques API1, API2, API3, API5, API8 y
 API4 de OWASP API Security Top~10~\cite{owaspapi2023} y A03 y A05 de OWASP
@@ -911,6 +912,47 @@ SEO & 91 & 91 \\
 contenido. La cifra válida es la de la derecha.}
 \end{longtable}
 
+\subsection{Seis corridas y un umbral que no se cumple}
+
+Aquella medición tenía una sola corrida, y solo de móvil. Se repitió con
+\textbf{tres corridas por perfil}, escritorio incluido, con Lighthouse 13.4.1 y
+los seis crudos conservados (tabla~\ref{tab:lighthouse6}).
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Perfil (mediana de 3)} & \textbf{Rendim.} & \textbf{Accesib.} & \textbf{B. prácticas} & \textbf{SEO} \\
+\midrule
+Escritorio & 97 & 98 & \textbf{78} & 91 \\
+Móvil & 89 & 98 & \textbf{78} & 91 \\
+\midrule
+Umbral de \req{REQ-U-002} & 80 & 90 & 90 & 85 \\
+\bottomrule
+\end{tabular}
+\caption{Lighthouse 13.4.1, seis corridas sobre \texttt{/login}. Tres de las
+cuatro categorías superan su umbral; buenas prácticas no.}
+\label{tab:lighthouse6}
+\end{table}
+
+\textbf{Buenas prácticas da 78 en las seis corridas, por debajo del umbral de
+90, y por tanto \req{REQ-U-002} no se cumple.} La causa está identificada y es
+única: las dos únicas auditorías que fallan en esa categoría son
+\texttt{is-on-https} y \texttt{redirects-http}. Ninguna otra falla.
+
+Ambas son consecuencia de medir contra un contenedor local sin TLS. Sería
+tentador declarar el requisito cumplido «salvo por el entorno», y no se hace:
+sin un despliegue con certificado no hay forma de comprobar que la puntuación
+subiría, y afirmarlo sería sustituir una medición por una conjetura. El
+requisito queda como no cumplido, con su causa documentada, y se cerrará con el
+mismo despliegue que cierra la carencia de HSTS.
+
+Merece señalarse por qué la medición anterior daba 100 en esta categoría: se
+hizo contra \texttt{http://localhost}, y Lighthouse \emph{exime a localhost} de
+la comprobación de HTTPS. Aquel 100 era, en este punto, un artefacto del
+entorno de medición y no una propiedad de la aplicación.
+
 \subsection{Por qué el rendimiento \emph{bajó} al corregir un defecto}
 
 El 100 de la primera corrida no era mérito de la aplicación: era el efecto de que
@@ -1089,7 +1131,7 @@ hecho.
 
 \subsection{RQ2 --- Nivel de seguridad de JWT en cookie \texttt{HttpOnly} con RBAC}
 
-\textbf{Respondida parcialmente.} La auditoría de 42 comprobaciones basada en
+\textbf{Respondida parcialmente.} La auditoría de 51 comprobaciones basada en
 OWASP API Security Top 10 no arrojó ningún fallo, con tres notas informativas.
 Se verificaron sobre respuestas reales: la cookie lleva \texttt{HttpOnly} y
 \texttt{SameSite=Strict}, CORS no usa comodín, un estudiante autenticado que
@@ -1117,16 +1159,60 @@ escritura sin ninguna anotación de autorización, de modo que cualquier usuario
 autenticado, incluido un estudiante, podía crear, modificar y borrar autores,
 editoriales y categorías. La auditoría propia no lo detectó porque solo sondeaba
 tres rutas. El defecto está corregido: los ocho llevan
-\texttt{@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")}. La lección es
-que una auditoría con cobertura parcial de rutas produce una falsa sensación de
-seguridad, y es una amenaza a la validez que se recoge en §\ref{sec:validez}.
+\texttt{@PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")}.
+
+Corregir el código, sin embargo, no corrige el instrumento que dejó pasar el
+fallo. Por eso la auditoría se amplió con los ocho endpoints enumerados uno a
+uno, más una comprobación de que el intento tampoco creó ningún registro: si
+alguno pierde su anotación en el futuro, la auditoría fallará en lugar de
+callar. La batería pasa de 42 a \textbf{51 comprobaciones, y las 51 se superan}.
+La lección de fondo es que una auditoría con cobertura parcial de rutas produce
+una falsa sensación de seguridad, y es una amenaza a la validez que se recoge en
+§\ref{sec:validez}.
 
 \subsection{RQ3 --- Efecto de la caché Redis en el rendimiento del catálogo}
 
 \textbf{Respondida, y en contra de la hipótesis de partida.} Las tres corridas
-conservadas dan un p95 de 73,02, 64,89 y 26,41 milisegundos, con cero errores.
-La corrida más rápida, con diferencia, fue la de \emph{caché fría} con la máquina
-virtual Java ya caliente.
+conservadas del primer protocolo (5 a 20 usuarios virtuales) dan un p95 de
+73,02, 64,89 y 26,41 milisegundos, con cero errores. La corrida más rápida, con
+diferencia, fue la de \emph{caché fría} con la máquina virtual Java ya caliente.
+
+A esa medición se añade la realizada con el perfil que exige la guía, 50
+usuarios virtuales sostenidos durante 30 segundos, repetida cinco veces y con
+los cinco crudos conservados (tabla~\ref{tab:k6-50vu}). El resultado es un p95
+medio de 5,55\,ms con un intervalo de confianza del 95\,\% de
+[4,07, 7,03]\,ms sobre 10\,750 iteraciones y cero peticiones fallidas. El
+umbral de \req{REQ-R-002} son 200\,ms, de modo que el requisito se cumple con
+un margen de más de un orden de magnitud.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Corrida} & \textbf{VU máx.} & \textbf{Iteraciones} & \textbf{Media} & \textbf{p95} & \textbf{Errores} \\
+\midrule
+1 & 50 & 2\,150 & 3,93\,ms & 5,56\,ms & 0 \\
+2 & 50 & 2\,150 & 3,35\,ms & 4,72\,ms & 0 \\
+3 & 50 & 2\,150 & 2,79\,ms & 4,66\,ms & 0 \\
+4 & 50 & 2\,150 & 3,99\,ms & 7,58\,ms & 0 \\
+5 & 50 & 2\,150 & 3,19\,ms & 5,23\,ms & 0 \\
+\midrule
+\textbf{Media} & 50 & \textbf{10\,750} & \textbf{3,45\,ms} & \textbf{5,55\,ms} & \textbf{0} \\
+\multicolumn{6}{@{}l@{}}{\footnotesize IC 95\,\% del p95 (t de Student, 4 g.l.): [4,07, 7,03]\,ms} \\
+\bottomrule
+\end{tabular}
+\caption{Cinco corridas con el perfil exigido de 50 usuarios virtuales
+sostenidos 30 segundos. Recalculable con
+\texttt{python scripts/analisis-k6-50vu.py}.}
+\label{tab:k6-50vu}
+\end{table}
+
+Conviene no dejarse llevar por lo cómodo de esa cifra. Un p95 de 5,55\,ms con 50
+usuarios concurrentes es excelente, y depende por completo de que el acervo sea
+sintético y pequeño: la consulta se resuelve casi íntegramente desde memoria.
+Estas cifras acotan el coste del servidor, no predicen el comportamiento con un
+catálogo real.
 
 De ahí se sigue una conclusión incómoda para la motivación original del
 \adr{0006}: con el volumen de datos de este sistema, \textbf{no puede afirmarse
@@ -1136,12 +1222,19 @@ desde su propia caché, y que el salto de red hasta Redis y el coste de
 serialización compensen o superen el ahorro. La variable que domina la medición
 no parece ser la caché, sino el calentamiento de la máquina virtual.
 
-Esta conclusión es descriptiva, no causal: tres corridas sin intervalos de
-confianza ni prueba inferencial no permiten afirmar una diferencia
-estadísticamente significativa. Lo que sí permiten es \emph{no} afirmar la
-mejora que se daba por supuesta, que es un resultado con valor propio. Contrastar
-la hipótesis en serio exige repetir la medición con un acervo de decenas de miles
-de títulos.
+Esta conclusión sobre la caché sigue siendo descriptiva, no causal, y conviene
+precisar por qué el intervalo de confianza recién presentado no la convierte en
+causal. Las cinco corridas del perfil de 50 VU son del \emph{mismo}
+tratamiento: no hay una condición «sin caché» con la que compararlas. El
+intervalo acota la media de una sola condición, que es una afirmación
+inferencial legítima, pero no es un contraste de hipótesis. Para afirmar que la
+caché mejora o empeora el rendimiento haría falta medir también la condición
+alternativa, y eso no se hizo. Por la misma razón no se informa tamaño de
+efecto: no hay efecto entre condiciones que cuantificar.
+
+Lo que estos datos sí permiten es \emph{no} afirmar la mejora que se daba por
+supuesta, que es un resultado con valor propio. Contrastar la hipótesis en serio
+exige dos condiciones y un acervo de decenas de miles de títulos.
 
 Merece registrarse, además, que el primer instrumento de medida era defectuoso:
 el arnés de k6 estaba midiendo el limitador de tasa en lugar del catálogo. Se
@@ -1188,7 +1281,7 @@ Campbell~\cite{cook1979quasi}.
   \item \textbf{La cobertura no mide calidad.} Mide qué líneas ejecutan las
         pruebas. Los tres defectos de la sección~\ref{sec:defectos} ocurrieron en
         código contabilizado como cubierto~\cite{inozemtseva2014coverage}.
-  \item \textbf{42 comprobaciones superadas no significan «sistema seguro».}
+  \item \textbf{51 comprobaciones superadas no significan «sistema seguro».}
         Significa que 42 controles concretos se comportan como se espera. La
         ausencia de evidencia de vulnerabilidad no es evidencia de ausencia.
   \item \textbf{El SUS mide percepción, no eficacia}~\cite{brooke1996sus}. Un
@@ -1283,7 +1376,7 @@ sobre lo entregado es del equipo.
 %==============================================================================
 
 \begin{enumerate}[label=\textbf{C\arabic*.},leftmargin=*]
-  \item \textbf{El sistema cumple sus requisitos medibles.} 42/42 comprobaciones
+  \item \textbf{El sistema cumple sus requisitos medibles.} 51/51 comprobaciones
         de seguridad, p95 entre 26 y 83\,ms frente a un umbral de 200\,ms, 0\,\% de
         error en 1\,474 peticiones, 41 pruebas en verde y accesibilidad de 100 en
         las comprobaciones automáticas.
@@ -1412,7 +1505,11 @@ Se declaran, sin atenuantes, las siguientes limitaciones de esta entrega:
 (i) la usabilidad no se midió, al ser cero el número de participantes del SUS;
 (ii) no se ejecutó un análisis dinámico de seguridad con OWASP ZAP;
 (iii) la cobertura de rama es del 16,31\,\%, muy por debajo de lo deseable;
-(iv) no se realizó inferencia estadística por insuficiencia de repeticiones;
+(iii bis) eq{REQ-U-002} no se cumple: Lighthouse da 78 en buenas prácticas
+frente al umbral de 90, por medirse sin TLS;
+(iv) la inferencia estadística se limita a un intervalo de confianza sobre una
+única condición: no hay contraste de hipótesis ni tamaño de efecto, porque no se
+midió ninguna condición alternativa con la que comparar;
 (v) el sistema no está desplegado en un entorno accesible públicamente, y
 todas las mediciones se tomaron contra \texttt{localhost};
 (vi) el cribado de trabajos relacionados se limitó a Crossref.

@@ -4,7 +4,7 @@
 Research*, ACM SIGSOFT, 2021.
 **Ámbito:** informe técnico `docs/informe/informe-tecnico.tex`.
 **Fecha de cumplimentación:** 3 de septiembre de 2026.
-**Estado:** 19 cumplidos, 4 parciales, 5 no cumplidos, sobre 28 ítems.
+**Estado:** 21 cumplidos, 3 parciales, 4 no cumplidos, sobre 28 ítems.
 
 ---
 
@@ -36,12 +36,12 @@ Research*, ACM SIGSOFT, 2021.
 | B1 | Se describe el diseño experimental | `[~]` | El protocolo de carga está descrito, pero no hay diseño experimental con factores y niveles |
 | B2 | Se justifica el tamaño de muestra | `[ ]` | **No cumplido.** No hay cálculo de potencia estadística ni justificación del número de corridas |
 | B3 | Se informan estadísticos descriptivos | `[x]` | §8.2: media, p95 e iteraciones de las tres corridas |
-| B4 | Se informan intervalos de confianza | `[ ]` | **No cumplido.** Se declara explícitamente que no se calcularon por insuficiencia de repeticiones |
-| B5 | Se aplica una prueba inferencial adecuada | `[ ]` | **No cumplido.** Ninguna. Tres corridas no permiten inferencia |
-| B6 | Se informa el tamaño del efecto | `[ ]` | **No cumplido.** Ninguno |
+| B4 | Se informan intervalos de confianza | `[x]` | IC 95 % del p95 sobre cinco corridas a 50 VU: [4,07, 7,03] ms (t de Student, 4 g.l.). Recalculable con `scripts/analisis-k6-50vu.py` |
+| B5 | Se aplica una prueba inferencial adecuada | `[ ]` | **No cumplido**, y por una razón de diseño, no de tamaño muestral: las cinco corridas son del mismo tratamiento, no hay dos condiciones que contrastar |
+| B6 | Se informa el tamaño del efecto | `[ ]` | **No cumplido.** No hay efecto entre condiciones que cuantificar; véase B5 |
 | B7 | Se declara la semilla aleatoria o el determinismo | `[~]` | El arnés de k6 no usa aleatoriedad, pero no se declara formalmente |
 | B8 | Se audita el instrumento de medida antes de usarlo | `[x]` | §8.1: se detectó que el arnés medía el limitador de tasa; el auditor de SQL dinámico lleva autotest de 3/3 y 0 falsos positivos |
-| B9 | Se repite la medición un número suficiente de veces | `[~]` | Tres corridas conservadas de las cinco exigidas; de la corrida 1 no se guardó la salida |
+| B9 | Se repite la medición un número suficiente de veces | `[x]` | **Cinco** corridas a 50 VU con los cinco crudos conservados, y seis corridas de Lighthouse (3 por perfil) |
 
 ## C. Estándar de estudio con participantes
 
@@ -56,11 +56,16 @@ Research*, ACM SIGSOFT, 2021.
 ## Lectura de conjunto
 
 El bloque A se cumple casi por completo: el trabajo está bien declarado, el
-entorno es reproducible y los datos crudos se publican. El bloque B es donde
-está el déficit real, y es un déficit **estadístico**, no de honestidad: no hay
-intervalos de confianza, ni prueba inferencial, ni tamaño de efecto, porque tres
-corridas no dan para ello. El bloque C está vacío por una razón única y
-declarada: cero participantes.
+entorno es reproducible y los datos crudos se publican.
 
-Ninguno de los nueve ítems no cumplidos o parciales se ha marcado como cumplido
-para mejorar el recuento.
+El bloque B mejoró al repetir las mediciones con el perfil exigido: cinco
+corridas a 50 VU permiten ya dar un intervalo de confianza (B4) y satisfacen la
+repetición (B9). Lo que sigue sin cumplirse es de **diseño experimental**, no de
+tamaño muestral: no hay prueba inferencial (B5) ni tamaño de efecto (B6) porque
+no se midió ninguna condición alternativa. Cinco corridas del mismo tratamiento
+no se contrastan con nada.
+
+El bloque C sigue vacío por una razón única y declarada: cero participantes.
+
+Ningún ítem no cumplido o parcial se ha marcado como cumplido para mejorar el
+recuento.

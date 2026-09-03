@@ -46,8 +46,14 @@ Solo **Docker** con el plugin **Docker Compose**.
 git clone <url-del-repositorio>
 cd SIGCB-QR-Biblioteca
 
-# Opcional: variables de entorno (docker compose trae valores por defecto)
+# Variables de entorno. NO es opcional: hay dos secretos sin valor por
+# defecto, y compose se detiene con un mensaje si faltan.
 cp .env.example .env
+
+# Generar la clave de firma JWT (base64 de 64 bytes) y anotarla en .env
+python -c "import secrets,base64; print(base64.b64encode(secrets.token_bytes(64)).decode())"
+
+# Definir también PGADMIN_PASSWORD en .env (cualquier valor local)
 
 # Levantar todos los servicios (la primera vez construye las imágenes)
 make up
@@ -114,10 +120,10 @@ entorno y la salida cruda. Lo que no se ha medido se declara como no medido.
 
 | Bloque | Resultado | Documento |
 |---|---|---|
-| Seguridad (OWASP) | 42/42 comprobaciones superadas | [OWASP-AUDIT.md](docs/mediciones/seguridad/OWASP-AUDIT.md) |
-| Pruebas y cobertura | 41 pruebas, 0 fallos; 39,04 % de líneas, 13,39 % de ramas | [COBERTURA.md](docs/mediciones/cobertura/COBERTURA.md) |
-| Rendimiento (k6) | p95 26–83 ms (objetivo ≤ 200 ms); 0 % de error | [REPORT.md](docs/mediciones/perf/REPORT.md) |
-| Frontend (Lighthouse) | Rendimiento 82, Accesibilidad 100, Buenas prácticas 100, SEO 91 | [LIGHTHOUSE.md](docs/mediciones/frontend/LIGHTHOUSE.md) |
+| Seguridad (OWASP) | 51/51 comprobaciones superadas | [OWASP-AUDIT.md](docs/mediciones/seguridad/OWASP-AUDIT.md) |
+| Pruebas y cobertura | 55 pruebas, 0 fallos; 38,85 % de líneas, 16,31 % de ramas | [COBERTURA.md](docs/mediciones/cobertura/COBERTURA.md) |
+| Rendimiento (k6) | 5 corridas a 50 VU: p95 5,55 ms, IC 95 % [4,07, 7,03]; 0 % de error | [REPORT-50VU.md](docs/mediciones/perf/50vu/REPORT-50VU.md) |
+| Frontend (Lighthouse) | 6 corridas: rendimiento 97/89, accesibilidad 98, SEO 91; **buenas prácticas 78, por debajo del umbral** | [LIGHTHOUSE-6-CORRIDAS.md](docs/mediciones/frontend/lh/LIGHTHOUSE-6-CORRIDAS.md) |
 | Usabilidad (SUS) | **Sin datos recogidos** — instrumento y protocolo listos | [SUS.md](docs/mediciones/usabilidad/SUS.md) |
 
 Las auditorías de esta entrega encontraron **tres defectos reales** que la suite

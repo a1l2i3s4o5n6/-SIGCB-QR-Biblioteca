@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -40,6 +41,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/dashboard/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/autores", "/api/editoriales", "/api/categorias")
+                    .hasAnyRole("ADMIN", "BIBLIOTECARIO")
+                .requestMatchers(HttpMethod.PUT, "/api/autores/*", "/api/editoriales/*", "/api/categorias/*")
+                    .hasAnyRole("ADMIN", "BIBLIOTECARIO")
+                .requestMatchers(HttpMethod.DELETE, "/api/editoriales/*", "/api/categorias/*")
+                    .hasAnyRole("ADMIN", "BIBLIOTECARIO")
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
             )
