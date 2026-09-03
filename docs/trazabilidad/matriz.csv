@@ -17,6 +17,7 @@ REQ-F-010,Funcional,Must,HU-10,,DashboardController,GET /api/dashboard/stats,,SP
 REQ-F-011,Funcional,Should,,,ReservaController,POST/DELETE /api/reservas,,CRUD-ORM,,implementado
 REQ-NF-001,No funcional,Must,HU-05,,LibroService,GET /api/libros,,CRUD-ORM,docs/mediciones/perf/REPORT.md,verificado
 REQ-NF-002,No funcional,Must,HU-01,CU-01,SecurityConfig,,SecurityTest.endpointsProtegidosRechazanPeticionesSinAutenticacion,CRUD-ORM,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
+REQ-NF-002,No funcional,Must,HU-01,CU-01,JwtTokenProvider,,CsrfDefenseTest.cookieDeAccesoLlevaSameSiteStrict,CRUD-ORM,docs/adr/0010-csrf-deshabilitado-y-samesite-strict.md,verificado
 REQ-NF-003,No funcional,Must,,,LibroRepository,GET /api/libros/buscar,SecurityTest.sqlInjectionEsTratadaComoDatoYNoRompeElEndpoint,SP,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
 REQ-NF-003,No funcional,Must,,,LibroRepository,GET /api/libros/buscar,SecurityTest.buscarConPayloadDeInyeccionSQLNoProvocaErrorInterno,SP,docs/mediciones/seguridad/OWASP-AUDIT.md,verificado
 REQ-NF-004,No funcional,Must,,,docker-compose.yml,,,,docs/adr/0007-anclar-imagenes-por-digest-sha256.md,verificado

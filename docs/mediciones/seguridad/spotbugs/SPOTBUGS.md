@@ -64,15 +64,25 @@ sitio, lo que bloquea el vector CSRF clásico.
 defensa** y en el comportamiento del navegador. Es una decisión defendible y no
 un descuido, pero:
 
-1. No estaba documentada en ningún sitio hasta este análisis. Una decisión de
+1. **No estaba documentada** en ningún sitio hasta este análisis. Una decisión de
    seguridad que nadie escribió no es una decisión: es una casualidad afortunada.
-2. Un navegador antiguo que ignore `SameSite` deja el sistema expuesto.
-3. No hay ninguna prueba automatizada que falle si alguien quita el
-   `SameSite=Strict`.
+2. Un navegador antiguo que ignore `SameSite` deja el sistema expuesto, y el
+   servidor no tiene forma de detectarlo. Esto no tiene arreglo desde el código:
+   es el precio de apoyarse en una defensa que ejecuta el cliente.
+3. **No había ninguna prueba** que fallara si alguien quitaba el
+   `SameSite=Strict`. Toda la seguridad dependía de que nadie tocara esa línea.
 
-**Acción recomendada:** redactar un ADR que registre la decisión con su
-justificación y su coste, y añadir una prueba que verifique el atributo en la
-cookie emitida. Ambas cosas quedan pendientes y se declaran como tales.
+**Acción tomada.** Las dos cosas que faltaban están hechas:
+
+1. **[ADR-0010](../../../adr/0010-csrf-deshabilitado-y-samesite-strict.md)**
+   registra la decisión con sus cuatro alternativas, la razón de no elegir la
+   más segura —el coste de coordinar el token CSRF a través del BFF no se juzgó
+   proporcionado— y sus consecuencias negativas.
+2. **`CsrfDefenseTest`** vigila el atributo en las dos cookies, la de acceso y
+   la de cierre de sesión. Se comprobó que la prueba **falla de verdad**: al
+   retirar temporalmente `setAttribute("SameSite", "Strict")` del código, dos de
+   los cuatro casos fallaron. Una prueba que no se ha visto fallar no prueba
+   nada.
 
 ## 3. Los 108 hallazgos `EI_EXPOSE_REP`
 

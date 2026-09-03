@@ -75,7 +75,7 @@ PostgreSQL~16 y Redis~7. El sistema cubre autenticación JWT en cookie
 multas y auditoría, con control de acceso basado en roles y trece procedimientos
 almacenados. La investigación adopta la metodología \emph{Design Science
 Research} de Peffers y se enmarca en cuatro preguntas de investigación. El
-informe documenta la arquitectura y sus decisiones (nueve ADR), y sobre todo el
+informe documenta la arquitectura y sus decisiones (diez ADR), y sobre todo el
 \textbf{estudio empírico} realizado sobre el sistema en marcha: una auditoría de
 seguridad de 51 comprobaciones basada en OWASP API Security Top~10, la medición
 de cobertura con JaCoCo, cuatro corridas de carga con k6, una auditoría de
@@ -581,7 +581,7 @@ Compatibilidad & \req{REQ-NF-004} & Imágenes ancladas por digest SHA-256; cinco
 Usabilidad & \req{REQ-U-001}, \req{REQ-U-002} & Lighthouse, seis corridas: 97/89 de rendimiento, 98 de accesibilidad, 91 de SEO; \textbf{78 en buenas prácticas, por debajo del umbral de 90}. SUS: \textbf{sin medir}, cero participantes \\
 Fiabilidad & \req{REQ-NF-008}, \req{REQ-NF-010} & Tres defectos corregidos con prueba de regresión; 17 corridas de CI sin fallo \\
 Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado; SpotBugs con find-sec-bugs, un hallazgo de seguridad real (CSRF). \textbf{Sin ZAP} \\
-Mantenibilidad & \req{REQ-NF-005} & 83 pruebas, 0 fallos. Cobertura 40,40\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
+Mantenibilidad & \req{REQ-NF-005} & 87 pruebas, 0 fallos. Cobertura 41,28\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
 Portabilidad & \req{REQ-NF-004} & Reproducción en un comando (\texttt{make all}); entorno fijado por digest \\
 \bottomrule
 \caption{Correspondencia entre ISO/IEC 25010, los requisitos que concretan cada
@@ -800,13 +800,32 @@ lo es sin más en una que autentica por cookie}, como esta, porque el navegador
 adjunta la cookie también en peticiones originadas por terceros.
 
 El riesgo está mitigado: la cookie se emite con \texttt{SameSite=Strict}, y así
-se verificó sobre una respuesta real. Pero conviene decir con precisión qué
-significa eso. La defensa descansa en \textbf{una sola línea}, en el
-comportamiento del navegador, no estaba documentada en ningún ADR hasta este
-análisis, y \textbf{no hay ninguna prueba que falle si alguien quita el
-\texttt{SameSite}}. Una decisión de seguridad que nadie escribió no es una
-decisión: es una casualidad afortunada que nadie está vigilando. Queda
-pendiente redactar el ADR correspondiente y añadir la prueba de regresión.
+se verificó sobre una respuesta real. Pero al examinarlo aparecieron dos
+carencias que el hallazgo dejaba a la vista. La defensa 	extbf{no estaba documentada
+en ningún ADR}, de modo que era una decisión que nadie había tomado
+explícitamente; y 	extbf{ninguna prueba fallaba si alguien retiraba el atributo}, de
+modo que toda la seguridad dependía de que nadie tocara esa línea. Una decisión
+de seguridad que nadie escribió y que nadie vigila no es una decisión: es una
+casualidad afortunada.
+
+Ambas cosas están corregidas. El \adr{0010} registra la decisión con sus cuatro
+alternativas y, sobre todo, con la razón de no haber elegido la más segura: el
+coste de coordinar un token CSRF a través del BFF no se juzgó proporcionado para
+este proyecto, y así se dice, en lugar de presentar la opción adoptada como si
+fuera la mejor. Y \texttt{CsrfDefenseTest} vigila ahora el atributo en las dos
+cookies, la de acceso y la de cierre de sesión --- esta última importa igual,
+porque una cookie de borrado sin el atributo permitiría a un tercero forzar el
+cierre de sesión de un usuario.
+
+La prueba se validó por el procedimiento que este informe defiende en otros
+puntos: se retiró temporalmente la línea \texttt{setAttribute("SameSite",
+"Strict")} del código y se comprobó que dos de los cuatro casos fallaban. Una
+prueba que no se ha visto fallar no prueba nada.
+
+Queda declarada una limitación que no tiene arreglo desde el código: si un
+navegador ignora \texttt{SameSite}, el sistema queda expuesto y el servidor no
+puede detectarlo. Es el precio de apoyar la defensa en algo que ejecuta el
+cliente.
 
 Es, además, el segundo hallazgo de esta entrega que la auditoría dinámica no vio
 y otro instrumento sí. El primero fueron los ocho endpoints del catálogo sin
@@ -1608,7 +1627,7 @@ Puntuación SUS & \texttt{python scripts\-/sus-score.py} (devuelve «sin partici
 
 \subsection{Anexo C --- Registros de decisiones de arquitectura}
 
-Los nueve ADR están en \texttt{docs\-/adr\-/}, en formato MADR, cada uno con sus
+Los diez ADR están en \texttt{docs\-/adr\-/}, en formato MADR, cada uno con sus
 consecuencias negativas explícitas. El script \texttt{validate-adr.sh} comprueba
 que el índice y los ficheros no diverjan.
 

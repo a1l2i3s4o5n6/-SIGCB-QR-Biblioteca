@@ -41,7 +41,7 @@ mismos servicios como *service containers*.
 ## 2. Resultado de la ejecución
 
 ```
-[INFO] Tests run: 83, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 87, Failures: 0, Errors: 0, Skipped: 0
 [INFO] All coverage checks have been met.
 [INFO] BUILD SUCCESS
 [INFO] Total time:  03:16 min
@@ -75,14 +75,14 @@ mismos servicios como *service containers*.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 2 451 | 7 156 | **34,25 %** |
+| Instrucciones | 2 505 | 7 156 | **35,01 %** |
 | Ramas | 61 | 374 | **16,31 %** |
-| **Líneas** | **644** | **1 594** | **40,40 %** |
+| **Líneas** | **658** | **1 594** | **41,28 %** |
 | Métodos | 115 | 334 | 34,43 % |
 | Clases analizadas | – | 65 | – |
 
 El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (40,40 %). El umbral es bajo a propósito y no debe presentarse
+regla se cumple (41,28 %). El umbral es bajo a propósito y no debe presentarse
 como un objetivo alcanzado: se fijó para que la construcción falle si la
 cobertura *retrocede*, no como meta de calidad. **Está muy por debajo del 70 %
 que pide la guía, en los tres estratos.**
@@ -128,9 +128,10 @@ de JaCoCo que ahora se versiona analiza 65 clases y 7 076 instrucciones, y da
 denominador.**
 
 La medición definitiva se obtuvo el 3 de septiembre ejecutando la suite entera
-con `make test`, ya autocontenido en contenedor. Son **83 pruebas** (no 55: el
-equipo añadió pruebas de controlador para catálogo, multas y reservas) y dan
-34,25 / 16,31 / 40,40. La cobertura de línea sube casi dos puntos respecto de la
+con `make test`, ya autocontenido en contenedor. Son **87 pruebas** (no 55: se
+añadieron pruebas de controlador para catálogo, multas y reservas, y las cuatro
+de `CsrfDefenseTest` que vigilan la defensa del ADR-0010) y dan
+35,01 / 16,31 / 41,28. La cobertura de línea sube casi dos puntos respecto de la
 medición intermedia, gracias a esas pruebas nuevas; la de rama **no se mueve en
 absoluto**, y ese es el dato que importa.
 
@@ -151,7 +152,7 @@ concentrada donde debe estarlo:
 - `service` (32,1 % de línea y 13,3 % de rama) es hoy la zona con déficit real:
   concentra la lógica de negocio y es donde menos bifurcaciones se ejercitan.
 
-**La cobertura de rama, 16,31 %, es el dato preocupante**, no el 38,85 % de líneas.
+**La cobertura de rama, 16,31 %, es el dato preocupante**, no el 41,28 % de líneas.
 Significa que las pruebas recorren el camino feliz y dejan casi todas las
 bifurcaciones —validaciones, comprobaciones de estado, ramas de error— sin
 ejercitar. Es coherente con los tres defectos que la construcción no detectó y
