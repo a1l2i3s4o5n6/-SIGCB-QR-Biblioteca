@@ -83,9 +83,17 @@ login() {
 # cookies en lugar de iniciar sesión de nuevo invalidaría también la sesión
 # original, y los bloques posteriores medirían 401 donde deben medir 403.
 ADMIN="$TMP/admin.txt"; EST="$TMP/estudiante.txt"; LOGOUT="$TMP/logout.txt"
-login admin@biblioteca.com          admin123       "$ADMIN"
-login carlos.garcia@estudiante.com  estudiante123  "$EST"
-login carlos.garcia@estudiante.com  estudiante123  "$LOGOUT"
+
+# Las credenciales de la sonda NO se versionan. Se toman del entorno y, si no
+# estan definidas, el script se detiene: es preferible no auditar a auditar con
+# una contrasena escrita en el repositorio. Para el entorno de demostracion
+# local, exporta las dos variables antes de invocar el script.
+: "${SIGCB_ADMIN_PASSWORD:?Define SIGCB_ADMIN_PASSWORD antes de ejecutar la auditoria}"
+: "${SIGCB_ESTUDIANTE_PASSWORD:?Define SIGCB_ESTUDIANTE_PASSWORD antes de ejecutar la auditoria}"
+
+login admin@biblioteca.com          "$SIGCB_ADMIN_PASSWORD"       "$ADMIN"
+login carlos.garcia@estudiante.com  "$SIGCB_ESTUDIANTE_PASSWORD"  "$EST"
+login carlos.garcia@estudiante.com  "$SIGCB_ESTUDIANTE_PASSWORD"  "$LOGOUT"
 LOGINS_CONSUMIDOS=3
 
 # ════════════════════════════════════════════════════════════════

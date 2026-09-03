@@ -129,15 +129,75 @@ documentados en [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
+## Compilar el informe técnico
+
+El informe de la Entrega Final está en
+[`docs/informe/informe-tecnico.tex`](docs/informe/informe-tecnico.tex), con su
+bibliografía en `referencias.bib`. Para regenerar el PDF:
+
+Antes de compilar, genera el commit y el digest que la portada incluye (se
+escriben en `docs/caratula/`; no se editan a mano):
+
+```bash
+python scripts/entrega-digest.py
+```
+
+Con TeX Live / MiKTeX instalado:
+
+```bash
+cd docs/informe
+latexmk -pdf informe-tecnico.tex
+```
+
+o manualmente (pdflatex + bibtex + dos pasadas):
+
+```bash
+cd docs/informe
+pdflatex -interaction=nonstopmode informe-tecnico.tex
+bibtex informe-tecnico
+pdflatex -interaction=nonstopmode informe-tecnico.tex
+pdflatex -interaction=nonstopmode informe-tecnico.tex
+```
+
+La **carátula** (criterio de piso: una página, URL en una sola línea) es un
+documento aparte y se compila igual:
+
+```bash
+cd docs/caratula
+pdflatex -interaction=nonstopmode caratula.tex
+```
+
+Sin instalar nada, en contenedor:
+
+```bash
+# Desde la RAIZ del repositorio. Se monta docs/ entero, no solo docs/informe:
+# el informe incluye los diagramas C4 de ../diagrams/ y la portada lee el
+# commit y el digest generados en ../caratula/ por scripts/entrega-digest.py.
+python scripts/entrega-digest.py
+docker run --rm -v "$PWD/docs":/docs -w /docs/informe texlive/texlive:latest-small \
+  latexmk -pdf -interaction=nonstopmode -halt-on-error informe-tecnico.tex
+```
+
+Detalles y relación con el resto de la documentación en
+[`docs/informe/README.md`](docs/informe/README.md).
+
 ## Documentación
 
 - [`CHANGELOG.md`](CHANGELOG.md) — historial de versiones
 - [`ETHICS.md`](ETHICS.md) — tratamiento de datos, privacidad y honestidad de la evidencia
 - [`LICENSE`](LICENSE) — licencia MIT
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) — despliegue del sistema
+- [`RUNBOOK.md`](RUNBOOK.md) — procedimientos operativos
+- [`BACKUP.md`](BACKUP.md) — estrategia de respaldo
+- [`DATA-PROVENANCE.md`](DATA-PROVENANCE.md) — procedencia de los datos
+- [`CONTRIBUTORS.md`](CONTRIBUTORS.md) — integrantes, ORCID y roles CRediT
 - [`docs/adr/`](docs/adr/) — decisiones de arquitectura
 - [`docs/requisitos/SRS.md`](docs/requisitos/SRS.md) — especificación de requisitos
 - [`docs/basedatos/DICCIONARIO-DATOS.md`](docs/basedatos/DICCIONARIO-DATOS.md) — modelo de datos
-- [`docs/observaciones/OBSERVACIONES.md`](docs/observaciones/OBSERVACIONES.md) — bitácora de observaciones del docente
+- [`docs/observaciones/OBSERVACIONES.md`](docs/observaciones/OBSERVACIONES.md) — bitácora de observaciones del docente, con el commit que resuelve cada una
+- [`docs/caratula/`](docs/caratula/) — carátula de una página con la URL del repositorio
+- [`docs/checklists/`](docs/checklists/) — listas de comprobación Ralph, FAIR, PRISMA e INCOSE
+- [`docs/mediciones/cobertura/jacoco.csv`](docs/mediciones/cobertura/jacoco.csv) — crudo de cobertura, para recalcular las cifras
 - [`SIGCB-QR.postman_collection.json`](SIGCB-QR.postman_collection.json) — colección de la API
 
 ## Historial de entregas

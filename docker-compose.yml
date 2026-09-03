@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: sigcbqr
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Doctora2025
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       TZ: America/Guayaquil
     ports:
       - "5432:5432"
@@ -33,7 +33,7 @@ services:
     container_name: sigcbqr-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@sigcbqr.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:?define PGADMIN_PASSWORD en .env}
     ports:
       - "5050:80"
     depends_on:
@@ -48,11 +48,11 @@ services:
       TZ: America/Guayaquil
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sigcbqr
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Doctora2025
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-postgres}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SPRING_MVC_LOG_RESOLVED_EXCEPTION: "true"
-      JWT_SECRET: YJmzpR1cx9oYiDuBEFK6U0BNLdB1uymzqpPrINxBzOwUlNp8VNxX7/AL5wTNbbQm
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me-in-production}
       JAVA_TOOL_OPTIONS: -Duser.timezone=America/Guayaquil
       CORS_ALLOWED_ORIGINS: http://localhost:8000,http://127.0.0.1:8000
     depends_on:

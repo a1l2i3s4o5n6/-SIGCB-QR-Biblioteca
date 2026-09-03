@@ -8,7 +8,15 @@
   "version": "1.0.0-rc",
   "creators": [
     {
-      "name": "Equipo SIGCB-QR",
+      "name": "Arias Moreira, Maybelin Gregoria",
+      "affiliation": "Universidad Técnica Estatal de Quevedo (UTEQ)"
+    },
+    {
+      "name": "Romero Mendez, Bryam Steven",
+      "affiliation": "Universidad Técnica Estatal de Quevedo (UTEQ)"
+    },
+    {
+      "name": "Zambrano Moreira, Alison Ariana",
       "affiliation": "Universidad Técnica Estatal de Quevedo (UTEQ)"
     }
   ],
@@ -32,7 +40,7 @@
   "notes": "Proyecto académico desarrollado como trabajo de asignatura en la Universidad Técnica Estatal de Quevedo. El conjunto de datos incluido es sintético: no contiene datos de personas reales (ver ETHICS.md).",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/EQUIPO/sigcb-qr",
+      "identifier": "https://github.com/a1l2i3s4o5n6/-SIGCB-QR-Biblioteca",
       "relation": "isSupplementTo",
       "scheme": "url"
     }

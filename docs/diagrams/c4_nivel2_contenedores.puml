@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title C4 Nivel 2 - Diagrama de Contenedores del Sistema SIGCB-QR
+
+Person(usuario, "Usuario", "Estudiante, Bibliotecario o Administrador")
+
+System_Boundary(sigcbqr, "SIGCB-QR") {
+    Container(frontend, "Frontend (BFF)", "PHP 8.3, Laravel 13, Blade + Tailwind + Alpine.js", "Renderiza vistas y actúa como Backend for Frontend. NO habla con la base de datos; todo pasa por ApiClient")
+    Container(api, "API REST", "Java 21, Spring Boot 3.5, Spring Security, JPA", "Lógica de negocio, seguridad, control de acceso basado en roles. Expone endpoints REST documentados con OpenAPI")
+    ContainerDb(database, "Base de datos", "PostgreSQL 16", "Persistencia relacional. 13 procedimientos y funciones almacenados mediante @Procedure")
+    Container(cache, "Caché", "Redis 7", "Caché distribuida para el catálogo (patrón cache-aside). No se usa como cola de mensajes ni como broker")
+}
+
+Rel(usuario, frontend, "Uso por navegador (HTTPS)", "HTTP")
+Rel(frontend, api, "Llamadas a la API (JWT en cookie HttpOnly)", "HTTP/JSON")
+Rel(api, database, "Consulta y persistencia (CRUD-ORM y procedimientos)", "JDBC/plpgsql")
+Rel(api, cache, "Aciertos y escrituras de caché", "RESP")
+
+@enduml

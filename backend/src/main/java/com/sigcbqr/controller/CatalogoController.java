@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class CatalogoController {
     }
 
     @PostMapping("/autores")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Crear autor")
     public ResponseEntity<ApiResponse> crearAutor(@RequestBody Autor autor) {
         autor.setActivo(true);
@@ -51,6 +53,7 @@ public class CatalogoController {
     }
 
     @PutMapping("/autores/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Actualizar autor")
     public ResponseEntity<ApiResponse> actualizarAutor(@PathVariable Long id, @RequestBody Autor request) {
         Autor autor = autorRepository.findById(id)
@@ -70,6 +73,7 @@ public class CatalogoController {
     }
 
     @PostMapping("/editoriales")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Crear editorial")
     public ResponseEntity<ApiResponse> crearEditorial(@RequestBody Editorial editorial) {
         editorial.setActivo(true);
@@ -78,6 +82,7 @@ public class CatalogoController {
     }
 
     @PutMapping("/editoriales/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Actualizar editorial")
     public ResponseEntity<ApiResponse> actualizarEditorial(@PathVariable Long id, @RequestBody Editorial request) {
         Editorial editorial = editorialRepository.findById(id)
@@ -89,6 +94,7 @@ public class CatalogoController {
     }
 
     @DeleteMapping("/editoriales/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Eliminar editorial")
     public ResponseEntity<ApiResponse> eliminarEditorial(@PathVariable Long id) {
         Editorial editorial = editorialRepository.findById(id)
@@ -106,6 +112,7 @@ public class CatalogoController {
     }
 
     @PostMapping("/categorias")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Crear categoría")
     public ResponseEntity<ApiResponse> crearCategoria(@RequestBody Categoria categoria) {
         categoria.setActivo(true);
@@ -114,6 +121,7 @@ public class CatalogoController {
     }
 
     @PutMapping("/categorias/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Actualizar categoría")
     public ResponseEntity<ApiResponse> actualizarCategoria(@PathVariable Long id, @RequestBody Categoria request) {
         Categoria categoria = categoriaRepository.findById(id)
@@ -125,6 +133,7 @@ public class CatalogoController {
     }
 
     @DeleteMapping("/categorias/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Operation(summary = "Eliminar categoría")
     public ResponseEntity<ApiResponse> eliminarCategoria(@PathVariable Long id) {
         Categoria categoria = categoriaRepository.findById(id)

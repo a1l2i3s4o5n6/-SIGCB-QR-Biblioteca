@@ -25,16 +25,23 @@ import { Trend, Rate } from 'k6/metrics';
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
 const EMAIL = __ENV.SIGCB_EMAIL || 'admin@biblioteca.com';
-const PASSWORD = __ENV.SIGCB_PASSWORD || 'admin123';
+const PASSWORD = __ENV.SIGCB_PASSWORD;
+if (!PASSWORD) {
+  throw new Error('Define SIGCB_PASSWORD en el entorno; no se versiona ninguna contrasena.');
+}
 
 // Métrica propia: aísla la latencia del catálogo del resto del tráfico.
 const catalogoDuracion = new Trend('catalogo_duracion', true);
 const catalogoErrores = new Rate('catalogo_errores');
 
+// Perfil exigido por la guia: 50 usuarios virtuales SOSTENIDOS durante 30 s.
+// La rampa de subida y la de bajada quedan fuera del tramo sostenido a
+// proposito: las metricas del informe se leen del tramo de 50 VU, no de la
+// rampa, que mezcla latencias de arranque con las de regimen.
 export const options = {
   stages: [
-    { duration: '10s', target: 5 },   // calentamiento
-    { duration: '20s', target: 20 },  // carga sostenida
+    { duration: '15s', target: 50 },  // rampa de subida
+    { duration: '30s', target: 50 },  // carga sostenida — tramo que se informa
     { duration: '10s', target: 0 },   // descenso
   ],
   thresholds: {

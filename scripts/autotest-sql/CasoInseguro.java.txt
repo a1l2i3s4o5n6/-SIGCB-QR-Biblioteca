@@ -1,0 +1,9 @@
+class Malo {
+    @Query("SELECT u FROM Usuario u WHERE u.nombre = '" + nombre + "'")
+    List<Usuario> buscar(String nombre);
+
+    void peor(String filtro) {
+        em.createNativeQuery("SELECT * FROM libro WHERE titulo LIKE '%" + filtro + "%'");
+    }
+    void pesimo() { conn.createStatement(); }
+}

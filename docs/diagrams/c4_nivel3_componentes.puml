@@ -1,0 +1,39 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title C4 Nivel 3 - Componentes de la API SIGCB-QR
+
+Container_Boundary(api, "API Spring Boot 3.5") {
+
+    Component(auth_controller, "AuthController", "Spring MVC @RestController", "Login, registro, logout, validación QR")
+    Component(libro_controller, "LibroController", "Spring MVC @RestController", "CRUD de material bibliográfico")
+    Component(prestamo_controller, "PrestamoController", "Spring MVC @RestController", "Préstamos, devoluciones, renovaciones")
+    Component(catalogo_controller, "CatalogoController", "Spring MVC @RestController", "Autores, editoriales, categorías (con @PreAuthorize)")
+    Component(reporte_controller, "ReporteController", "Spring MVC @RestController", "Reportes de préstamos y multas")
+
+    Component(auth_service, "AuthService", "Spring Service", "Lógica de autenticación, emisión JWT")
+    Component(prestamo_service, "PrestamoService", "Spring Service", "Flujo de préstamo/devolución, invoca procedimientos")
+    Component(jwt_provider, "JwtTokenProvider", "Spring Component", "Generación y validación de tokens JWT firmados HMAC-SHA256")
+    Component(jwt_filter, "JwtAuthenticationFilter", "OncePerRequestFilter", "Autenticación de cada petición")
+    Component(security, "SecurityConfig", "Spring Security", "Configuración de filtros, RBAC con @EnableMethodSecurity")
+
+    Component(repositories, "Repositorios JPA", "Spring Data JPA", "Acceso a datos elemental (CRUD-ORM)")
+    Component(procedures, "Acceso a procedimientos", "JPA @Procedure", "Invocación de procedimientos y funciones almacenados")
+}
+
+ContainerDb(database, "PostgreSQL 16", "Esquema relacional con 13 procedimientos/funciones")
+Container(cache, "Redis 7", "Caché de catálogo")
+
+Rel(auth_controller, auth_service, "Delega autenticación")
+Rel(auth_service, jwt_provider, "Emite JWT")
+Rel(jwt_filter, jwt_provider, "Valida JWT")
+Rel(security, jwt_filter, "Instala filtro y reglas RBAC")
+Rel(libro_controller, repositories, "CRUD elemental")
+Rel(catalogo_controller, repositories, "CRUD autores/editoriales/categorías")
+Rel(reporte_controller, procedures, "Invocaciones @Procedure")
+Rel(prestamo_service, procedures, "Procedimientos sp_*/fn_*")
+Rel(repositories, database, "JDBC/ORM")
+Rel(procedures, database, "plpgsql")
+Rel(libro_controller, cache, "Lectura/escritura de catálogo")
+
+@enduml

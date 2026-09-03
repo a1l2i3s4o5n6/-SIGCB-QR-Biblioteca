@@ -190,6 +190,42 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Análisis estático de seguridad: SpotBugs con el complemento
+                 find-sec-bugs. Se ejecuta en la fase verify y escribe el
+                 informe en target/spotbugsXml.xml.
+                 Ejecución aislada: mvn spotbugs:check -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.6.6</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <includeTests>false</includeTests>
+                    <xmlOutput>true</xmlOutput>
+                    <!-- No romper la construcción en la primera pasada: el
+                         objetivo de esta entrega es obtener el informe. Poner
+                         a true cuando los hallazgos estén triados. -->
+                    <failOnError>false</failOnError>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.13.0</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-security</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

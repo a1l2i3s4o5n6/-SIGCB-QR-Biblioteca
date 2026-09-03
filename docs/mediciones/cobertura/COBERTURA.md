@@ -5,6 +5,9 @@
 **Requisito asociado:** REQ-NF-005
 **Informe HTML completo:** `backend/target/site/jacoco/index.html` (se genera con
 `mvn verify`; no se versiona)
+**Crudo versionado:** `docs/mediciones/cobertura/jacoco.xml` y `jacoco.csv` — copia
+literal del informe que produjo `mvn verify`. Todas las cifras de este documento
+son recalculables desde el CSV; el apartado 3.1 da el comando exacto.
 
 ---
 
@@ -72,48 +75,75 @@ mismos servicios como *service containers*.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 1 944 | 5 352 | **36,32 %** |
-| Ramas | 49 | 276 | **17,75 %** |
-| **Líneas** | **538** | **1 236** | **43,53 %** |
-| Complejidad ciclomática | 110 | 436 | 25,23 % |
-| Métodos | 96 | 298 | 32,21 % |
-| Clases analizadas | – | 62 | – |
+| Instrucciones | 2 276 | 7 076 | **32,17 %** |
+| Ramas | 61 | 374 | **16,31 %** |
+| **Líneas** | **617** | **1 588** | **38,85 %** |
+| Complejidad ciclomática | 125 | 521 | 23,99 % |
+| Métodos | 110 | 334 | 32,93 % |
+| Clases analizadas | – | 65 | – |
 
 El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (43,53 %). El umbral es bajo a propósito y no debe presentarse
+regla se cumple (38,85 %). El umbral es bajo a propósito y no debe presentarse
 como un objetivo alcanzado: se fijó para que la construcción falle si la
-cobertura *retrocede*, no como meta de calidad.
+cobertura *retrocede*, no como meta de calidad. **Está muy por debajo del 70 %
+que pide la guía, en los tres estratos.**
+
+### 3.1 Cómo recalcular estas cifras
+
+```bash
+python - <<'EOF'
+import csv, collections
+rows = list(csv.DictReader(open('docs/mediciones/cobertura/jacoco.csv')))
+t = collections.Counter()
+for r in rows:
+    for k in r:
+        if k.endswith(('_MISSED', '_COVERED')):
+            t[k] += int(r[k])
+for c in ['INSTRUCTION', 'BRANCH', 'LINE', 'COMPLEXITY', 'METHOD']:
+    m, cv = t[c + '_MISSED'], t[c + '_COVERED']
+    print(f'{c:12s} {cv:5d}/{m+cv:5d} = {100*cv/(m+cv):5.2f} %')
+EOF
+```
 
 ### Cobertura por paquete
 
 | Paquete | Líneas | Cobertura de línea | Cobertura de rama |
 |---|---:|---:|---:|
-| `com.sigcbqr.config` | 58/58 | 100,0 % | 0,0 % |
-| `com.sigcbqr.model.dto.response` | 14/23 | 60,9 % | 0,0 % |
+| `com.sigcbqr.config` | 59/59 | 100,0 % | 0,0 % |
+| `com.sigcbqr.model.dto.response` | 19/23 | 82,6 % | 0,0 % |
 | `com.sigcbqr.exception` | 44/83 | 53,0 % | 0,0 % |
-| `com.sigcbqr.service` | 271/561 | 48,3 % | 22,1 % |
-| `com.sigcbqr.security` | 56/123 | 45,5 % | 25,0 % |
+| `com.sigcbqr.security` | 59/123 | 48,0 % | 25,0 % |
+| `com.sigcbqr.controller` | 145/330 | 43,9 % | 29,3 % |
 | `com.sigcbqr` | 1/3 | 33,3 % | 0,0 % |
-| `com.sigcbqr.controller` | 93/317 | 29,3 % | 17,9 % |
+| `com.sigcbqr.service` | 289/899 | 32,1 % | 13,3 % |
 | `com.sigcbqr.model.entity` | 1/68 | 1,5 % | 0,0 % |
 
----
+### 3.2 Corrección respecto de la versión anterior de este documento
+
+La primera redacción declaró 36,32 % de instrucciones, 17,75 % de ramas y 43,53 %
+de líneas sobre 5 352 instrucciones y 62 clases. Esas cifras correspondían a una
+ejecución **anterior** al rediseño del tablero de control (commit `8503a5f`), que
+añadió código de producción sin añadir pruebas en la misma proporción. El informe
+de JaCoCo que ahora se versiona analiza 65 clases y 7 076 instrucciones, y da
+32,17 / 16,31 / 38,85. **La cobertura no subió: bajó, porque creció el
+denominador.** Se corrige aquí porque la cifra publicada debe ser la que se
+recalcula del crudo, no la más favorable.
 
 ## 4. Interpretación
 
 **El reparto importa más que el total.** La cobertura no es uniforme y está
 concentrada donde debe estarlo:
 
-- `security` (45,5 %) y `service` (48,3 %) contienen las reglas cuya rotura
+- `security` (48,0 %) y `controller` (43,9 %) contienen las reglas cuya rotura
   tendría consecuencias: emisión y validación de tokens, revocación, límites de
   préstamo, borrado lógico.
 - `model.entity` (1,5 %) son entidades JPA de datos con Lombok. La cifra es baja y
   **carece de significado**: probar un *getter* generado no aporta información.
   Contribuye a hundir el total sin que eso indique riesgo.
-- `controller` (29,3 %) es la zona con déficit real: solo cuatro de los quince
-  controladores tienen pruebas.
+- `service` (32,1 % de línea y 13,3 % de rama) es hoy la zona con déficit real:
+  concentra la lógica de negocio y es donde menos bifurcaciones se ejercitan.
 
-**La cobertura de rama, 17,75 %, es el dato preocupante**, no el 43,53 % de líneas.
+**La cobertura de rama, 16,31 %, es el dato preocupante**, no el 38,85 % de líneas.
 Significa que las pruebas recorren el camino feliz y dejan casi todas las
 bifurcaciones —validaciones, comprobaciones de estado, ramas de error— sin
 ejercitar. Es coherente con los tres defectos que la construcción no detectó y

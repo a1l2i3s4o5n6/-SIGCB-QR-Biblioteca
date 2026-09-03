@@ -40,3 +40,21 @@ docs/informe/*.bbl
 docs/informe/*.blg
 docs/informe/*.fls
 docs/informe/*.fdb_latexmk
+docs/informe/*.lof
+docs/informe/*.lot
+docs/informe/*.lol
+
+# LaTeX de la caratula: mismos auxiliares que el informe (el PDF si se versiona)
+docs/caratula/*.aux
+docs/caratula/*.log
+docs/caratula/*.out
+docs/caratula/*.toc
+
+# Artefactos generados por scripts/entrega-digest.py.
+# NO se versionan a proposito: el manifiesto resume los ficheros versionados,
+# de modo que versionarlo lo haria referirse a si mismo y el digest no seria
+# estable. Se regeneran con: python scripts/entrega-digest.py
+docs/caratula/MANIFIESTO.txt
+docs/caratula/digest.txt
+docs/caratula/digest.tex
+docs/caratula/commit.tex
