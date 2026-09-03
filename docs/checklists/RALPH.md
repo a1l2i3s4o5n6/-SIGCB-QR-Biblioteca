@@ -18,7 +18,7 @@ Research*, ACM SIGSOFT, 2021.
 | A4 | Se justifica la elección metodológica | `[x]` | §3.2: el artefacto precede a la evaluación |
 | A5 | Se describe el objeto de estudio con detalle suficiente | `[x]` | §5 Arquitectura, con los tres diagramas C4 |
 | A6 | Se declara el entorno de ejecución de forma reproducible | `[x]` | §3.5: SO, versiones y cinco imágenes ancladas por digest |
-| A7 | Los datos crudos se publican | `[x]` | `docs/mediciones/`, incluidos jacoco.csv y los crudos de k6 |
+| A7 | Los datos crudos se publican | `[x]` | `docs/mediciones/`: jacoco.csv/xml, los cinco crudos de k6, los seis de Lighthouse, el de OWASP y el XML de SpotBugs |
 | A8 | Los procedimientos de análisis se publican | `[x]` | `scripts/perf-analysis.py`, `scripts/sus-score.py`, §3.1 de COBERTURA.md |
 | A9 | Se declaran las amenazas a la validez en las cuatro categorías | `[x]` | §11, con marco de Wohlin, Cook y Runeson |
 | A10 | Se declaran las limitaciones del estudio | `[x]` | §13.7 Limitaciones declaradas |

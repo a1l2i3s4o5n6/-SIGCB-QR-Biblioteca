@@ -1,6 +1,6 @@
 # Cobertura de pruebas — SIGCB-QR
 
-**Fecha de medición:** 2026-09-01
+**Fecha de medición:** 2026-09-03
 **Herramienta:** JaCoCo 0.8.12 (`jacoco-maven-plugin`)
 **Requisito asociado:** REQ-NF-005
 **Informe HTML completo:** `backend/target/site/jacoco/index.html` (se genera con
@@ -41,10 +41,10 @@ mismos servicios como *service containers*.
 ## 2. Resultado de la ejecución
 
 ```
-[INFO] Tests run: 55, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 83, Failures: 0, Errors: 0, Skipped: 0
 [INFO] All coverage checks have been met.
 [INFO] BUILD SUCCESS
-[INFO] Total time:  02:52 min
+[INFO] Total time:  03:16 min
 ```
 
 ### Pruebas por clase
@@ -75,15 +75,14 @@ mismos servicios como *service containers*.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 2 276 | 7 076 | **32,17 %** |
+| Instrucciones | 2 451 | 7 156 | **34,25 %** |
 | Ramas | 61 | 374 | **16,31 %** |
-| **Líneas** | **617** | **1 588** | **38,85 %** |
-| Complejidad ciclomática | 125 | 521 | 23,99 % |
-| Métodos | 110 | 334 | 32,93 % |
+| **Líneas** | **644** | **1 594** | **40,40 %** |
+| Métodos | 115 | 334 | 34,43 % |
 | Clases analizadas | – | 65 | – |
 
 El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (38,85 %). El umbral es bajo a propósito y no debe presentarse
+regla se cumple (40,40 %). El umbral es bajo a propósito y no debe presentarse
 como un objetivo alcanzado: se fijó para que la construcción falle si la
 cobertura *retrocede*, no como meta de calidad. **Está muy por debajo del 70 %
 que pide la guía, en los tres estratos.**
@@ -109,16 +108,16 @@ EOF
 
 | Paquete | Líneas | Cobertura de línea | Cobertura de rama |
 |---|---:|---:|---:|
-| `com.sigcbqr.config` | 59/59 | 100,0 % | 0,0 % |
+| `com.sigcbqr.config` | 65/65 | 100,0 % | 0,0 % |
 | `com.sigcbqr.model.dto.response` | 19/23 | 82,6 % | 0,0 % |
 | `com.sigcbqr.exception` | 44/83 | 53,0 % | 0,0 % |
+| `com.sigcbqr.controller` | 166/330 | 50,3 % | 29,3 % |
 | `com.sigcbqr.security` | 59/123 | 48,0 % | 25,0 % |
-| `com.sigcbqr.controller` | 145/330 | 43,9 % | 29,3 % |
 | `com.sigcbqr` | 1/3 | 33,3 % | 0,0 % |
 | `com.sigcbqr.service` | 289/899 | 32,1 % | 13,3 % |
 | `com.sigcbqr.model.entity` | 1/68 | 1,5 % | 0,0 % |
 
-### 3.2 Corrección respecto de la versión anterior de este documento
+### 3.2 Historial de esta cifra, y por qué se corrigió dos veces
 
 La primera redacción declaró 36,32 % de instrucciones, 17,75 % de ramas y 43,53 %
 de líneas sobre 5 352 instrucciones y 62 clases. Esas cifras correspondían a una
@@ -126,8 +125,17 @@ ejecución **anterior** al rediseño del tablero de control (commit `8503a5f`), 
 añadió código de producción sin añadir pruebas en la misma proporción. El informe
 de JaCoCo que ahora se versiona analiza 65 clases y 7 076 instrucciones, y da
 32,17 / 16,31 / 38,85. **La cobertura no subió: bajó, porque creció el
-denominador.** Se corrige aquí porque la cifra publicada debe ser la que se
-recalcula del crudo, no la más favorable.
+denominador.**
+
+La medición definitiva se obtuvo el 3 de septiembre ejecutando la suite entera
+con `make test`, ya autocontenido en contenedor. Son **83 pruebas** (no 55: el
+equipo añadió pruebas de controlador para catálogo, multas y reservas) y dan
+34,25 / 16,31 / 40,40. La cobertura de línea sube casi dos puntos respecto de la
+medición intermedia, gracias a esas pruebas nuevas; la de rama **no se mueve en
+absoluto**, y ese es el dato que importa.
+
+Se corrige dos veces en el mismo documento porque la cifra publicada debe ser la
+que se recalcula del crudo versionado, no la más favorable ni la más cómoda.
 
 ## 4. Interpretación
 

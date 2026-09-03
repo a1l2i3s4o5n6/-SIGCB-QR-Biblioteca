@@ -38,7 +38,16 @@ coste, está en **[ADR-0002](docs/adr/0002-separar-api-spring-boot-de-frontend-l
 
 ## Requisitos
 
-Solo **Docker** con el plugin **Docker Compose**.
+Solo **Docker** con el plugin **Docker Compose**. Maven y el JDK van en
+contenedor, incluida la suite de pruebas (`make test`).
+
+Para desarrollar en local con un JDK propio, el repositorio incluye el
+**Maven Wrapper**, que fija la versión de Maven (3.9.16):
+
+```bash
+cd backend && ./mvnw verify      # Linux/macOS
+cd backend && mvnw.cmd verify    # Windows
+```
 
 ## Puesta en marcha
 
@@ -88,8 +97,8 @@ Otros estudiantes: `ana.martinez@estudiante.com`, `pedro.ramirez@estudiante.com`
 | Objetivo | Qué hace |
 |---|---|
 | `make up` / `make down` | Levanta o detiene toda la infraestructura |
-| `make test` | Ejecuta la suite del backend con cobertura (`make test DB_PASSWORD=MiClave` para otra BD) |
-| `make verify` | Valida digest de imágenes, matriz de trazabilidad y ADR |
+| `make test` | Suite del backend con cobertura y SpotBugs. **Autocontenido**: levanta PostgreSQL y Redis de prueba y ejecuta Maven en contenedor; no necesita Maven ni JDK instalados |
+| `make verify` | Valida digest de imágenes, matriz de trazabilidad, ADR, SQL dinámico y digest de la entrega |
 | `make audit` | Ejecuta la auditoría de seguridad OWASP contra el sistema en marcha |
 | `make metrics` | Hit ratio de Redis y estado de los contenedores |
 | `make logs` / `make clean` | Registros; parada con borrado de volúmenes |
@@ -121,9 +130,10 @@ entorno y la salida cruda. Lo que no se ha medido se declara como no medido.
 | Bloque | Resultado | Documento |
 |---|---|---|
 | Seguridad (OWASP) | 51/51 comprobaciones superadas | [OWASP-AUDIT.md](docs/mediciones/seguridad/OWASP-AUDIT.md) |
-| Pruebas y cobertura | 55 pruebas, 0 fallos; 38,85 % de líneas, 16,31 % de ramas | [COBERTURA.md](docs/mediciones/cobertura/COBERTURA.md) |
+| Pruebas y cobertura | **83 pruebas**, 0 fallos; 40,40 % de líneas, 16,31 % de ramas | [COBERTURA.md](docs/mediciones/cobertura/COBERTURA.md) |
 | Rendimiento (k6) | 5 corridas a 50 VU: p95 5,55 ms, IC 95 % [4,07, 7,03]; 0 % de error | [REPORT-50VU.md](docs/mediciones/perf/50vu/REPORT-50VU.md) |
 | Frontend (Lighthouse) | 6 corridas: rendimiento 97/89, accesibilidad 98, SEO 91; **buenas prácticas 78, por debajo del umbral** | [LIGHTHOUSE-6-CORRIDAS.md](docs/mediciones/frontend/lh/LIGHTHOUSE-6-CORRIDAS.md) |
+| Análisis estático | SpotBugs + find-sec-bugs: 191 hallazgos, **1 de seguridad real** (CSRF) | [SPOTBUGS.md](docs/mediciones/seguridad/spotbugs/SPOTBUGS.md) |
 | Usabilidad (SUS) | **Sin datos recogidos** — instrumento y protocolo listos | [SUS.md](docs/mediciones/usabilidad/SUS.md) |
 
 Las auditorías de esta entrega encontraron **tres defectos reales** que la suite

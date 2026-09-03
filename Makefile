@@ -1,8 +1,7 @@
 # SIGCB-QR — Makefile para reproducibilidad
 # Uso: make all | up | down | test | verify | audit | metrics | logs | clean
-# Comprobar contraseña: make test DB_PASSWORD=MiClave
+# La suite es autocontenida: 'make test' no necesita Maven ni JDK instalados.
 
-DB_PASSWORD ?= $(POSTGRES_PASSWORD)
 
 .PHONY: all up down test logs metrics clean verify audit docs-check
 
@@ -24,8 +23,12 @@ up:
 down:
 	docker compose down
 
+# Suite del backend con cobertura. Autocontenida: levanta PostgreSQL y Redis de
+# prueba, ejecuta Maven en contenedor y limpia al terminar. No exige Maven ni
+# JDK instalados, en coherencia con el unico requisito que declara el README.
+# Para ejecutar en local con el wrapper: cd backend && ./mvnw verify
 test:
-	cd backend && TEST_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sigcbqr_test TEST_DATASOURCE_USERNAME=postgres TEST_DATASOURCE_PASSWORD=$(DB_PASSWORD) mvn clean test
+	@bash scripts/run-tests.sh
 
 logs:
 	docker compose logs -f

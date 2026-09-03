@@ -580,8 +580,8 @@ Eficiencia de desempeño & \req{REQ-R-001}--\req{REQ-R-004} & Medido: cinco corr
 Compatibilidad & \req{REQ-NF-004} & Imágenes ancladas por digest SHA-256; cinco servicios en Docker Compose \\
 Usabilidad & \req{REQ-U-001}, \req{REQ-U-002} & Lighthouse, seis corridas: 97/89 de rendimiento, 98 de accesibilidad, 91 de SEO; \textbf{78 en buenas prácticas, por debajo del umbral de 90}. SUS: \textbf{sin medir}, cero participantes \\
 Fiabilidad & \req{REQ-NF-008}, \req{REQ-NF-010} & Tres defectos corregidos con prueba de regresión; 17 corridas de CI sin fallo \\
-Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado. \textbf{Sin ZAP} \\
-Mantenibilidad & \req{REQ-NF-005} & Cobertura 38,85\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
+Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado; SpotBugs con find-sec-bugs, un hallazgo de seguridad real (CSRF). \textbf{Sin ZAP} \\
+Mantenibilidad & \req{REQ-NF-005} & 83 pruebas, 0 fallos. Cobertura 40,40\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
 Portabilidad & \req{REQ-NF-004} & Reproducción en un comando (\texttt{make all}); entorno fijado por digest \\
 \bottomrule
 \caption{Correspondencia entre ISO/IEC 25010, los requisitos que concretan cada
@@ -774,6 +774,43 @@ Tres verificaciones merecen mención por su diseño:
         creación no autorizada se comprueba que \emph{no se creó ningún usuario}.
         Un \texttt{403} sería inútil si el recurso se hubiese creado igualmente.
 \end{itemize}
+
+\subsection{Análisis estático con SpotBugs y find-sec-bugs}
+
+A la auditoría dinámica se añade análisis estático: SpotBugs 4.8.6.6 con el
+complemento find-sec-bugs 1.13.0, en su ajuste más exhaustivo
+(\texttt{effort=Max}, \texttt{threshold=Low}), ejecutado dentro de \texttt{make
+test}. El informe se versiona en
+\texttt{docs\-/mediciones\-/seguridad\-/spotbugs\-/}.
+
+Arroja \textbf{191 hallazgos}, y la cifra desnuda induce a error. De los 72 de
+categoría \textsc{security}, \textbf{71 son \texttt{SPRING\_ENDPOINT}}, que no
+es un defecto: find-sec-bugs marca cada endpoint de Spring como punto que un
+auditor debe revisar, y el sistema tiene 71. Otros 108 son
+\texttt{EI\_EXPOSE\_REP} sobre entidades JPA, donde las asociaciones deben ser
+referencias vivas para que el ORM funcione. Presentar 191 como
+«vulnerabilidades» sería inflar la cifra en la dirección alarmista, que es tan
+deshonesto como inflarla en la favorable.
+
+\textbf{Hay un hallazgo de seguridad real, y uno solo:}
+\texttt{SPRING\_CSRF\_PROTECTION\_DISABLED}. \texttt{SecurityConfig} deshabilita
+la protección CSRF. Deshabilitarla es inocuo en una API que autentica por
+cabecera \texttt{Authorization}, porque esa cabecera no viaja sola; \textbf{no
+lo es sin más en una que autentica por cookie}, como esta, porque el navegador
+adjunta la cookie también en peticiones originadas por terceros.
+
+El riesgo está mitigado: la cookie se emite con \texttt{SameSite=Strict}, y así
+se verificó sobre una respuesta real. Pero conviene decir con precisión qué
+significa eso. La defensa descansa en \textbf{una sola línea}, en el
+comportamiento del navegador, no estaba documentada en ningún ADR hasta este
+análisis, y \textbf{no hay ninguna prueba que falle si alguien quita el
+\texttt{SameSite}}. Una decisión de seguridad que nadie escribió no es una
+decisión: es una casualidad afortunada que nadie está vigilando. Queda
+pendiente redactar el ADR correspondiente y añadir la prueba de regresión.
+
+Es, además, el segundo hallazgo de esta entrega que la auditoría dinámica no vio
+y otro instrumento sí. El primero fueron los ocho endpoints del catálogo sin
+autorización. La lectura conjunta está en §\ref{sec:validez}.
 
 \subsection{Limitaciones declaradas}
 
@@ -1503,9 +1540,10 @@ API de Crossref, DOI por DOI.
 \addcontentsline{toc}{subsection}{7. Limitaciones declaradas}
 Se declaran, sin atenuantes, las siguientes limitaciones de esta entrega:
 (i) la usabilidad no se midió, al ser cero el número de participantes del SUS;
-(ii) no se ejecutó un análisis dinámico de seguridad con OWASP ZAP;
-(iii) la cobertura de rama es del 16,31\,\%, muy por debajo de lo deseable;
-(iii bis) eq{REQ-U-002} no se cumple: Lighthouse da 78 en buenas prácticas
+(ii) no se ejecutó un análisis dinámico de seguridad con OWASP ZAP, aunque sí el estático con SpotBugs y find-sec-bugs;
+(iii) la cobertura de rama es del 16,31\,\%, muy por debajo de lo deseable, y no se movió ni una décima al añadir 28 pruebas nuevas;
+(iii bis) 
+eq{REQ-U-002} no se cumple: Lighthouse da 78 en buenas prácticas
 frente al umbral de 90, por medirse sin TLS;
 (iv) la inferencia estadística se limita a un intervalo de confianza sobre una
 única condición: no hay contraste de hipótesis ni tamaño de efecto, porque no se
