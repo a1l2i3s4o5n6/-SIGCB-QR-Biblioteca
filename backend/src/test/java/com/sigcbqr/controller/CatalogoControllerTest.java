@@ -12,6 +12,8 @@ import com.sigcbqr.repository.FacultadRepository;
 import com.sigcbqr.security.JwtAuthenticationEntryPoint;
 import com.sigcbqr.security.JwtTokenProvider;
 import com.sigcbqr.security.UserPrincipal;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -63,6 +66,15 @@ class CatalogoControllerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @BeforeEach
+    void setup401() throws Exception {
+        doAnswer(invocation -> {
+            HttpServletResponse response = invocation.getArgument(1);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }).when(jwtAuthenticationEntryPoint).commence(any(), any(), any());
+    }
 
     private UsernamePasswordAuthenticationToken auth(String rol, Long id) {
         UserPrincipal principal = new UserPrincipal(
