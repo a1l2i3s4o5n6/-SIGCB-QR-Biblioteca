@@ -1,7 +1,9 @@
 -- ============================================
--- V11 [PROD]: Desactivar usuarios semilla con contraseñas conocidas
+-- V13 [PROD]: Desactivar usuarios semilla con contraseñas conocidas
 -- Esta migración SOLO se ejecuta en el entorno de producción
--- (location classpath:db/migration/prod, definida en application-prod.yml).
+-- (location classpath:db/migration-prod, definida en application-prod.yml).
+-- Se versiona como V13 (y no V11) porque Flyway aplica ambas ubicaciones en
+-- producción y la numeración debe ser única en todo el esquema.
 -- En desarrollo los seed permanecen activos para poder probar el sistema.
 --
 -- Las contraseñas de estos usuarios están documentadas públicamente
