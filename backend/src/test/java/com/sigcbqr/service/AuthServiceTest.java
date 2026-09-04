@@ -8,6 +8,8 @@ import com.sigcbqr.model.dto.response.LoginResponse;
 import com.sigcbqr.model.dto.response.UsuarioResponse;
 import com.sigcbqr.model.entity.Rol;
 import com.sigcbqr.model.entity.Usuario;
+import com.sigcbqr.repository.CarreraRepository;
+import com.sigcbqr.repository.FacultadRepository;
 import com.sigcbqr.repository.RolRepository;
 import com.sigcbqr.repository.UsuarioRepository;
 import com.sigcbqr.security.JwtTokenProvider;
@@ -40,12 +42,16 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AuditoriaService auditoriaService;
+    @Mock
+    private FacultadRepository facultadRepository;
+    @Mock
+    private CarreraRepository carreraRepository;
 
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(authenticationManager, tokenProvider, usuarioRepository, rolRepository, passwordEncoder, auditoriaService);
+        authService = new AuthService(authenticationManager, tokenProvider, usuarioRepository, rolRepository, passwordEncoder, auditoriaService, facultadRepository, carreraRepository);
     }
 
     @Test
