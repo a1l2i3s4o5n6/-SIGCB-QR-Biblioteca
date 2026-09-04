@@ -58,3 +58,7 @@ docs/caratula/MANIFIESTO.txt
 docs/caratula/digest.txt
 docs/caratula/digest.tex
 docs/caratula/commit.tex
+
+# Ajustes locales de compose (remapeo de puertos, etc.). Son de cada maquina,
+# no del proyecto: versionarlos impondria los conflictos de puerto de uno a todos.
+docker-compose.override.yml
