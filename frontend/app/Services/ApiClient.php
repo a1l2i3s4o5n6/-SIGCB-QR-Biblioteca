@@ -209,6 +209,33 @@ class ApiClient
         return $response->json('data') ?? [];
     }
 
+    public function renovacionesPendientes(array $params = []): array
+    {
+        return $this->withAuth()->get('/prestamos/renovaciones-pendientes', $params)->json() ?? [];
+    }
+
+    public function aprobarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/aprobar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo aprobar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function rechazarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/rechazar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo rechazar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // INVENTARIO (ejemplares disponibles)
     // ─────────────────────────────────────────────

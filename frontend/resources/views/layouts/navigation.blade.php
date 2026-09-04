@@ -159,9 +159,15 @@
         </a>
         @else
         <a href="{{ route('prestamos.index') }}"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.index') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
+        </a>
+
+        <a href="{{ route('prestamos.renovaciones-pendientes') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.renovaciones-pendientes') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-redo-alt w-5 text-center text-sm"></i>
+            <span class="ml-3">Renovaciones</span>
         </a>
 
         <a href="{{ route('devoluciones.index') }}"
@@ -315,9 +321,14 @@
         </a>
         @else
         <a href="{{ route('prestamos.index') }}" @click="$store.ui.sidebarOpen = false"
-            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.index') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Préstamos</span>
+        </a>
+        <a href="{{ route('prestamos.renovaciones-pendientes') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.renovaciones-pendientes') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-redo-alt w-5 text-center text-sm"></i>
+            <span class="ml-3">Renovaciones</span>
         </a>
         <a href="{{ route('devoluciones.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('devoluciones.*') ? 'active text-white' : '' }}">

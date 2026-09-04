@@ -57,9 +57,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/prestamos',                [PrestamoController::class, 'index'])->name('prestamos.index');
     Route::get('/prestamos/crear',          [PrestamoController::class, 'create'])->name('prestamos.create');
     Route::post('/prestamos',               [PrestamoController::class, 'store'])->name('prestamos.store');
+    Route::get('/prestamos/renovaciones-pendientes',           [PrestamoController::class, 'renovacionesPendientes'])->name('prestamos.renovaciones-pendientes');
     Route::get('/prestamos/{id}',           [PrestamoController::class, 'show'])->name('prestamos.show');
     Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
     Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
+    Route::put('/prestamos/{id}/aprobar-renovacion',           [PrestamoController::class, 'aprobarRenovacion'])->name('prestamos.aprobar-renovacion');
+    Route::put('/prestamos/{id}/rechazar-renovacion',          [PrestamoController::class, 'rechazarRenovacion'])->name('prestamos.rechazar-renovacion');
 
     // ── Devoluciones ────────────────────────────────────────────────────
     Route::get('/devoluciones',            [PrestamoController::class, 'devoluciones'])->name('devoluciones.index');
