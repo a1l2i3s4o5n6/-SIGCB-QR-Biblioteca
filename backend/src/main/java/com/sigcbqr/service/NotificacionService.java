@@ -42,6 +42,13 @@ public class NotificacionService {
         return notificacionRepository.countByUsuarioIdAndLeidaFalse(usuarioId);
     }
 
+    @Transactional(readOnly = true)
+    public NotificacionResponse obtenerPorId(Long id) {
+        Notificacion notificacion = notificacionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación", id));
+        return toResponse(notificacion);
+    }
+
     @Transactional
     public NotificacionResponse crear(NotificacionRequest request) {
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
@@ -52,6 +59,8 @@ public class NotificacionService {
                 .titulo(request.getTitulo().trim())
                 .mensaje(request.getMensaje().trim())
                 .tipo(StringUtils.hasText(request.getTipo()) ? request.getTipo().trim().toUpperCase() : "INFO")
+                .prioridad(StringUtils.hasText(request.getPrioridad())
+                        ? request.getPrioridad().trim().toUpperCase() : "NORMAL")
                 .leida(false)
                 .build();
 
@@ -86,6 +95,7 @@ public class NotificacionService {
                 .mensaje(n.getMensaje())
                 .leida(n.getLeida())
                 .tipo(n.getTipo())
+                .prioridad(n.getPrioridad())
                 .createdAt(n.getCreatedAt())
                 .build();
     }

@@ -39,6 +39,9 @@ public class Prestamo {
     @Column(columnDefinition = "TEXT")
     private String observaciones;
 
+    @Column(name = "num_renovaciones")
+    private Integer numRenovaciones;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -51,6 +54,7 @@ public class Prestamo {
         updatedAt = LocalDateTime.now();
         if (estado == null) estado = "ACTIVO";
         if (fechaPrestamo == null) fechaPrestamo = LocalDateTime.now();
+        if (numRenovaciones == null) numRenovaciones = 0;
     }
 
     @PreUpdate

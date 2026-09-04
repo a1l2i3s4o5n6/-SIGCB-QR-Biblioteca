@@ -59,7 +59,14 @@ public class NotificacionController {
 
     @PutMapping("/{id}/leida")
     @Operation(summary = "Marcar como leída")
-    public ResponseEntity<ApiResponse> marcarLeida(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> marcarLeida(@AuthenticationPrincipal UserPrincipal principal,
+                                                    @PathVariable Long id) {
+        var notificacion = notificacionService.obtenerPorId(id);
+        if ("ESTUDIANTE".equals(principal.rol())
+                && !principal.id().equals(notificacion.getUsuarioId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No tiene acceso a esta notificación");
+        }
         notificacionService.marcarLeida(id);
         return ResponseEntity.ok(ApiResponse.success("Notificación marcada como leída", null));
     }

@@ -273,4 +273,144 @@ class PrestamoServiceTest {
 
         assertThrows(BadRequestException.class, () -> prestamoService.crear(request));
     }
+
+    @Test
+    void solicitarRenovacionDePrestamoActivoMarcaPendiente() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Test User");
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("ACTIVO");
+        prestamo.setUsuario(usuario);
+        prestamo.setNumRenovaciones(0);
+
+        Inventario inventario = new Inventario();
+        inventario.setId(1L);
+        Libro libro = new Libro();
+        libro.setId(1L);
+        libro.setTitulo("Test Book");
+        inventario.setLibro(libro);
+        prestamo.setInventario(inventario);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(i -> {
+            Prestamo p = i.getArgument(0);
+            p.setObservaciones("Solicitud de renovación en espera de aprobación");
+            return p;
+        });
+
+        var response = prestamoService.solicitarRenovacion(1L);
+        assertEquals("RENOVACION_PENDIENTE", response.getEstado());
+        verify(prestamoRepository).save(any(Prestamo.class));
+    }
+
+    @Test
+    void solicitarRenovacionDePrestamoNoActivoLanzaExcepcion() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("DEVUELTO");
+        prestamo.setUsuario(usuario);
+        prestamo.setNumRenovaciones(0);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+
+        assertThrows(BadRequestException.class, () -> prestamoService.solicitarRenovacion(1L));
+        verify(prestamoRepository, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void solicitarRenovacionAlAlcanzarLimiteLanzaExcepcion() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("ACTIVO");
+        prestamo.setUsuario(usuario);
+        prestamo.setNumRenovaciones(2);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+
+        assertThrows(BadRequestException.class, () -> prestamoService.solicitarRenovacion(1L));
+        verify(prestamoRepository, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void aprobarRenovacionPendienteRenuevaElPrestamo() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Test User");
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("RENOVACION_PENDIENTE");
+        prestamo.setUsuario(usuario);
+        prestamo.setNumRenovaciones(0);
+        prestamo.setFechaVencimiento(java.time.LocalDateTime.now().plusDays(7));
+
+        Inventario inventario = new Inventario();
+        inventario.setId(1L);
+        Libro libro = new Libro();
+        libro.setId(1L);
+        libro.setTitulo("Test Book");
+        inventario.setLibro(libro);
+        prestamo.setInventario(inventario);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(i -> i.getArgument(0));
+
+        var response = prestamoService.aprobarRenovacion(1L);
+        assertNotNull(response);
+        assertEquals(1, response.getNumRenovaciones());
+        verify(prestamoRepository, times(2)).save(any(Prestamo.class));
+    }
+
+    @Test
+    void aprobarRenovacionSinPendienteLanzaExcepcion() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("ACTIVO");
+        prestamo.setUsuario(usuario);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+
+        assertThrows(BadRequestException.class, () -> prestamoService.aprobarRenovacion(1L));
+        verify(prestamoRepository, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void rechazarRenovacionPendienteVuelveAActivo() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Test User");
+
+        Prestamo prestamo = new Prestamo();
+        prestamo.setId(1L);
+        prestamo.setEstado("RENOVACION_PENDIENTE");
+        prestamo.setUsuario(usuario);
+        prestamo.setNumRenovaciones(0);
+
+        Inventario inventario = new Inventario();
+        inventario.setId(1L);
+        Libro libro = new Libro();
+        libro.setId(1L);
+        libro.setTitulo("Test Book");
+        inventario.setLibro(libro);
+        prestamo.setInventario(inventario);
+
+        when(prestamoRepository.findById(1L)).thenReturn(Optional.of(prestamo));
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(i -> i.getArgument(0));
+
+        var response = prestamoService.rechazarRenovacion(1L);
+        assertEquals("ACTIVO", response.getEstado());
+        verify(prestamoRepository).save(any(Prestamo.class));
+    }
 }

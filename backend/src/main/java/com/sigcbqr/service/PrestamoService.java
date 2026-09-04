@@ -18,6 +18,7 @@ public class PrestamoService {
 
     private static final int MAX_PRESTAMOS_ACTIVOS = 5;
     private static final int DIAS_PRESTAMO = 7;
+    private static final int MAX_RENOVACIONES = 2;
 
     private final PrestamoRepository prestamoRepository;
     private final UsuarioRepository usuarioRepository;
@@ -166,6 +167,80 @@ public class PrestamoService {
     }
 
     @Transactional
+    public PrestamoResponse solicitarRenovacion(Long id) {
+        Prestamo prestamo = prestamoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+
+        if (!"ACTIVO".equals(prestamo.getEstado())) {
+            throw new BadRequestException("Solo se pueden solicitar renovaciones de préstamos activos");
+        }
+
+        Integer renovaciones = prestamo.getNumRenovaciones() != null ? prestamo.getNumRenovaciones() : 0;
+        if (renovaciones >= MAX_RENOVACIONES) {
+            throw new BadRequestException("El préstamo ya alcanzó el límite de renovaciones permitidas");
+        }
+
+        prestamo.setEstado("RENOVACION_PENDIENTE");
+        prestamo.setObservaciones("Solicitud de renovación en espera de aprobación");
+        prestamo = prestamoRepository.save(prestamo);
+
+        auditoriaService.registrar("SOLICITAR_RENOVACION", "PRESTAMO", prestamo.getId(),
+                "Solicitud de renovación del préstamo #" + prestamo.getId()
+                        + " (" + prestamo.getUsuario().getNombre() + ")");
+        return toResponse(prestamo);
+    }
+
+    @Transactional
+    public PrestamoResponse aprobarRenovacion(Long id) {
+        Prestamo prestamo = prestamoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+
+        if (!"RENOVACION_PENDIENTE".equals(prestamo.getEstado())) {
+            throw new BadRequestException("El préstamo no tiene una solicitud de renovación pendiente");
+        }
+
+        prestamo.setEstado("RENOVADO");
+        prestamo.setObservaciones("Renovado - nueva fecha: " + LocalDateTime.now().plusDays(DIAS_PRESTAMO));
+        prestamoRepository.save(prestamo);
+
+        Prestamo nuevoPrestamo = Prestamo.builder()
+                .usuario(prestamo.getUsuario())
+                .inventario(prestamo.getInventario())
+                .fechaPrestamo(LocalDateTime.now())
+                .fechaVencimiento(LocalDateTime.now().plusDays(DIAS_PRESTAMO))
+                .estado("ACTIVO")
+                .numRenovaciones(prestamo.getNumRenovaciones() != null
+                        ? prestamo.getNumRenovaciones() + 1 : 1)
+                .observaciones("Renovación aprobada del préstamo #" + prestamo.getId())
+                .build();
+
+        nuevoPrestamo = prestamoRepository.save(nuevoPrestamo);
+        auditoriaService.registrar("APROBAR_RENOVACION", "PRESTAMO", nuevoPrestamo.getId(),
+                "Renovación aprobada del préstamo #" + prestamo.getId()
+                        + " (" + prestamo.getUsuario().getNombre() + ")");
+        return toResponse(nuevoPrestamo);
+    }
+
+    @Transactional
+    public PrestamoResponse rechazarRenovacion(Long id) {
+        Prestamo prestamo = prestamoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
+
+        if (!"RENOVACION_PENDIENTE".equals(prestamo.getEstado())) {
+            throw new BadRequestException("El préstamo no tiene una solicitud de renovación pendiente");
+        }
+
+        prestamo.setEstado("ACTIVO");
+        prestamo.setObservaciones("Solicitud de renovación rechazada");
+        prestamo = prestamoRepository.save(prestamo);
+
+        auditoriaService.registrar("RECHAZAR_RENOVACION", "PRESTAMO", prestamo.getId(),
+                "Solicitud de renovación rechazada del préstamo #" + prestamo.getId()
+                        + " (" + prestamo.getUsuario().getNombre() + ")");
+        return toResponse(prestamo);
+    }
+
+    @Transactional
     public PrestamoResponse renovar(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Préstamo", id));
@@ -184,6 +259,8 @@ public class PrestamoService {
                 .fechaPrestamo(LocalDateTime.now())
                 .fechaVencimiento(LocalDateTime.now().plusDays(DIAS_PRESTAMO))
                 .estado("ACTIVO")
+                .numRenovaciones(prestamo.getNumRenovaciones() != null
+                        ? prestamo.getNumRenovaciones() + 1 : 1)
                 .observaciones("Renovación del préstamo #" + prestamo.getId())
                 .build();
 
@@ -196,6 +273,7 @@ public class PrestamoService {
     private PrestamoResponse toResponse(Prestamo prestamo) {
         return PrestamoResponse.builder()
                 .id(prestamo.getId())
+                .usuarioId(prestamo.getUsuario().getId())
                 .usuarioNombre(prestamo.getUsuario().getNombre())
                 .libroTitulo(prestamo.getInventario().getLibro().getTitulo())
                 .codigoEjemplar(prestamo.getInventario().getCodigoEjemplar())
@@ -204,6 +282,7 @@ public class PrestamoService {
                 .fechaDevolucion(prestamo.getFechaDevolucion())
                 .estado(prestamo.getEstado())
                 .observaciones(prestamo.getObservaciones())
+                .numRenovaciones(prestamo.getNumRenovaciones())
                 .build();
     }
 }

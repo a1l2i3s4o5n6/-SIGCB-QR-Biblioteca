@@ -6,6 +6,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatosController;
+use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\MultaController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\PerfilController;
@@ -56,9 +57,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/prestamos',                [PrestamoController::class, 'index'])->name('prestamos.index');
     Route::get('/prestamos/crear',          [PrestamoController::class, 'create'])->name('prestamos.create');
     Route::post('/prestamos',               [PrestamoController::class, 'store'])->name('prestamos.store');
+    Route::get('/prestamos/renovaciones-pendientes',           [PrestamoController::class, 'renovacionesPendientes'])->name('prestamos.renovaciones-pendientes');
     Route::get('/prestamos/{id}',           [PrestamoController::class, 'show'])->name('prestamos.show');
     Route::put('/prestamos/{id}/devolver',  [PrestamoController::class, 'devolver'])->name('prestamos.devolver');
     Route::put('/prestamos/{id}/renovar',   [PrestamoController::class, 'renovar'])->name('prestamos.renovar');
+    Route::put('/prestamos/{id}/aprobar-renovacion',           [PrestamoController::class, 'aprobarRenovacion'])->name('prestamos.aprobar-renovacion');
+    Route::put('/prestamos/{id}/rechazar-renovacion',          [PrestamoController::class, 'rechazarRenovacion'])->name('prestamos.rechazar-renovacion');
 
     // ── Devoluciones ────────────────────────────────────────────────────
     Route::get('/devoluciones',            [PrestamoController::class, 'devoluciones'])->name('devoluciones.index');
@@ -103,6 +107,13 @@ Route::middleware('auth')->group(function () {
     // ── Mi Perfil ─────────────────────────────────────────────────────
     Route::get('/perfil',                     [PerfilController::class, 'index'])->name('perfil.index');
     Route::put('/perfil',                     [PerfilController::class, 'update'])->name('perfil.update');
+
+    // ── Auto-servicio del estudiante ─────────────────────────────────
+    Route::get('/estudiante/mis-prestamos',              [EstudianteController::class, 'misPrestamos'])->name('estudiante.mis-prestamos');
+    Route::put('/estudiante/prestamos/{id}/solicitar-renovacion', [EstudianteController::class, 'solicitarRenovacion'])->name('estudiante.solicitar-renovacion');
+    Route::get('/estudiante/mis-reservas',               [EstudianteController::class, 'misReservas'])->name('estudiante.mis-reservas');
+    Route::post('/estudiante/reservar-libro',            [EstudianteController::class, 'reservarLibro'])->name('estudiante.reservar-libro');
+    Route::delete('/estudiante/reservas/{id}',           [EstudianteController::class, 'cancelarReserva'])->name('estudiante.cancelar-reserva');
 
     // ── Auditoría ───────────────────────────────────────────────────────
     Route::get('/auditoria',               [AuditoriaController::class, 'index'])->name('auditoria.index');

@@ -7,8 +7,12 @@ import com.sigcbqr.model.dto.request.PerfilRequest;
 import com.sigcbqr.model.dto.request.RegisterRequest;
 import com.sigcbqr.model.dto.response.LoginResponse;
 import com.sigcbqr.model.dto.response.UsuarioResponse;
+import com.sigcbqr.model.entity.Carrera;
+import com.sigcbqr.model.entity.Facultad;
 import com.sigcbqr.model.entity.Rol;
 import com.sigcbqr.model.entity.Usuario;
+import com.sigcbqr.repository.CarreraRepository;
+import com.sigcbqr.repository.FacultadRepository;
 import com.sigcbqr.repository.RolRepository;
 import com.sigcbqr.repository.UsuarioRepository;
 import com.sigcbqr.security.JwtTokenProvider;
@@ -29,19 +33,25 @@ public class AuthService {
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditoriaService auditoriaService;
+    private final FacultadRepository facultadRepository;
+    private final CarreraRepository carreraRepository;
 
     public AuthService(AuthenticationManager authenticationManager,
                        JwtTokenProvider tokenProvider,
                        UsuarioRepository usuarioRepository,
                        RolRepository rolRepository,
                        PasswordEncoder passwordEncoder,
-                       AuditoriaService auditoriaService) {
+                       AuditoriaService auditoriaService,
+                       FacultadRepository facultadRepository,
+                       CarreraRepository carreraRepository) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
         this.auditoriaService = auditoriaService;
+        this.facultadRepository = facultadRepository;
+        this.carreraRepository = carreraRepository;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -75,14 +85,8 @@ public class AuthService {
             throw new BadRequestException("El correo ya está registrado");
         }
 
-        Rol rol;
-        if (request.getRolId() != null) {
-            rol = rolRepository.findById(request.getRolId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado"));
-        } else {
-            rol = rolRepository.findByNombre("ESTUDIANTE")
+        Rol rol = rolRepository.findByNombre("ESTUDIANTE")
                     .orElseThrow(() -> new ResourceNotFoundException("Rol ESTUDIANTE no encontrado"));
-        }
 
         Usuario usuario = Usuario.builder()
                 .nombre(request.getNombre())
@@ -137,6 +141,22 @@ public class AuthService {
         usuario.setTelefono(request.getTelefono() == null ? null : request.getTelefono().trim());
         usuario.setFoto(request.getFoto() == null ? null : request.getFoto().trim());
 
+        if (request.getCodigoEstudiantil() != null) {
+            usuario.setCodigoEstudiantil(request.getCodigoEstudiantil().trim());
+        }
+
+        if (request.getFacultadId() != null) {
+            Facultad facultad = facultadRepository.findById(request.getFacultadId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Facultad", request.getFacultadId()));
+            usuario.setFacultad(facultad);
+        }
+
+        if (request.getCarreraId() != null) {
+            Carrera carrera = carreraRepository.findById(request.getCarreraId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Carrera", request.getCarreraId()));
+            usuario.setCarrera(carrera);
+        }
+
         String nuevaPassword = request.getPasswordNueva();
         if (nuevaPassword != null && !nuevaPassword.isBlank()) {
             String actual = request.getPasswordActual();
@@ -161,6 +181,11 @@ public class AuthService {
                 .email(usuario.getEmail())
                 .telefono(usuario.getTelefono())
                 .foto(usuario.getFoto())
+                .codigoEstudiantil(usuario.getCodigoEstudiantil())
+                .facultadId(usuario.getFacultad() != null ? usuario.getFacultad().getId() : null)
+                .facultadNombre(usuario.getFacultad() != null ? usuario.getFacultad().getNombre() : null)
+                .carreraId(usuario.getCarrera() != null ? usuario.getCarrera().getId() : null)
+                .carreraNombre(usuario.getCarrera() != null ? usuario.getCarrera().getNombre() : null)
                 .rol(usuario.getRol().getNombre())
                 .activo(usuario.getActivo())
                 .createdAt(usuario.getCreatedAt())
