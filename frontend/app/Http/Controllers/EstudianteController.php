@@ -9,16 +9,16 @@ use Illuminate\View\View;
 
 class EstudianteController extends Controller
 {
-    public function __construct(protected ApiClient $api)
+    public function __construct(protected ApiClient $api) {}
+
+    private function authorizeEstudiante(): void
     {
-        $this->middleware(function ($request, $next) {
-            abort_unless(in_array(session('rol'), ['ESTUDIANTE', 'LECTOR'], true), 403, 'No tienes permisos para acceder a esta sección.');
-            return $next($request);
-        });
+        abort_unless(in_array(session('rol'), ['ESTUDIANTE', 'LECTOR'], true), 403, 'No tienes permisos para acceder a esta sección.');
     }
 
     public function misPrestamos(Request $request): View
     {
+        $this->authorizeEstudiante();
         $page = max(0, (int) $request->query('page', 0));
         $size = min(50, max(5, (int) $request->query('size', 10)));
 
@@ -42,6 +42,7 @@ class EstudianteController extends Controller
 
     public function solicitarRenovacion(int $id): RedirectResponse
     {
+        $this->authorizeEstudiante();
         try {
             $this->api->solicitarRenovacion($id);
             return redirect()->route('estudiante.mis-prestamos')
@@ -53,6 +54,7 @@ class EstudianteController extends Controller
 
     public function misReservas(Request $request): View
     {
+        $this->authorizeEstudiante();
         $page = max(0, (int) $request->query('page', 0));
         $size = min(50, max(5, (int) $request->query('size', 10)));
 
@@ -75,6 +77,8 @@ class EstudianteController extends Controller
 
     public function reservarLibro(Request $request): RedirectResponse
     {
+        $this->authorizeEstudiante();
+
         $request->validate([
             'libroId' => ['required', 'integer'],
         ]);
@@ -90,6 +94,7 @@ class EstudianteController extends Controller
 
     public function cancelarReserva(int $id): RedirectResponse
     {
+        $this->authorizeEstudiante();
         try {
             $this->api->cancelarReserva($id);
             return redirect()->route('estudiante.mis-reservas')

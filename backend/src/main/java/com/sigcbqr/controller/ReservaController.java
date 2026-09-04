@@ -1,6 +1,7 @@
 package com.sigcbqr.controller;
 
 import com.sigcbqr.exception.ResourceNotFoundException;
+import com.sigcbqr.model.dto.request.ReservaAutoRequest;
 import com.sigcbqr.model.dto.request.ReservaRequest;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
@@ -113,7 +114,7 @@ public class ReservaController {
     @PreAuthorize("hasRole('ESTUDIANTE')")
     @Operation(summary = "Auto-reserva", description = "El estudiante reserva un libro para sí mismo, quedando en la lista de espera")
     public ResponseEntity<ApiResponse> reservarLibro(@AuthenticationPrincipal UserPrincipal principal,
-                                                     @Valid @RequestBody ReservaRequest request) {
+                                                     @Valid @RequestBody ReservaAutoRequest request) {
         var libro = libroRepository.findById(request.getLibroId())
                 .orElseThrow(() -> new ResourceNotFoundException("Libro", request.getLibroId()));
 
