@@ -73,6 +73,11 @@ docker compose up -d --build
 curl http://localhost:8080/actuator/health   # → {"status":"UP",...}
 ```
 
+> Si en un entorno con un volumen `pgdata` existente (creado con otra versión
+> de las migraciones) la API no arranca con `Migration checksum mismatch`,
+> **no** borres el volumen: el remedio que conserva los datos está en
+> [RUNBOOK.md § 3.5](RUNBOOK.md#35-bd-con-historial-de-flyway-desfasado-checksum-mismatch).
+
 | Servicio | URL |
 |---|---|
 | Frontend | http://localhost:8000 |

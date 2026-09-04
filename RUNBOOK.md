@@ -95,6 +95,52 @@ make docs-check
    es necesario) y **nunca** versionar secretos reales; usar placeholders en
    `.env.example`.
 
+### 3.5 BD con historial de Flyway desfasado (checksum mismatch)
+
+**Síntoma:** el contenedor `api` queda en `Exited (1)` y en
+`docker compose logs api` aparece:
+
+```
+Validate failed: Migrations have failed validation
+Migration checksum mismatch for migration version 11
+```
+
+**Causa:** el volumen `pgdata` fue creado con una versión anterior de las
+migraciones, de modo que su historial de Flyway no coincide con el árbol local.
+No ocurre en un clon limpio: ahí las migraciones se aplican desde cero.
+
+**Remedio (una sola vez por volumen; NO borra datos):**
+
+```bash
+# 1. Aplicar la migración V11 al esquema existente (es idempotente:
+#    usa ADD COLUMN IF NOT EXISTS / CREATE INDEX IF NOT EXISTS)
+cat backend/src/main/resources/db/migration/V11__add_student_module_fields.sql \
+  | docker exec -i sigcbqr-postgres psql -U postgres -d sigcbqr -v ON_ERROR_STOP=1
+
+# 2. Alinear el historial de Flyway con el árbol de migraciones local
+#    (toma la contraseña del .env; no pide teclear secretos)
+PASSWORD=$(grep '^SPRING_DATASOURCE_PASSWORD=' .env | cut -d= -f2)
+docker run --rm --network sigcb-qr-biblioteca_default \
+  -v "$PWD/backend/src/main/resources/db/migration":/flyway/sql:ro \
+  flyway/flyway:11.7.2 \
+  repair -url=jdbc:postgresql://postgres:5432/sigcbqr \
+    -user=postgres -password="$PASSWORD"
+
+# 3. Comprobar que la fila 11 quedó como 'add student module fields'
+docker exec sigcbqr-postgres psql -U postgres -d sigcbqr \
+  -c "SELECT installed_rank, version, description, success FROM flyway_schema_history ORDER BY installed_rank;"
+
+# 4. Verificar que el puerto 8080 del host esté libre
+#    (si otro contenedor lo ocupa, p. ej. 'new-php-1': docker stop new-php-1)
+#    y levantar de nuevo
+docker compose up -d --build
+curl -fsS http://localhost:8080/actuator/health
+```
+
+**Nota:** si el frontend reporta `cURL error 6: Could not resolve host:
+sigcbqr-api`, no es un problema de DNS, sino que el contenedor `api` está
+detenido; al arrancarlo el nombre se resuelve dentro de la red de Compose.
+
 ## 4. Puesta en marcha / detención
 
 ```bash
