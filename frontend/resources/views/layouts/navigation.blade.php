@@ -146,6 +146,18 @@
         </a>
         @endif
 
+        @if (in_array(session('rol'), ['ESTUDIANTE', 'LECTOR'], true))
+        <a href="{{ route('estudiante.mis-prestamos') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-prestamos') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Préstamos</span>
+        </a>
+        <a href="{{ route('estudiante.mis-reservas') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-reservas') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Reservas</span>
+        </a>
+        @else
         <a href="{{ route('prestamos.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
@@ -163,6 +175,7 @@
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
+        @endif
 
         <a href="{{ route('notificaciones.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
@@ -172,6 +185,7 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO'], true))
         <a href="{{ route('qr-codigos.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('qr-codigos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
@@ -184,19 +198,22 @@
             <span class="ml-3">Multas</span>
         </a>
 
-        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('sanciones.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
             <span class="ml-3">Sanciones</span>
         </a>
-        @endif
 
-        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
+        </a>
+        @else
+        <a href="{{ route('multas.index') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('multas.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Multas</span>
         </a>
         @endif
 
@@ -285,6 +302,18 @@
             <span class="ml-3">Usuarios</span>
         </a>
         @endif
+        @if (in_array(session('rol'), ['ESTUDIANTE', 'LECTOR'], true))
+        <a href="{{ route('estudiante.mis-prestamos') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-prestamos') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Préstamos</span>
+        </a>
+        <a href="{{ route('estudiante.mis-reservas') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-reservas') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Reservas</span>
+        </a>
+        @else
         <a href="{{ route('prestamos.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('prestamos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
@@ -300,6 +329,7 @@
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
             <span class="ml-3">Reservas</span>
         </a>
+        @endif
         <a href="{{ route('notificaciones.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('notificaciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-bell w-5 text-center text-sm"></i>
@@ -308,6 +338,7 @@
 
         <p class="px-3 text-[10px] font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">Gestión</p>
 
+        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO'], true))
         <a href="{{ route('qr-codigos.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('qr-codigos.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
@@ -318,18 +349,21 @@
             <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
             <span class="ml-3">Multas</span>
         </a>
-        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('sanciones.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('sanciones.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-ban w-5 text-center text-sm"></i>
             <span class="ml-3">Sanciones</span>
         </a>
-        @endif
-        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
         <a href="{{ route('reportes.index') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('reportes.*') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-chart-bar w-5 text-center text-sm"></i>
             <span class="ml-3">Reportes</span>
+        </a>
+        @else
+        <a href="{{ route('multas.index') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('multas.*') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-exclamation-triangle w-5 text-center text-sm"></i>
+            <span class="ml-3">Mis Multas</span>
         </a>
         @endif
 

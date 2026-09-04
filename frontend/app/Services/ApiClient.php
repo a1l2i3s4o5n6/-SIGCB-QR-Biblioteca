@@ -193,6 +193,22 @@ class ApiClient
         return $this->withAuth()->put("/prestamos/{$id}/renovar")->json() ?? [];
     }
 
+    public function misPrestamos(array $params = []): array
+    {
+        return $this->withAuth()->get('/prestamos/mis', $params)->json() ?? [];
+    }
+
+    public function solicitarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/solicitar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo solicitar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // INVENTARIO (ejemplares disponibles)
     // ─────────────────────────────────────────────
@@ -228,6 +244,22 @@ class ApiClient
             'usuarioId' => $usuarioId,
             'libroId'   => $libroId,
         ])->json() ?? [];
+    }
+
+    public function autoReserva(int $libroId): array
+    {
+        $response = $this->withAuth()->post('/reservas/mias', ['libroId' => $libroId]);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo reservar el libro.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function misReservas(array $params = []): array
+    {
+        return $this->withAuth()->get('/reservas', $params)->json() ?? [];
     }
 
     public function cancelarReserva(int $id): array
