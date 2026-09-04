@@ -29,6 +29,9 @@ public class Notificacion {
     @Column(length = 50)
     private String tipo;
 
+    @Column(length = 20)
+    private String prioridad;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -37,5 +40,6 @@ public class Notificacion {
         createdAt = LocalDateTime.now();
         if (leida == null) leida = false;
         if (tipo == null) tipo = "INFO";
+        if (prioridad == null) prioridad = "NORMAL";
     }
 }

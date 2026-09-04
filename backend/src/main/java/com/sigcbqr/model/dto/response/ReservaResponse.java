@@ -15,4 +15,5 @@ public class ReservaResponse {
     private LocalDateTime fechaReserva;
     private LocalDateTime fechaVencimiento;
     private String estado;
+    private Integer posicionLista;
 }

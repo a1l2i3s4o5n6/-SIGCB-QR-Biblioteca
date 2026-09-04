@@ -5,5 +5,8 @@ set -e
 cd /var/www/html
 
 
+# Exponer storage/public (avatares subidos) en el web root
+php artisan storage:link --force 2>/dev/null || true
+
 # Iniciar Apache en primer plano
 exec apache2-foreground

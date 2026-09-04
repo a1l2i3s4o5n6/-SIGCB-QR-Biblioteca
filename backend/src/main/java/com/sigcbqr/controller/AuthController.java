@@ -97,15 +97,16 @@ public class AuthController {
     @Operation(summary = "Usuario actual", description = "Obtiene los datos del usuario autenticado")
     public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         var usuario = authService.getCurrentUser(userPrincipal.id());
-        var response = UsuarioResponse.builder()
+        var userResponse = UsuarioResponse.builder()
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
                 .telefono(usuario.getTelefono())
+                .foto(usuario.getFoto())
                 .rol(usuario.getRol().getNombre())
                 .activo(usuario.getActivo())
                 .createdAt(usuario.getCreatedAt())
                 .build();
-        return ResponseEntity.ok(ApiResponse.success("Usuario actual", response));
+        return ResponseEntity.ok(ApiResponse.success("Usuario actual", userResponse));
     }
 }

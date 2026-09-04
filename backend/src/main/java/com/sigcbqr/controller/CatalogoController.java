@@ -94,7 +94,7 @@ public class CatalogoController {
     }
 
     @DeleteMapping("/editoriales/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar editorial")
     public ResponseEntity<ApiResponse> eliminarEditorial(@PathVariable Long id) {
         Editorial editorial = editorialRepository.findById(id)
@@ -133,7 +133,7 @@ public class CatalogoController {
     }
 
     @DeleteMapping("/categorias/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar categoría")
     public ResponseEntity<ApiResponse> eliminarCategoria(@PathVariable Long id) {
         Categoria categoria = categoriaRepository.findById(id)

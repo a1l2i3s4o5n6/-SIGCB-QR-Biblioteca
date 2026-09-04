@@ -14,5 +14,6 @@ public class NotificacionResponse {
     private String mensaje;
     private Boolean leida;
     private String tipo;
+    private String prioridad;
     private LocalDateTime createdAt;
 }

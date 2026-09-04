@@ -20,6 +20,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     long countByEstado(String estado);
     long countByCreatedAtBetween(LocalDateTime inicio, LocalDateTime fin);
     long countByUsuarioIdAndEstado(Long usuarioId, String estado);
+    long countByLibroIdAndEstado(Long libroId, String estado);
+    boolean existsByLibroIdAndUsuarioIdAndEstado(Long libroId, Long usuarioId, String estado);
 
     @Query("SELECT FUNCTION('date', r.createdAt), COUNT(r) FROM Reserva r " +
             "WHERE r.createdAt >= :inicio AND r.createdAt <= :fin " +

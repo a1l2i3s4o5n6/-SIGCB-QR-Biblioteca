@@ -79,12 +79,15 @@ class PrestamoController extends Controller
         $request->validate([
             'usuarioId'    => ['required', 'integer'],
             'inventarioId' => ['required', 'integer'],
+            'codigoQr'     => ['nullable', 'string', 'max:100'],
         ]);
 
         try {
+            $codigoQr = $request->input('codigoQr');
             $this->api->crearPrestamo(
                 (int) $request->input('usuarioId'),
-                (int) $request->input('inventarioId')
+                (int) $request->input('inventarioId'),
+                $codigoQr === '' || $codigoQr === null ? null : trim($codigoQr)
             );
 
             return redirect()->route('prestamos.index')
@@ -115,6 +118,52 @@ class PrestamoController extends Controller
             $this->api->renovarPrestamo($id);
             return redirect()->route('prestamos.show', $id)
                 ->with('success', 'Préstamo renovado.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function renovacionesPendientes(Request $request): View
+    {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
+        $page = max(0, (int) $request->query('page', 0));
+        $size = min(50, max(5, (int) $request->query('size', 10)));
+
+        $data = $this->api->renovacionesPendientes(['page' => $page, 'size' => $size]);
+
+        return view('prestamos.renovaciones-pendientes', [
+            'prestamos'   => $data['content'] ?? [],
+            'page'        => $data['page'] ?? $page,
+            'size'        => $data['size'] ?? $size,
+            'total'       => $data['totalElements'] ?? 0,
+            'totalPages'  => $data['totalPages'] ?? 0,
+            'first'       => $data['first'] ?? true,
+            'last'        => $data['last'] ?? true,
+        ]);
+    }
+
+    public function aprobarRenovacion(int $id): RedirectResponse
+    {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
+        try {
+            $this->api->aprobarRenovacion($id);
+            return redirect()->route('prestamos.renovaciones-pendientes')
+                ->with('success', 'Renovación aprobada.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function rechazarRenovacion(int $id): RedirectResponse
+    {
+        abort_unless(in_array(session('rol'), self::STAFF), 403);
+
+        try {
+            $this->api->rechazarRenovacion($id);
+            return redirect()->route('prestamos.renovaciones-pendientes')
+                ->with('success', 'Renovación rechazada.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

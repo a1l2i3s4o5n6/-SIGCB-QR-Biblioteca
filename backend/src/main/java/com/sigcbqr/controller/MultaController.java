@@ -38,11 +38,12 @@ public class MultaController {
     @Transactional(readOnly = true)
     @Operation(summary = "Listar multas", description = "Obtiene multas con paginación y filtro por estado de pago (solo staff)")
     public ResponseEntity<PageResponse<MultaResponse>> listar(
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "pagada", required = false) Boolean pagada,
             @PageableDefault(size = 10) Pageable pageable) {
         var page = (pagada == null)
-                ? multaRepository.findAll(pageable).map(this::toResponse)
-                : multaRepository.findByPagada(pagada, pageable).map(this::toResponse);
+                ? multaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse)
+                : multaRepository.findByUsuarioIdAndPagada(principal.id(), pagada, pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 
