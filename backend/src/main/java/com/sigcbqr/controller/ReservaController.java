@@ -84,6 +84,7 @@ public class ReservaController {
     }
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Crear reserva", description = "Registra una nueva reserva de libro (staff para cualquier usuario; el estudiante solo puede reservarse a sí mismo)")
     public ResponseEntity<ApiResponse> crear(@AuthenticationPrincipal UserPrincipal principal,
                                              @Valid @RequestBody ReservaRequest request) {

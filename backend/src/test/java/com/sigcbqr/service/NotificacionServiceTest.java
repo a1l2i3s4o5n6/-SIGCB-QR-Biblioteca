@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -116,5 +117,29 @@ class NotificacionServiceTest {
         assertEquals(true, n1.getLeida());
         assertEquals(true, n2.getLeida());
         verify(notificacionRepository).saveAll(any());
+    }
+
+    @Test
+    void marcarLeidaSiEsPropiaMarcaCuandoPertenece() {
+        Usuario dueno = usuario(1L);
+        Notificacion notif = notificacion(7L, dueno);
+        when(notificacionRepository.findById(7L)).thenReturn(Optional.of(notif));
+
+        notificacionService.marcarLeidaSiEsPropia(7L, 1L);
+
+        assertEquals(true, notif.getLeida());
+        verify(notificacionRepository).save(notif);
+    }
+
+    @Test
+    void marcarLeidaSiEsPropiaLanzaSiNoPertenece() {
+        Usuario dueno = usuario(1L);
+        Notificacion notif = notificacion(7L, dueno);
+        when(notificacionRepository.findById(7L)).thenReturn(Optional.of(notif));
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> notificacionService.marcarLeidaSiEsPropia(7L, 999L));
+
+        assertEquals(false, notif.getLeida());
     }
 }

@@ -10,6 +10,7 @@ import com.sigcbqr.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -75,6 +76,17 @@ public class NotificacionService {
     public void marcarLeida(Long id) {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Notificación", id));
+        notificacion.setLeida(true);
+        notificacionRepository.save(notificacion);
+    }
+
+    @Transactional
+    public void marcarLeidaSiEsPropia(Long id, Long usuarioId) {
+        Notificacion notificacion = notificacionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación", id));
+        if (!notificacion.getUsuario().getId().equals(usuarioId)) {
+            throw new AccessDeniedException("No puede marcar una notificación de otro usuario");
+        }
         notificacion.setLeida(true);
         notificacionRepository.save(notificacion);
     }

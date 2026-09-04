@@ -53,7 +53,7 @@ public class SecurityConfig {
                 // autenticada es responsabilidad del filtro, no del metodo.
                 .requestMatchers("/api/auth/me").authenticated()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").authenticated()
                 .requestMatchers("/api/dashboard/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/autores", "/api/editoriales", "/api/categorias")
                     .hasAnyRole("ADMIN", "BIBLIOTECARIO")
