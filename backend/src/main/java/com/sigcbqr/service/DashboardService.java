@@ -73,6 +73,21 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
+    public long contarPrestamosActivos(Long usuarioId) {
+        return prestamoRepository.countByUsuarioIdAndEstado(usuarioId, "ACTIVO");
+    }
+
+    @Transactional(readOnly = true)
+    public long contarMultasPendientes(Long usuarioId) {
+        return multaRepository.countByUsuarioIdAndPagadaFalse(usuarioId);
+    }
+
+    @Transactional(readOnly = true)
+    public long contarReservasPendientes(Long usuarioId) {
+        return reservaRepository.countByUsuarioIdAndEstado(usuarioId, "PENDIENTE");
+    }
+
+    @Transactional(readOnly = true)
     public DashboardResumenResponse resumen(UserPrincipal principal, LocalDate desde, LocalDate hasta) {
         LocalDate desdeOk = (desde != null) ? desde : LocalDate.now().minusDays(30);
         LocalDate hastaOk = (hasta != null) ? hasta : LocalDate.now();

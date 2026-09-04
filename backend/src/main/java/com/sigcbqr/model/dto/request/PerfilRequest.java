@@ -28,6 +28,13 @@ public class PerfilRequest {
     @Size(max = 255, message = "La URL de la foto es demasiado larga")
     private String foto;
 
+    @Size(max = 30, message = "El código estudiantil es demasiado largo")
+    private String codigoEstudiantil;
+
+    private Long facultadId;
+
+    private Long carreraId;
+
     private String passwordActual;
 
     @Size(max = 100, message = "La contraseña es demasiado larga")

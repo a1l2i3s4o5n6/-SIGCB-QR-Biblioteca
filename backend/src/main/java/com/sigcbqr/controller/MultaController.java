@@ -6,12 +6,14 @@ import com.sigcbqr.model.dto.response.MultaResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
 import com.sigcbqr.model.entity.Multa;
 import com.sigcbqr.repository.MultaRepository;
+import com.sigcbqr.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,17 +37,19 @@ public class MultaController {
     @Transactional(readOnly = true)
     @Operation(summary = "Listar multas", description = "Obtiene multas con paginación y filtro por estado de pago")
     public ResponseEntity<PageResponse<MultaResponse>> listar(
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "pagada", required = false) Boolean pagada,
             @PageableDefault(size = 10) Pageable pageable) {
         var page = (pagada == null)
-                ? multaRepository.findAll(pageable).map(this::toResponse)
-                : multaRepository.findByPagada(pagada, pageable).map(this::toResponse);
+                ? multaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse)
+                : multaRepository.findByUsuarioIdAndPagada(principal.id(), pagada, pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 
     @GetMapping("/usuario/{usuarioId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Transactional(readOnly = true)
-    @Operation(summary = "Multas por usuario", description = "Obtiene las multas de un usuario")
+    @Operation(summary = "Multas por usuario", description = "Obtiene las multas de un usuario (solo staff)")
     public ResponseEntity<PageResponse<MultaResponse>> listarPorUsuario(
             @PathVariable Long usuarioId,
             @PageableDefault(size = 10) Pageable pageable) {

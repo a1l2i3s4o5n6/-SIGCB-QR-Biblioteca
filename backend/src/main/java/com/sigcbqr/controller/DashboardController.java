@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -24,8 +26,15 @@ public class DashboardController {
     }
 
     @GetMapping("/stats")
-    @Operation(summary = "Estadísticas", description = "Obtiene las estadísticas principales del dashboard")
-    public ResponseEntity<ApiResponse> getStats() {
+    @Operation(summary = "Estadísticas", description = "Obtiene las estadísticas principales del dashboard (filtradas por rol)")
+    public ResponseEntity<ApiResponse> getStats(@AuthenticationPrincipal UserPrincipal principal) {
+        if ("ESTUDIANTE".equals(principal.rol())) {
+            Map<String, Object> stats = new LinkedHashMap<>();
+            stats.put("misPrestamosActivos", dashboardService.contarPrestamosActivos(principal.id()));
+            stats.put("misMultasPendientes", dashboardService.contarMultasPendientes(principal.id()));
+            stats.put("misReservasPendientes", dashboardService.contarReservasPendientes(principal.id()));
+            return ResponseEntity.ok(ApiResponse.success("Estadísticas del dashboard", stats));
+        }
         var stats = dashboardService.getStats();
         return ResponseEntity.ok(ApiResponse.success("Estadísticas del dashboard", stats));
     }

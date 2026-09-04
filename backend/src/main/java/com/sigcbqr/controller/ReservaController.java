@@ -47,9 +47,15 @@ public class ReservaController {
     @GetMapping
     @Operation(summary = "Listar reservas", description = "Obtiene reservas con paginación, búsqueda y filtro por estado")
     public ResponseEntity<PageResponse<ReservaResponse>> listar(
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "q", required = false) String q,
             @RequestParam(value = "estado", required = false) String estado,
             @PageableDefault(size = 10) Pageable pageable) {
+        boolean esEstudiante = "ESTUDIANTE".equals(principal.rol());
+        if (esEstudiante) {
+            var page = reservaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse);
+            return ResponseEntity.ok(PageResponse.from(page));
+        }
         boolean sinFiltros = q == null && estado == null;
         var page = sinFiltros
                 ? reservaRepository.findAll(pageable).map(this::toResponse)
@@ -63,11 +69,14 @@ public class ReservaController {
     private ReservaResponse toResponse(Reserva reserva) {
         return ReservaResponse.builder()
                 .id(reserva.getId())
+                .usuarioId(reserva.getUsuario().getId())
                 .usuarioNombre(reserva.getUsuario().getNombre())
+                .libroId(reserva.getLibro().getId())
                 .libroTitulo(reserva.getLibro().getTitulo())
                 .fechaReserva(reserva.getFechaReserva())
                 .fechaVencimiento(reserva.getFechaVencimiento())
                 .estado(reserva.getEstado())
+                .posicionLista(reserva.getPosicionLista())
                 .build();
     }
 

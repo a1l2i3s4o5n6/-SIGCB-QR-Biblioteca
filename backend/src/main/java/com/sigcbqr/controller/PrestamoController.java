@@ -60,7 +60,8 @@ public class PrestamoController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico (solo staff)")
     public ResponseEntity<PageResponse<PrestamoResponse>> listarPorUsuario(
             @PathVariable Long usuarioId,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -70,8 +71,14 @@ public class PrestamoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener préstamo", description = "Obtiene un préstamo por su ID")
-    public ResponseEntity<ApiResponse> obtener(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> obtener(@AuthenticationPrincipal UserPrincipal principal,
+                                               @PathVariable Long id) {
         var prestamo = prestamoService.obtener(id);
+        if ("ESTUDIANTE".equals(principal.rol())
+                && !principal.id().equals(prestamo.getUsuarioId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No tiene acceso a este préstamo");
+        }
         return ResponseEntity.ok(ApiResponse.success("Préstamo encontrado", prestamo));
     }
 

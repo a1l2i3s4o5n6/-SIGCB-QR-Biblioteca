@@ -33,6 +33,9 @@ public class Reserva {
     @Column(length = 30)
     private String estado;
 
+    @Column(name = "posicion_lista")
+    private Integer posicionLista;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -41,5 +44,6 @@ public class Reserva {
         createdAt = LocalDateTime.now();
         fechaReserva = LocalDateTime.now();
         if (estado == null) estado = "PENDIENTE";
+        if (posicionLista == null) posicionLista = 0;
     }
 }
