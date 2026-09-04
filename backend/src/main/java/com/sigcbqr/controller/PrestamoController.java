@@ -60,7 +60,8 @@ public class PrestamoController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico (solo staff)")
     public ResponseEntity<PageResponse<PrestamoResponse>> listarPorUsuario(
             @PathVariable Long usuarioId,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -70,8 +71,14 @@ public class PrestamoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener préstamo", description = "Obtiene un préstamo por su ID")
-    public ResponseEntity<ApiResponse> obtener(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> obtener(@AuthenticationPrincipal UserPrincipal principal,
+                                               @PathVariable Long id) {
         var prestamo = prestamoService.obtener(id);
+        if ("ESTUDIANTE".equals(principal.rol())
+                && !principal.id().equals(prestamo.getUsuarioId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No tiene acceso a este préstamo");
+        }
         return ResponseEntity.ok(ApiResponse.success("Préstamo encontrado", prestamo));
     }
 
@@ -97,5 +104,43 @@ public class PrestamoController {
     public ResponseEntity<ApiResponse> renovar(@PathVariable Long id) {
         var prestamo = prestamoService.renovar(id);
         return ResponseEntity.ok(ApiResponse.success("Préstamo renovado", prestamo));
+    }
+
+    @GetMapping("/renovaciones-pendientes")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Renovaciones pendientes", description = "Lista las solicitudes de renovación a la espera de aprobación")
+    public ResponseEntity<PageResponse<PrestamoResponse>> renovacionesPendientes(
+            @PageableDefault(size = 10) Pageable pageable) {
+        var page = prestamoService.listarPorEstado("RENOVACION_PENDIENTE", pageable);
+        return ResponseEntity.ok(PageResponse.from(page));
+    }
+
+    @PutMapping("/{id}/solicitar-renovacion")
+    @Operation(summary = "Solicitar renovación", description = "El estudiante solicita la renovación de su préstamo activo para aprobación")
+    public ResponseEntity<ApiResponse> solicitarRenovacion(@AuthenticationPrincipal UserPrincipal principal,
+                                                           @PathVariable Long id) {
+        var prestamo = prestamoService.obtener(id);
+        if (!principal.id().equals(prestamo.getUsuarioId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "No puede solicitar la renovación de un préstamo ajeno");
+        }
+        var renovado = prestamoService.solicitarRenovacion(id);
+        return ResponseEntity.ok(ApiResponse.success("Solicitud de renovación registrada", renovado));
+    }
+
+    @PutMapping("/{id}/aprobar-renovacion")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Aprobar renovación", description = "El bibliotecario aprueba la solicitud de renovación de un préstamo")
+    public ResponseEntity<ApiResponse> aprobarRenovacion(@PathVariable Long id) {
+        var prestamo = prestamoService.aprobarRenovacion(id);
+        return ResponseEntity.ok(ApiResponse.success("Renovación aprobada", prestamo));
+    }
+
+    @PutMapping("/{id}/rechazar-renovacion")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Rechazar renovación", description = "El bibliotecario rechaza la solicitud de renovación de un préstamo")
+    public ResponseEntity<ApiResponse> rechazarRenovacion(@PathVariable Long id) {
+        var prestamo = prestamoService.rechazarRenovacion(id);
+        return ResponseEntity.ok(ApiResponse.success("Renovación rechazada", prestamo));
     }
 }

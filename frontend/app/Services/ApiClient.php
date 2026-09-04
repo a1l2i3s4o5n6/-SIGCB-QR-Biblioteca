@@ -193,6 +193,49 @@ class ApiClient
         return $this->withAuth()->put("/prestamos/{$id}/renovar")->json() ?? [];
     }
 
+    public function misPrestamos(array $params = []): array
+    {
+        return $this->withAuth()->get('/prestamos/mis', $params)->json() ?? [];
+    }
+
+    public function solicitarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/solicitar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo solicitar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function renovacionesPendientes(array $params = []): array
+    {
+        return $this->withAuth()->get('/prestamos/renovaciones-pendientes', $params)->json() ?? [];
+    }
+
+    public function aprobarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/aprobar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo aprobar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function rechazarRenovacion(int $id): array
+    {
+        $response = $this->withAuth()->put("/prestamos/{$id}/rechazar-renovacion");
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo rechazar la renovación.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
     // ─────────────────────────────────────────────
     // INVENTARIO (ejemplares disponibles)
     // ─────────────────────────────────────────────
@@ -228,6 +271,22 @@ class ApiClient
             'usuarioId' => $usuarioId,
             'libroId'   => $libroId,
         ])->json() ?? [];
+    }
+
+    public function autoReserva(int $libroId): array
+    {
+        $response = $this->withAuth()->post('/reservas/mias', ['libroId' => $libroId]);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo reservar el libro.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function misReservas(array $params = []): array
+    {
+        return $this->withAuth()->get('/reservas', $params)->json() ?? [];
     }
 
     public function cancelarReserva(int $id): array
@@ -470,6 +529,32 @@ class ApiClient
 
         if (!$response->successful()) {
             throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo levantar la sanción.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    // ─────────────────────────────────────────────
+    // PERFIL (usuario autenticado)
+    // ─────────────────────────────────────────────
+
+    public function getMiPerfil(): array
+    {
+        $response = $this->withAuth()->get('/perfil');
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo obtener el perfil.');
+        }
+
+        return $response->json('data') ?? [];
+    }
+
+    public function actualizarMiPerfil(array $data): array
+    {
+        $response = $this->withAuth()->put('/perfil', $data);
+
+        if (!$response->successful()) {
+            throw new \Exception($response->json('detail') ?? $response->json('message') ?? 'No se pudo actualizar el perfil.');
         }
 
         return $response->json('data') ?? [];

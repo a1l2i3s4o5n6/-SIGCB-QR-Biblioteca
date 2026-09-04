@@ -21,6 +21,9 @@ public interface MultaRepository extends JpaRepository<Multa, Long> {
     @EntityGraph(attributePaths = {"usuario", "prestamo"})
     Page<Multa> findByPagada(Boolean pagada, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"usuario", "prestamo"})
+    Page<Multa> findByUsuarioIdAndPagada(Long usuarioId, Boolean pagada, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"usuario", "prestamo"})
     Page<Multa> findAll(Pageable pageable);

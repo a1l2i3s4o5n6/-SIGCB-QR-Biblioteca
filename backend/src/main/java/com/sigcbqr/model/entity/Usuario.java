@@ -28,6 +28,17 @@ public class Usuario {
 
     private String foto;
 
+    @Column(name = "codigo_estudiantil", length = 30)
+    private String codigoEstudiantil;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "facultad_id")
+    private Facultad facultad;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "carrera_id")
+    private Carrera carrera;
+
     @Column(nullable = false)
     private Boolean activo;
 

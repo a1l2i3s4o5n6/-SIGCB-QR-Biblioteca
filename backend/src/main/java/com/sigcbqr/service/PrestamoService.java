@@ -18,6 +18,7 @@ public class PrestamoService {
 
     private static final int MAX_PRESTAMOS_ACTIVOS = 5;
     private static final int DIAS_PRESTAMO = 7;
+    private static final int MAX_RENOVACIONES = 2;
 
     private final PrestamoRepository prestamoRepository;
     private final UsuarioRepository usuarioRepository;
@@ -184,6 +185,8 @@ public class PrestamoService {
                 .fechaPrestamo(LocalDateTime.now())
                 .fechaVencimiento(LocalDateTime.now().plusDays(DIAS_PRESTAMO))
                 .estado("ACTIVO")
+                .numRenovaciones(prestamo.getNumRenovaciones() != null
+                        ? prestamo.getNumRenovaciones() + 1 : 1)
                 .observaciones("Renovación del préstamo #" + prestamo.getId())
                 .build();
 
@@ -196,6 +199,7 @@ public class PrestamoService {
     private PrestamoResponse toResponse(Prestamo prestamo) {
         return PrestamoResponse.builder()
                 .id(prestamo.getId())
+                .usuarioId(prestamo.getUsuario().getId())
                 .usuarioNombre(prestamo.getUsuario().getNombre())
                 .libroTitulo(prestamo.getInventario().getLibro().getTitulo())
                 .codigoEjemplar(prestamo.getInventario().getCodigoEjemplar())
@@ -204,6 +208,7 @@ public class PrestamoService {
                 .fechaDevolucion(prestamo.getFechaDevolucion())
                 .estado(prestamo.getEstado())
                 .observaciones(prestamo.getObservaciones())
+                .numRenovaciones(prestamo.getNumRenovaciones())
                 .build();
     }
 }

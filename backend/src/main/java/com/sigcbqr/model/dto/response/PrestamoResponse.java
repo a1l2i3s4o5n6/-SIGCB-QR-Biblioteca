@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class PrestamoResponse {
 
     private Long id;
+    private Long usuarioId;
     private String usuarioNombre;
     private String libroTitulo;
     private String codigoEjemplar;
@@ -16,4 +17,5 @@ public class PrestamoResponse {
     private LocalDateTime fechaDevolucion;
     private String estado;
     private String observaciones;
+    private Integer numRenovaciones;
 }

@@ -20,4 +20,7 @@ public class NotificacionRequest {
 
     @Size(max = 50, message = "El tipo no puede superar 50 caracteres")
     private String tipo;
+
+    @Size(max = 20, message = "La prioridad no puede superar 20 caracteres")
+    private String prioridad;
 }
