@@ -100,11 +100,45 @@ public class ReservaController {
                 .fechaReserva(LocalDateTime.now())
                 .fechaVencimiento(LocalDateTime.now().plusDays(2))
                 .estado("PENDIENTE")
+                .posicionLista(1)
                 .build();
 
         reserva = reservaRepository.save(reserva);
         auditoriaService.registrar("CREAR", "RESERVA", reserva.getId(),
                 "Reserva de \"" + libro.getTitulo() + "\" por " + usuario.getNombre());
+        return ResponseEntity.ok(ApiResponse.created("Reserva registrada", toResponse(reserva)));
+    }
+
+    @PostMapping("/mias")
+    @PreAuthorize("hasRole('ESTUDIANTE')")
+    @Operation(summary = "Auto-reserva", description = "El estudiante reserva un libro para sí mismo, quedando en la lista de espera")
+    public ResponseEntity<ApiResponse> reservarLibro(@AuthenticationPrincipal UserPrincipal principal,
+                                                     @Valid @RequestBody ReservaRequest request) {
+        var libro = libroRepository.findById(request.getLibroId())
+                .orElseThrow(() -> new ResourceNotFoundException("Libro", request.getLibroId()));
+
+        if (reservaRepository.existsByLibroIdAndUsuarioIdAndEstado(request.getLibroId(), principal.id(), "PENDIENTE")) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(400, "Ya tienes una reserva pendiente para este libro"));
+        }
+
+        var usuario = usuarioRepository.findById(principal.id())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", principal.id()));
+
+        long posicion = reservaRepository.countByLibroIdAndEstado(request.getLibroId(), "PENDIENTE") + 1;
+
+        var reserva = Reserva.builder()
+                .usuario(usuario)
+                .libro(libro)
+                .fechaReserva(LocalDateTime.now())
+                .fechaVencimiento(LocalDateTime.now().plusDays(2))
+                .estado("PENDIENTE")
+                .posicionLista((int) posicion)
+                .build();
+
+        reserva = reservaRepository.save(reserva);
+        auditoriaService.registrar("AUTO_RESERVAR", "RESERVA", reserva.getId(),
+                "Auto-reserva de \"" + libro.getTitulo() + "\" por " + usuario.getNombre());
         return ResponseEntity.ok(ApiResponse.created("Reserva registrada", toResponse(reserva)));
     }
 
