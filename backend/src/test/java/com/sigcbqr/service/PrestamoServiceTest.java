@@ -31,13 +31,17 @@ class PrestamoServiceTest {
     @Mock
     private SancionRepository sancionRepository;
     @Mock
+    private ReservaRepository reservaRepository;
+    @Mock
+    private NotificacionService notificacionService;
+    @Mock
     private AuditoriaService auditoriaService;
 
     private PrestamoService prestamoService;
 
     @BeforeEach
     void setUp() {
-        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository, sancionRepository, auditoriaService);
+        prestamoService = new PrestamoService(prestamoRepository, usuarioRepository, inventarioRepository, libroRepository, sancionRepository, reservaRepository, notificacionService, auditoriaService);
     }
 
     @Test
@@ -141,5 +145,44 @@ class PrestamoServiceTest {
         verify(inventarioRepository).save(any(Inventario.class));
         verify(libroRepository).save(any(Libro.class));
         verify(prestamoRepository).save(any(Prestamo.class));
+    }
+
+    @Test
+    void crearPrestamoCompletaReservaPendienteYNotifica() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Inventario inventario = new Inventario();
+        inventario.setId(1L);
+        inventario.setEstado("DISPONIBLE");
+
+        Libro libro = new Libro();
+        libro.setId(1L);
+        libro.setTitulo("Reserved Book");
+        libro.setEjemplaresDisponibles(5);
+        inventario.setLibro(libro);
+
+        Reserva reserva = new Reserva();
+        reserva.setId(1L);
+        reserva.setEstado("PENDIENTE");
+        reserva.setLibro(libro);
+        reserva.setUsuario(usuario);
+
+        PrestamoRequest request = new PrestamoRequest();
+        request.setUsuarioId(1L);
+        request.setInventarioId(1L);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(inventarioRepository.findById(1L)).thenReturn(Optional.of(inventario));
+        when(prestamoRepository.countByUsuarioIdAndEstado(1L, "ACTIVO")).thenReturn(0L);
+        when(prestamoRepository.save(any(Prestamo.class))).thenAnswer(i -> i.getArgument(0));
+        when(reservaRepository.findByLibroIdAndUsuarioIdAndEstado(1L, 1L, "PENDIENTE"))
+                .thenReturn(Optional.of(reserva));
+
+        var response = prestamoService.crear(request);
+        assertNotNull(response);
+        assertEquals("COMPLETADA", reserva.getEstado());
+        verify(reservaRepository).save(reserva);
+        verify(notificacionService).notificar(eq(1L), anyString(), contains("Reserved Book"), eq("EXITO"));
     }
 }

@@ -24,6 +24,8 @@ public class PrestamoService {
     private final InventarioRepository inventarioRepository;
     private final LibroRepository libroRepository;
     private final SancionRepository sancionRepository;
+    private final ReservaRepository reservaRepository;
+    private final NotificacionService notificacionService;
     private final AuditoriaService auditoriaService;
 
     public PrestamoService(PrestamoRepository prestamoRepository,
@@ -31,12 +33,16 @@ public class PrestamoService {
                            InventarioRepository inventarioRepository,
                            LibroRepository libroRepository,
                            SancionRepository sancionRepository,
+                           ReservaRepository reservaRepository,
+                           NotificacionService notificacionService,
                            AuditoriaService auditoriaService) {
         this.prestamoRepository = prestamoRepository;
         this.usuarioRepository = usuarioRepository;
         this.inventarioRepository = inventarioRepository;
         this.libroRepository = libroRepository;
         this.sancionRepository = sancionRepository;
+        this.reservaRepository = reservaRepository;
+        this.notificacionService = notificacionService;
         this.auditoriaService = auditoriaService;
     }
 
@@ -108,7 +114,21 @@ public class PrestamoService {
         prestamo = prestamoRepository.save(prestamo);
         auditoriaService.registrar("CREAR", "PRESTAMO", prestamo.getId(),
                 "Préstamo de \"" + libro.getTitulo() + "\" a " + usuario.getNombre());
+        completarReservaSiExiste(libro, usuario, prestamo);
         return toResponse(prestamo);
+    }
+
+    private void completarReservaSiExiste(Libro libro, Usuario usuario, Prestamo prestamo) {
+        reservaRepository.findByLibroIdAndUsuarioIdAndEstado(libro.getId(), usuario.getId(), "PENDIENTE")
+                .ifPresent(reserva -> {
+                    reserva.setEstado("COMPLETADA");
+                    reservaRepository.save(reserva);
+                    auditoriaService.registrar("COMPLETAR", "RESERVA", reserva.getId(),
+                            "Solicitud de \"" + libro.getTitulo() + "\" atendida con préstamo #" + prestamo.getId());
+                    notificacionService.notificar(usuario.getId(), "Tu solicitud fue atendida",
+                            "Tu solicitud de \"" + libro.getTitulo() + "\" fue completada. Ya puedes retirar el libro (préstamo #" + prestamo.getId() + ").",
+                            "EXITO");
+                });
     }
 
     @Transactional

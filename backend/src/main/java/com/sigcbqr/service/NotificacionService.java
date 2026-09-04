@@ -62,6 +62,16 @@ public class NotificacionService {
     }
 
     @Transactional
+    public void notificar(Long usuarioId, String titulo, String mensaje, String tipo) {
+        crear(NotificacionRequest.builder()
+                .usuarioId(usuarioId)
+                .titulo(titulo)
+                .mensaje(mensaje)
+                .tipo(tipo)
+                .build());
+    }
+
+    @Transactional
     public void marcarLeida(Long id) {
         Notificacion notificacion = notificacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Notificación", id));
