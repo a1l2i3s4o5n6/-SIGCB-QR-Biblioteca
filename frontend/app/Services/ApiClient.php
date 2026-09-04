@@ -221,6 +221,11 @@ class ApiClient
         return $this->withAuth()->get('/reservas', $params)->json() ?? [];
     }
 
+    public function getReservasMias(array $params = []): array
+    {
+        return $this->withAuth()->get('/reservas/mis', $params)->json() ?? [];
+    }
+
     public function crearReserva(int $usuarioId, int $libroId): array
     {
         return $this->withAuth()->post('/reservas', [
@@ -241,6 +246,11 @@ class ApiClient
     public function getMultas(array $params = []): array
     {
         return $this->withAuth()->get('/multas', $params)->json() ?? [];
+    }
+
+    public function getMultasMias(array $params = []): array
+    {
+        return $this->withAuth()->get('/multas/mis', $params)->json() ?? [];
     }
 
     public function pagarMulta(int $id): array

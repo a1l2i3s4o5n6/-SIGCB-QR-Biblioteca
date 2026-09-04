@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-bold text-gray-800">Multas</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Gestión de multas por retraso en devoluciones</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) ? 'Gestión de multas por retraso en devoluciones' : 'Tus multas por retraso en devoluciones' }}</p>
             </div>
         </div>
     </x-slot>
@@ -45,7 +45,9 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left text-gray-500 text-xs uppercase bg-gray-50">
-                        <th class="px-5 py-3 font-medium">Usuario</th>
+                        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+                            <th class="px-5 py-3 font-medium">Usuario</th>
+                        @endif
                         <th class="px-5 py-3 font-medium">Préstamo</th>
                         <th class="px-5 py-3 font-medium">Concepto</th>
                         <th class="px-5 py-3 font-medium text-right">Monto</th>
@@ -57,7 +59,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse ($multas as $multa)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-5 py-3 font-semibold text-gray-800">{{ $multa['usuarioNombre'] ?? '—' }}</td>
+                            @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+                                <td class="px-5 py-3 font-semibold text-gray-800">{{ $multa['usuarioNombre'] ?? '—' }}</td>
+                            @endif
                             <td class="px-5 py-3">
                                 <span class="px-2 py-1 bg-gray-100 text-gray-700 text-[11px] font-mono rounded">#{{ $multa['prestamoId'] ?? '—' }}</span>
                             </td>
@@ -87,7 +91,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-10 text-center">
+                            <td colspan="{{ in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) ? 7 : 6 }}" class="px-5 py-10 text-center">
                                 <i class="fas fa-exclamation-triangle text-gray-300 text-3xl mb-3"></i>
                                 <p class="text-gray-400">No hay multas {{ $filtro === 'pendientes' ? 'pendientes' : ($filtro === 'pagadas' ? 'pagadas' : 'registradas') }}.</p>
                             </td>

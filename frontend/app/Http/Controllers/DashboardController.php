@@ -21,10 +21,17 @@ class DashboardController extends Controller
         }
 
         $resumen = $this->api->getDashboardResumen($params);
+        $rol = session('rol');
+
+        $misReservas = null;
+        if ($rol === 'ESTUDIANTE') {
+            $misReservas = $this->api->getReservasMias(['size' => 5]);
+        }
 
         return view('dashboard', [
-            'resumen' => $resumen,
-            'rol'     => session('rol'),
+            'resumen'     => $resumen,
+            'rol'         => $rol,
+            'misReservas' => $misReservas,
         ]);
     }
 }

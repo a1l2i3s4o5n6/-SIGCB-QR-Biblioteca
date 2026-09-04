@@ -52,7 +52,7 @@
             </div>
             <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="qr-result flex items-center justify-center bg-gray-50 rounded-xl border border-gray-200 p-6"
-                    id="qr-result-{{ $resultado['id'] }}" data-codigo="{{ $resultado['codigo'] }}" style="min-height:170px;"></div>
+                    id="qr-result-{{ $resultado['id'] }}" data-codigo="{{ route('qr-codigos.validar', ['codigo' => $resultado['codigo']]) }}" data-texto="{{ $resultado['codigo'] }}" style="min-height:170px;"></div>
                 <div class="space-y-3">
                     <div>
                         <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Título</p>
@@ -71,6 +71,14 @@
                     <p class="text-[11px] text-gray-400">
                         Generado el {{ !empty($resultado['createdAt']) ? \Carbon\Carbon::parse($resultado['createdAt'])->format('d/m/Y H:i') : '—' }}
                     </p>
+                    <div class="pt-2 border-t border-gray-100 mt-2">
+                        <a href="{{ route('reservas.create', ['libro' => $resultado['libroId'] ?? '']) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg shadow transition">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            Solicitar préstamo
+                        </a>
+                        <p class="text-[11px] text-gray-400 mt-1.5">Crea una reserva para poder retirar este libro.</p>
+                    </div>
                 </div>
             </div>
         </div>

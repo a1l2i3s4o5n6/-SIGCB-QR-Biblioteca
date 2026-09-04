@@ -62,7 +62,7 @@
                     @forelse ($qrs as $qr)
                         <tr class="hover:bg-gray-50">
                             <td class="px-5 py-4">
-                                <div class="qr-canvas flex items-center justify-center" id="qr-{{ $qr['id'] }}" data-codigo="{{ $qr['codigo'] }}" style="width:110px;height:110px;"></div>
+                                <div class="qr-canvas flex items-center justify-center" id="qr-{{ $qr['id'] }}" data-codigo="{{ route('qr-codigos.validar', ['codigo' => $qr['codigo']]) }}" data-texto="{{ $qr['codigo'] }}" style="width:110px;height:110px;"></div>
                             </td>
                             <td class="px-5 py-4 text-sm text-gray-500">{{ $qr['id'] }}</td>
                             <td class="px-5 py-4 text-sm font-medium text-gray-800">{{ $qr['libroTitulo'] ?? '—' }}</td>
@@ -110,7 +110,7 @@
             document.querySelectorAll('.qr-canvas').forEach(function (el) {
                 var codigo = el.dataset.codigo;
                 if (typeof QRCode === 'undefined') {
-                    el.textContent = codigo;
+                    el.textContent = el.dataset.texto || codigo;
                     return;
                 }
                 try {
@@ -123,7 +123,7 @@
                         correctLevel: QRCode.CorrectLevel.M
                     });
                 } catch (e) {
-                    el.textContent = codigo;
+                    el.textContent = el.dataset.texto || codigo;
                 }
             });
         });

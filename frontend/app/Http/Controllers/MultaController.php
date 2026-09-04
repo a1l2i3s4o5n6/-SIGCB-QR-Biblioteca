@@ -11,12 +11,19 @@ class MultaController extends Controller
 {
     public function __construct(protected ApiClient $api) {}
 
+    private function esStaff(): bool
+    {
+        return in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']);
+    }
+
     public function index(Request $request): View
     {
         $page = max(0, (int) $request->query('page', 0));
         $size = min(100, max(5, (int) $request->query('size', 10)));
 
-        $data = $this->api->getMultas(['page' => $page, 'size' => $size]);
+        $data = $this->esStaff()
+            ? $this->api->getMultas(['page' => $page, 'size' => $size])
+            : $this->api->getMultasMias(['page' => $page, 'size' => $size]);
         $multas = $data['content'] ?? [];
 
         $filtro = $request->query('estado', '');

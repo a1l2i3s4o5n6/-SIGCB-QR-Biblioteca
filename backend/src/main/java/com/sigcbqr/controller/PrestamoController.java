@@ -60,7 +60,8 @@ public class PrestamoController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Préstamos por usuario", description = "Obtiene los préstamos de un usuario específico (solo staff)")
     public ResponseEntity<PageResponse<PrestamoResponse>> listarPorUsuario(
             @PathVariable Long usuarioId,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -69,7 +70,8 @@ public class PrestamoController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener préstamo", description = "Obtiene un préstamo por su ID")
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
+    @Operation(summary = "Obtener préstamo", description = "Obtiene un préstamo por su ID (solo staff)")
     public ResponseEntity<ApiResponse> obtener(@PathVariable Long id) {
         var prestamo = prestamoService.obtener(id);
         return ResponseEntity.ok(ApiResponse.success("Préstamo encontrado", prestamo));

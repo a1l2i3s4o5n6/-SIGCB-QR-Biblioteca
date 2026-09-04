@@ -3,7 +3,9 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-gray-500 text-xs uppercase bg-gray-50">
-                    <th class="px-5 py-3 font-medium">Usuario</th>
+                    @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+                        <th class="px-5 py-3 font-medium">Usuario</th>
+                    @endif
                     <th class="px-5 py-3 font-medium">Libro</th>
                     <th class="px-5 py-3 font-medium">Fecha de reserva</th>
                     <th class="px-5 py-3 font-medium">Vencimiento</th>
@@ -14,12 +16,14 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($reservas as $reserva)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-5 py-3">
-                            <a href="{{ route('reservas.show', $reserva['id']) }}"
-                                class="font-semibold text-gray-800 hover:text-primary-400">
-                                {{ $reserva['usuarioNombre'] ?? '—' }}
-                            </a>
-                        </td>
+                        @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
+                            <td class="px-5 py-3">
+                                <a href="{{ route('reservas.show', $reserva['id']) }}"
+                                    class="font-semibold text-gray-800 hover:text-primary-400">
+                                    {{ $reserva['usuarioNombre'] ?? '—' }}
+                                </a>
+                            </td>
+                        @endif
                         <td class="px-5 py-3 text-gray-600">{{ $reserva['libroTitulo'] ?? '—' }}</td>
                         <td class="px-5 py-3 text-gray-500">{{ $reserva['fechaReserva'] ? \Carbon\Carbon::parse($reserva['fechaReserva'])->format('d/m/Y H:i') : '—' }}</td>
                         <td class="px-5 py-3 text-gray-500">{{ $reserva['fechaVencimiento'] ? \Carbon\Carbon::parse($reserva['fechaVencimiento'])->format('d/m/Y H:i') : '—' }}</td>
@@ -41,7 +45,7 @@
                                     class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-400 transition">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
-                                @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) && ($reserva['estado'] ?? '') === 'PENDIENTE')
+                                @if (($reserva['estado'] ?? '') === 'PENDIENTE' && in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO', 'ESTUDIANTE']))
                                     <form method="POST" action="{{ route('reservas.cancelar', $reserva['id']) }}"
                                         onsubmit="return confirm('¿Cancelar esta reserva?')">
                                         @csrf
@@ -58,9 +62,9 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-5 py-10 text-center">
+                        <td colspan="{{ in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) ? 6 : 5 }}" class="px-5 py-10 text-center">
                             <i class="fas fa-calendar-check text-gray-300 text-3xl mb-3"></i>
-                            <p class="text-gray-400">No hay reservas registradas.</p>
+                            <p class="text-gray-400">{{ in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) ? 'No hay reservas registradas.' : 'No tienes solicitudes de reserva.' }}</p>
                         </td>
                     </tr>
                 @endforelse
