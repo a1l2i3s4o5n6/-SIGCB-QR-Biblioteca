@@ -413,9 +413,8 @@ si la métrica llegó a obtenerse.
 \textbf{RQ} & \textbf{Objetivo (Goal)} & \textbf{Métrica} & \textbf{¿Se obtuvo?} \\
 \midrule
 RQ1 & Reducir el tiempo de procesamiento del préstamo & Tiempo por operación de préstamo, con QR y sin QR & \textbf{No.} Sin línea base manual con la que comparar \\
-RQ2 & Determinar el nivel de seguridad alcanzado & 51 comprobaciones OWASP API Top 10; auditoría de SQL dinámico & Sí, parcialmente: sin ZAP ni SpotBugs \\
-RQ3 & Caracterizar el efecto de la caché & p95 de latencia del catálogo; hit ratio de Redis & Sí, con reservas (véase §
-ef{sec:discusion}) \\
+RQ2 & Determinar el nivel de seguridad alcanzado & 51 comprobaciones OWASP API Top 10; auditoría de SQL dinámico; SpotBugs con find-sec-bugs; ZAP en modo pasivo & Sí, parcialmente: el escaneo activo de ZAP sigue sin ejecutarse \\
+RQ3 & Caracterizar el efecto de la caché & p95 de latencia del catálogo; hit ratio de Redis & Sí, con reservas (véase §\ref{sec:discusion}) \\
 RQ4 & Medir la usabilidad percibida & Puntuación SUS (Brooke) & \textbf{No.} Cero participantes \\
 \bottomrule
 \end{tabular}
@@ -575,13 +574,13 @@ características tienen medición y cuatro no.
 \textbf{Característica} & \textbf{Requisitos} & \textbf{Evidencia en esta entrega} \\
 \midrule
 \endhead
-Adecuación funcional & \req{REQ-F-001}--\req{REQ-F-011} & 55 pruebas automatizadas; 9 de 11 requisitos funcionales verificados \\
+Adecuación funcional & \req{REQ-F-001}--\req{REQ-F-011} & 95 pruebas automatizadas; 9 de 11 requisitos funcionales verificados \\
 Eficiencia de desempeño & \req{REQ-R-001}--\req{REQ-R-004} & Medido: cinco corridas a 50 VU, p95 medio 5,55\,ms, IC 95\,\% [4,07, 7,03]\,ms. Login y préstamo sin medir \\
 Compatibilidad & \req{REQ-NF-004} & Imágenes ancladas por digest SHA-256; cinco servicios en Docker Compose \\
 Usabilidad & \req{REQ-U-001}, \req{REQ-U-002} & Lighthouse, seis corridas: 97/89 de rendimiento, 98 de accesibilidad, 91 de SEO; \textbf{78 en buenas prácticas, por debajo del umbral de 90}. SUS: \textbf{sin medir}, cero participantes \\
 Fiabilidad & \req{REQ-NF-008}, \req{REQ-NF-010} & Tres defectos corregidos con prueba de regresión; 17 corridas de CI sin fallo \\
-Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado; SpotBugs con find-sec-bugs, un hallazgo de seguridad real (CSRF). \textbf{Sin ZAP} \\
-Mantenibilidad & \req{REQ-NF-005} & 87 pruebas, 0 fallos. Cobertura 41,28\,\% de línea y 16,31\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
+Seguridad & \req{REQ-NF-002}, \req{REQ-NF-003}, \req{REQ-NF-006}, \req{REQ-NF-007}, \req{REQ-NF-009} & Auditoría OWASP de 51 comprobaciones, 51 superadas; auditoría de SQL dinámico con 0 hallazgos e instrumento autoprobado; SpotBugs con find-sec-bugs, un hallazgo de seguridad real (CSRF); ZAP pasivo: 0 alertas altas en API y frontend, 1 media en la API y 4 en el frontend. \textbf{Sin escaneo activo} \\
+Mantenibilidad & \req{REQ-NF-005} & 95 pruebas, 0 fallos. Cobertura 42,51\,\% de línea y 16,84\,\% de rama, recalculable desde el crudo versionado. Por debajo del objetivo \\
 Portabilidad & \req{REQ-NF-004} & Reproducción en un comando (\texttt{make all}); entorno fijado por digest \\
 \bottomrule
 \caption{Correspondencia entre ISO/IEC 25010, los requisitos que concretan cada
@@ -1559,10 +1558,9 @@ API de Crossref, DOI por DOI.
 \addcontentsline{toc}{subsection}{7. Limitaciones declaradas}
 Se declaran, sin atenuantes, las siguientes limitaciones de esta entrega:
 (i) la usabilidad no se midió, al ser cero el número de participantes del SUS;
-(ii) no se ejecutó un análisis dinámico de seguridad con OWASP ZAP, aunque sí el estático con SpotBugs y find-sec-bugs;
-(iii) la cobertura de rama es del 16,31\,\%, muy por debajo de lo deseable, y no se movió ni una décima al añadir 28 pruebas nuevas;
-(iii bis) 
-eq{REQ-U-002} no se cumple: Lighthouse da 78 en buenas prácticas
+(ii) el análisis dinámico con OWASP ZAP se ejecutó solo en modo pasivo: la araña recorrió la API sin autenticar y no hubo escaneo activo, de modo que la ausencia de alertas altas no evidencia ausencia de inyección;
+(iii) la cobertura de rama es del 16,84\,\%, muy por debajo de lo deseable: en las tres mediciones se ha movido menos de punto y medio pese a pasar de 55 a 95 pruebas;
+(iii bis) \req{REQ-U-002} no se cumple: Lighthouse da 78 en buenas prácticas
 frente al umbral de 90, por medirse sin TLS;
 (iv) la inferencia estadística se limita a un intervalo de confianza sobre una
 única condición: no hay contraste de hipótesis ni tamaño de efecto, porque no se

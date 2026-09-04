@@ -32,7 +32,7 @@ Los datos de las mediciones empíricas se conservan como **crudos** en
 
 | Bloque | Rutas de los crudos |
 |---|---|
-| Seguridad | `docs/mediciones/seguridad/owasp-audit-raw.txt` y `audit-sql-dynamic.json` |
+| Seguridad | `docs/mediciones/seguridad/owasp-audit-raw.txt`, `audit-sql-dynamic.json` y `zap/zap-{api,frontend}.json` |
 | Cobertura | `docs/mediciones/cobertura/jacoco.xml` y `jacoco.csv` — **crudo versionado**, de modo que las cifras son recalculables por un tercero |
 | Rendimiento | `docs/mediciones/perf/k6-*.txt` |
 | Frontend | `docs/mediciones/frontend/*.json` / `*.html` |
@@ -44,7 +44,8 @@ Los datos de las mediciones empíricas se conservan como **crudos** en
 |---|---|---|
 | `owasp-audit-raw.txt` | curl 8.19.0 | `bash scripts/owasp-audit.sh` |
 | `audit-sql-dynamic.json` | Analizador propio, con autotest de 3/3 detecciones y 0 falsos positivos | `bash scripts/audit-sql-dynamic.sh --json` |
-| `jacoco.xml` / `jacoco.csv` | JaCoCo 0.8.12 | `make test`, y copiar desde `backend/target/site/jacoco/` |
+| `jacoco.xml` / `jacoco.csv` | JaCoCo 0.8.15 | `make test`, y copiar desde `backend/target/site/jacoco/` |
+| `zap/zap-*.json` | OWASP ZAP, modo pasivo (`spider` + `passiveScan`, sin escaneo activo) | `zap.sh -cmd -autorun /zap/wrk/zap.yaml`; el procedimiento completo está en `docs/mediciones/seguridad/zap/ZAP.md` |
 | `k6-*.txt` | k6 | `k6 run scripts/k6-load-test.js` |
 | `*.report.json` | Lighthouse 12.8.2 | `lighthouse <url> --output=json` |
 | `sus-respuestas.csv` | Instrumento SUS propio | Recogida manual; **cero respuestas a la fecha** |
@@ -84,7 +85,7 @@ incluirlos lo haría referirse a sí mismo.
 
 La matriz de trazabilidad ([`docs/trazabilidad/`](docs/trazabilidad/)) vincula
 cada requisito con su evidencia empírica. Se valida automáticamente con
-`make verify` (55 pruebas, 35 filas, 0 errores).
+`make verify` (97 pruebas, 36 filas, 0 errores).
 
 ## Curators
 

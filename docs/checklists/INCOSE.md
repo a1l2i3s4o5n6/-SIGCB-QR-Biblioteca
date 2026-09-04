@@ -40,7 +40,7 @@ ISO/IEC/IEEE 29148:2018, §5.2.
 | C1 | Trazabilidad hacia atrás, a la necesidad de origen | `[~]` | 24 de 27 tienen historia o caso de uso; `REQ-F-011`, `REQ-NF-008` y `REQ-NF-009` no, y se declara |
 | C2 | Trazabilidad hacia delante, al diseño y al código | `[x]` | Columna `modulo_codigo` y `endpoint_api` en las 35 filas |
 | C3 | Trazabilidad a la verificación | `[x]` | Columna `prueba_automatizada`, validada por script |
-| C4 | La trazabilidad es comprobable automáticamente | `[x]` | `scripts/validate-traceability.sh`: 55 pruebas descubiertas, 35 filas, 0 errores |
+| C4 | La trazabilidad es comprobable automáticamente | `[x]` | `scripts/validate-traceability.sh`: 97 pruebas descubiertas, 36 filas, 0 errores |
 | C5 | Se identifica el tipo de acceso a datos de cada requisito | `[x]` | Columna `tipo_acceso`: CRUD-ORM o SP |
 
 ## D. Gestión y priorización

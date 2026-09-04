@@ -1,7 +1,7 @@
 # Cobertura de pruebas — SIGCB-QR
 
-**Fecha de medición:** 2026-09-03
-**Herramienta:** JaCoCo 0.8.12 (`jacoco-maven-plugin`)
+**Fecha de medición:** 2026-09-04
+**Herramienta:** JaCoCo 0.8.15 (`jacoco-maven-plugin`)
 **Requisito asociado:** REQ-NF-005
 **Informe HTML completo:** `backend/target/site/jacoco/index.html` (se genera con
 `mvn verify`; no se versiona)
@@ -41,33 +41,40 @@ mismos servicios como *service containers*.
 ## 2. Resultado de la ejecución
 
 ```
-[INFO] Tests run: 87, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 95, Failures: 0, Errors: 0, Skipped: 0
 [INFO] All coverage checks have been met.
 [INFO] BUILD SUCCESS
-[INFO] Total time:  03:16 min
+[INFO] Total time:  03:08 min
 ```
 
 ### Pruebas por clase
 
 | Clase de prueba | Pruebas | Tipo |
 |---|---:|---|
-| `CacheSerializationTest` | 2 | Unitaria |
 | `AuditoriaControllerTest` | 5 | `@WebMvcTest` |
 | `AuthControllerTest` | 2 | `@WebMvcTest` |
-| `LibroControllerTest` | 3 | `@WebMvcTest` |
-| `ReporteControllerTest` | 2 | `@WebMvcTest` |
+| `AuthMeEndpointTest` | 3 | `@WebMvcTest` |
+| `AuthServiceTest` | 2 | Unitaria (Mockito) |
+| `CacheSerializationTest` | 2 | Unitaria |
+| `CatalogoControllerTest` | 10 | `@WebMvcTest` |
+| `CatalogoSecurityTest` | 8 | `@WebMvcTest` |
+| `CsrfDefenseTest` | 4 | Unitaria |
 | `GlobalExceptionHandlerTest` | 6 | Unitaria |
 | `JwtAuthenticationFilterTest` | 3 | Unitaria (Mockito) |
 | `JwtBlacklistServiceTest` | 4 | Unitaria (Mockito) |
 | `JwtTokenProviderTest` | 5 | Unitaria |
-| `SecurityTest` | 3 | `@SpringBootTest` |
-| `AuthServiceTest` | 2 | Unitaria (Mockito) |
+| `LibroControllerTest` | 3 | `@WebMvcTest` |
 | `LibroServiceTest` | 5 | Unitaria (Mockito) |
+| `MultaControllerTest` | 4 | `@WebMvcTest` |
 | `NotificacionServiceTest` | 4 | Unitaria (Mockito) |
-| `PrestamoServiceTest` | 4 | Unitaria (Mockito) |
+| `PrestamoServiceTest` | 5 | Unitaria (Mockito) |
+| `RegisterValidationTest` | 5 | `@WebMvcTest` |
+| `ReporteControllerTest` | 2 | `@WebMvcTest` |
+| `ReservaControllerTest` | 5 | `@WebMvcTest` |
 | `SancionServiceTest` | 4 | Unitaria (Mockito) |
+| `SecurityTest` | 3 | `@SpringBootTest` |
 | `SigcbQrApplicationTests` | 1 | Contexto completo |
-| **Total** | **55** | |
+| **Total** | **95** | |
 
 ---
 
@@ -75,14 +82,14 @@ mismos servicios como *service containers*.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 2 505 | 7 156 | **35,01 %** |
-| Ramas | 61 | 374 | **16,31 %** |
-| **Líneas** | **658** | **1 594** | **41,28 %** |
-| Métodos | 115 | 334 | 34,43 % |
+| Instrucciones | 2 594 | 7 165 | **36,20 %** |
+| Ramas | 63 | 374 | **16,84 %** |
+| **Líneas** | **678** | **1 595** | **42,51 %** |
+| Métodos | 119 | 334 | 35,63 % |
 | Clases analizadas | – | 65 | – |
 
 El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (41,28 %). El umbral es bajo a propósito y no debe presentarse
+regla se cumple (42,51 %). El umbral es bajo a propósito y no debe presentarse
 como un objetivo alcanzado: se fijó para que la construcción falle si la
 cobertura *retrocede*, no como meta de calidad. **Está muy por debajo del 70 %
 que pide la guía, en los tres estratos.**
@@ -108,11 +115,11 @@ EOF
 
 | Paquete | Líneas | Cobertura de línea | Cobertura de rama |
 |---|---:|---:|---:|
-| `com.sigcbqr.config` | 65/65 | 100,0 % | 0,0 % |
+| `com.sigcbqr.config` | 66/66 | 100,0 % | 0,0 % |
 | `com.sigcbqr.model.dto.response` | 19/23 | 82,6 % | 0,0 % |
-| `com.sigcbqr.exception` | 44/83 | 53,0 % | 0,0 % |
+| `com.sigcbqr.security` | 82/123 | 66,7 % | 25,0 % |
+| `com.sigcbqr.exception` | 54/83 | 65,1 % | 50,0 % |
 | `com.sigcbqr.controller` | 166/330 | 50,3 % | 29,3 % |
-| `com.sigcbqr.security` | 59/123 | 48,0 % | 25,0 % |
 | `com.sigcbqr` | 1/3 | 33,3 % | 0,0 % |
 | `com.sigcbqr.service` | 289/899 | 32,1 % | 13,3 % |
 | `com.sigcbqr.model.entity` | 1/68 | 1,5 % | 0,0 % |
@@ -135,7 +142,16 @@ de `CsrfDefenseTest` que vigilan la defensa del ADR-0010) y dan
 medición intermedia, gracias a esas pruebas nuevas; la de rama **no se mueve en
 absoluto**, y ese es el dato que importa.
 
-Se corrige dos veces en el mismo documento porque la cifra publicada debe ser la
+La medición que se publica con la versión 1.0.0 se tomó el 4 de septiembre, ya
+con `RegisterValidationTest` y `AuthMeEndpointTest` incorporadas: son **95
+pruebas** y dan 36,20 / 16,84 / 42,51. Frente a la medición anterior, la
+cobertura de línea sube 1,23 puntos y la de rama medio punto. Lo que más se
+mueve es `com.sigcbqr.security`, de 48,0 % a 66,7 % de línea, porque las dos
+pruebas nuevas ejercitan el endpoint `/auth/me` y la validación del registro,
+que hasta ahora no tocaba ninguna prueba. La cobertura de rama sigue siendo el
+punto débil: 16,84 % está muy lejos del 70 % que pide la guía.
+
+Se corrige tres veces en el mismo documento porque la cifra publicada debe ser la
 que se recalcula del crudo versionado, no la más favorable ni la más cómoda.
 
 ## 4. Interpretación
