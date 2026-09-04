@@ -6,7 +6,7 @@ Sistema de gestión bibliotecaria universitaria que automatiza autenticación,
 catálogo, préstamos, devoluciones, reservas, multas, códigos QR, auditoría y
 reportes. Proyecto académico de la Universidad Técnica Estatal de Quevedo (UTEQ).
 
-**Versión:** 1.0.0-rc — Entrega Final
+**Versión:** 1.0.0 — Entrega Final
 
 ---
 
@@ -223,7 +223,7 @@ Detalles y relación con el resto de la documentación en
 | 0.3.0 | Primera | SRS, casos de uso, diagramas C4 |
 | 0.7.0 | Segunda | Autenticación JWT, CRUD, préstamos, Docker Compose |
 | 0.9.0-rc | Tercera | RFC 7807, caché Redis, procedimientos, trazabilidad, CI |
-| 1.0.0-rc | **Final** | Licencia, ADR, ética, diccionario de datos, evidencia empírica de los cinco bloques, corrección de tres defectos |
+| 1.0.0 | **Final** | Licencia, ADR, ética, diccionario de datos, evidencia empírica de los cinco bloques, corrección de tres defectos |
 
 ## Citar este trabajo
 
