@@ -36,12 +36,12 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
-                <p class="text-xs text-gray-500">
-                    &copy; {{ date('Y') }} <span class="text-primary-400 font-semibold">SIGCB-QR</span> — Todos los derechos reservados
+        <footer class="app-footer px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-1">
+                <p class="text-xs text-white">
+                    &copy; {{ date('Y') }} <span class="text-gold-400 font-semibold">SIGCB-QR</span> — Todos los derechos reservados
                 </p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-white/85">
                     Versión 1.0 | Biblioteca Universitaria
                 </p>
             </div>
