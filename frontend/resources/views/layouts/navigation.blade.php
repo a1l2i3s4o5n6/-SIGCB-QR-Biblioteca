@@ -1,4 +1,9 @@
 <!-- ===== TOP NAVBAR ===== -->
+@php
+        $userFoto = session('user.foto');
+        $mostrarFoto = !empty($userFoto)
+            && (preg_match('#^https?://#i', $userFoto) || file_exists(public_path(trim($userFoto, '/'))));
+    @endphp
 <nav x-data="{
         userMenuOpen: false,
         notifCount: 0,
@@ -47,12 +52,12 @@
             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                 <button @click="open = !open"
                     class="flex items-center space-x-2 text-white/90 hover:text-white focus:outline-none transition group">
-                    @if (session('user.foto'))
-                        <img src="{{ asset(session('user.foto')) }}" alt="Foto de perfil"
+                    @if ($mostrarFoto)
+                        <img src="{{ asset($userFoto) }}" alt="Foto de perfil"
                             class="w-8 h-8 rounded-full object-cover border border-white/30">
                     @else
                         <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold text-white">
-                            {{ substr(session('user.nombre', '?'), 0, 1) }}
+                            {{ mb_strtoupper(mb_substr(session('user.nombre', '?'), 0, 1)) }}
                         </div>
                     @endif
                     <span class="hidden sm:block text-sm font-medium">{{ session('user.nombre', 'Usuario') }}</span>
@@ -67,9 +72,9 @@
                     x-transition:enter-end="transform opacity-100 scale-100"
                     style="display: none;">
                     <div class="px-4 py-2 border-b border-gray-100">
-                        @if (session('user.foto'))
+                        @if ($mostrarFoto)
                             <div class="flex items-center gap-3 mb-2">
-                                <img src="{{ asset(session('user.foto')) }}" alt="Foto de perfil"
+                                <img src="{{ asset($userFoto) }}" alt="Foto de perfil"
                                     class="w-9 h-9 rounded-full object-cover">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">{{ session('user.nombre', 'Usuario') }}</p>

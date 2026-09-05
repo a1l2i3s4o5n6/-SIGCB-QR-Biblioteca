@@ -26,13 +26,19 @@
         </div>
     @endif
 
+    @php
+        $fotoPerfil = $perfil['foto'] ?? '';
+        $tieneFotoReal = !empty($fotoPerfil)
+            && (preg_match('#^https?://#i', $fotoPerfil) || file_exists(public_path(trim($fotoPerfil, '/'))));
+    @endphp
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-3xl"
-         data-foto-actual="{{ $perfil['foto'] ?? '' }}"
+         data-foto-actual="{{ $tieneFotoReal ? $fotoPerfil : '' }}"
          x-data="{
              fotoPreview: '',
              quitar: @json(old('quitar_foto') ? true : false),
              urlValue: '',
-             tieneActual: @json((bool) !empty($perfil['foto'])),
+             tieneActual: @json($tieneFotoReal),
              init() {
                  const actual = this.$el.dataset.fotoActual || '';
                  if (!this.quitar && actual) this.fotoPreview = actual;
@@ -75,14 +81,14 @@
                     <div class="relative shrink-0">
                         <img x-show="!quitar && (fotoPreview || tieneActual)"
                             x-bind:src="fotoPreview"
-                            src="@if (!empty($perfil['foto'])){{ asset($perfil['foto']) }}@endif"
+                            src="@if ($tieneFotoReal){{ asset($fotoPerfil) }}@endif"
                             alt="Foto de perfil"
                             class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-                            style="{{ empty($perfil['foto']) ? 'display:none' : '' }}">
+                            style="{{ !$tieneFotoReal ? 'display:none' : '' }}">
                         <div x-show="quitar || !(fotoPreview || tieneActual)"
                             class="w-24 h-24 rounded-full bg-primary-100 flex items-center justify-center text-3xl font-bold text-primary-600 border-4 border-white shadow-sm"
-                            style="{{ !empty($perfil['foto']) && empty(old('quitar_foto')) ? 'display:none' : '' }}">
-                            {{ substr(old('nombre', $perfil['nombre'] ?? '?'), 0, 1) }}
+                            style="{{ $tieneFotoReal && empty(old('quitar_foto')) ? 'display:none' : '' }}">
+                            {{ mb_strtoupper(mb_substr(old('nombre', $perfil['nombre'] ?? '?'), 0, 1)) }}
                         </div>
                         <span x-show="quitar"
                             class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-semibold uppercase tracking-wide"
@@ -104,7 +110,7 @@
                                 x-ref="fotoFile" @change="onFile($event)">
 
                             <button type="button" @click="eliminarFoto()"
-                                x-show="quitar || fotoPreview || @json((bool) !empty($perfil['foto']))"
+                                x-show="quitar || fotoPreview || @json($tieneFotoReal)"
                                 x-transition
                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition"
                                 style="display: none;">
