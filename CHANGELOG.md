@@ -7,6 +7,49 @@ versionado sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [No publicada] — Cobertura de los servicios core (Fase 3)
+
+Fase de cobertura: se cubren los cuatro servicios con peor punto de partida y se
+sube el umbral de JaCoCo para que la cifra no retroceda. Medición del
+2026-09-05 documentada en `docs/mediciones/cobertura/COBERTURA.md` (crudo
+versionado: `jacoco.csv`/`jacoco.xml`).
+
+### Añadido
+
+- **Tests unitarios** (Mockito) para los servicios con menos cobertura, 38 pruebas
+  nuevas (total de la suite: 152):
+  - `DashboardServiceTest` (7): `getStats`, conteos por usuario, `resumen` de
+    `ADMIN`/`BIBLIOTECARIO` y de `ESTUDIANTE` (5 y la de personal, con kpis,
+    alertas, series diarias y porcentajes por rol), inversión de rango cuando
+    `desde > hasta`, actividad reciente (con y sin usuario) y estado del sistema.
+  - `NotificacionProgramadaServiceTest` (4): marca de prestamos vencidos,
+    ventana de deduplicación de 6 h, avisos de vencimiento próximo, acierto de
+    sanción vencida (staff) y por caducar, y sanción sin fecha o lejana.
+  - `QrCodigoServiceTest` (13): listar/filtrar por libro, crear (con y sin
+    código, código generado, duplicado, libro inexistente), regenerar, activar/
+    desactivar y validar (activo, inactivo, no registrado).
+  - `UsuarioServiceTest` (14): listar y filtrado con normalización, obtener,
+    crear (correo repetido, contraseña vacía, rol explícito y por defecto),
+    actualizar y eliminación lógica (borrado lógico, no físico).
+
+### Cambiado
+
+- **`backend/pom.xml`**: umbral de JaCoCo (`LINE`, BUNDLE) de 30 % a **60 %** en
+  el mismo commit que las pruebas.
+- **Cobertura medida** (2026-09-05): instrucciones 62,60 %, ramas 44,78 %,
+  **líneas 67,63 %**. `com.sigcbqr.service` pasa de 32,1 % a 77,6 % de línea
+  (rama de 13,3 % a 58,6 %); `DashboardService` 84,8 %, 
+  `NotificacionProgramadaService` 100 %, `QrCodigoService` 98,3 %,
+  `UsuarioService` 100 %.
+
+### Pendiente (documentado en COBERTURA.md §6)
+
+- `AuditoriaService` (19 %) y `ReporteService` (16,7 %) siguen sin pruebas.
+- La rama de `controller` y `security` (≈27 %) es el siguiente escalón hacia el
+  70 % de la guía.
+
+---
+
 ## [No publicada] — Autoría verificada y unificada (Fase 2)
 
 Cierre de la fase de autoría: identidades de git unificadas, atribución verificable

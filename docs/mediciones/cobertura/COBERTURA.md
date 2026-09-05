@@ -1,6 +1,6 @@
 # Cobertura de pruebas — SIGCB-QR
 
-**Fecha de medición:** 2026-09-04
+**Fecha de medición:** 2026-09-05
 **Herramienta:** JaCoCo 0.8.15 (`jacoco-maven-plugin`)
 **Requisito asociado:** REQ-NF-005
 **Informe HTML completo:** `backend/target/site/jacoco/index.html` (se genera con
@@ -57,10 +57,10 @@ corrida.
 ## 2. Resultado de la ejecución
 
 ```
-[INFO] Tests run: 95, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 152, Failures: 0, Errors: 0, Skipped: 0
 [INFO] All coverage checks have been met.
 [INFO] BUILD SUCCESS
-[INFO] Total time:  03:08 min
+[INFO] Total time:  06:10 min
 ```
 
 ### Pruebas por clase
@@ -70,11 +70,12 @@ corrida.
 | `AuditoriaControllerTest` | 5 | `@WebMvcTest` |
 | `AuthControllerTest` | 2 | `@WebMvcTest` |
 | `AuthMeEndpointTest` | 3 | `@WebMvcTest` |
-| `AuthServiceTest` | 2 | Unitaria (Mockito) |
+| `AuthServiceTest` | 6 | Unitaria (Mockito) |
 | `CacheSerializationTest` | 2 | Unitaria |
 | `CatalogoControllerTest` | 10 | `@WebMvcTest` |
 | `CatalogoSecurityTest` | 8 | `@WebMvcTest` |
 | `CsrfDefenseTest` | 4 | Unitaria |
+| `DashboardServiceTest` | 7 | Unitaria (Mockito) |
 | `GlobalExceptionHandlerTest` | 6 | Unitaria |
 | `JwtAuthenticationFilterTest` | 3 | Unitaria (Mockito) |
 | `JwtBlacklistServiceTest` | 4 | Unitaria (Mockito) |
@@ -82,15 +83,19 @@ corrida.
 | `LibroControllerTest` | 3 | `@WebMvcTest` |
 | `LibroServiceTest` | 5 | Unitaria (Mockito) |
 | `MultaControllerTest` | 4 | `@WebMvcTest` |
-| `NotificacionServiceTest` | 4 | Unitaria (Mockito) |
-| `PrestamoServiceTest` | 5 | Unitaria (Mockito) |
+| `NotificacionProgramadaServiceTest` | 4 | Unitaria (Mockito) |
+| `NotificacionServiceTest` | 6 | Unitaria (Mockito) |
+| `PerfilControllerTest` | 3 | `@WebMvcTest` |
+| `PrestamoServiceTest` | 15 | Unitaria (Mockito) |
+| `QrCodigoServiceTest` | 13 | Unitaria (Mockito) |
 | `RegisterValidationTest` | 5 | `@WebMvcTest` |
 | `ReporteControllerTest` | 2 | `@WebMvcTest` |
 | `ReservaControllerTest` | 5 | `@WebMvcTest` |
 | `SancionServiceTest` | 4 | Unitaria (Mockito) |
 | `SecurityTest` | 3 | `@SpringBootTest` |
 | `SigcbQrApplicationTests` | 1 | Contexto completo |
-| **Total** | **95** | |
+| `UsuarioServiceTest` | 14 | Unitaria (Mockito) |
+| **Total** | **152** | |
 
 ---
 
@@ -98,17 +103,17 @@ corrida.
 
 | Contador | Cubierto | Total | Porcentaje |
 |---|---:|---:|---:|
-| Instrucciones | 2 594 | 7 165 | **36,20 %** |
-| Ramas | 63 | 374 | **16,84 %** |
-| **Líneas** | **678** | **1 595** | **42,51 %** |
-| Métodos | 119 | 334 | 35,63 % |
-| Clases analizadas | – | 65 | – |
+| Instrucciones | 5 111 | 8 165 | **62,60 %** |
+| Ramas | 206 | 460 | **44,78 %** |
+| **Líneas** | **1 214** | **1 795** | **67,63 %** |
+| Métodos | 181 | 364 | 49,73 % |
+| Clases analizadas | – | 66 | – |
 
-El umbral configurado en `pom.xml` es **30 % de líneas a nivel de BUNDLE**, y la
-regla se cumple (42,51 %). El umbral es bajo a propósito y no debe presentarse
-como un objetivo alcanzado: se fijó para que la construcción falle si la
-cobertura *retrocede*, no como meta de calidad. **Está muy por debajo del 70 %
-que pide la guía, en los tres estratos.**
+El umbral configurado en `pom.xml` es **60 % de líneas a nivel de BUNDLE** (subido
+desde el 30 % inicial durante la Fase 3), y la regla se cumple (67,63 %). La guía
+pide 70 % de líneas y 70 % de ramas en los tres estratos: la cobertura de línea
+está a poco más de dos puntos, y la de rama (44,78 %) sigue siendo el punto débil,
+aunque «service» ya la ejercita al 58,6 %.
 
 ### 3.1 Cómo recalcular estas cifras
 
@@ -131,14 +136,14 @@ EOF
 
 | Paquete | Líneas | Cobertura de línea | Cobertura de rama |
 |---|---:|---:|---:|
-| `com.sigcbqr.config` | 66/66 | 100,0 % | 0,0 % |
-| `com.sigcbqr.model.dto.response` | 19/23 | 82,6 % | 0,0 % |
-| `com.sigcbqr.security` | 82/123 | 66,7 % | 25,0 % |
-| `com.sigcbqr.exception` | 54/83 | 65,1 % | 50,0 % |
-| `com.sigcbqr.controller` | 166/330 | 50,3 % | 29,3 % |
-| `com.sigcbqr` | 1/3 | 33,3 % | 0,0 % |
-| `com.sigcbqr.service` | 289/899 | 32,1 % | 13,3 % |
-| `com.sigcbqr.model.entity` | 1/68 | 1,5 % | 0,0 % |
+| `com.sigcbqr.config` | 66/66 | 100,0 % | 100,0 % |
+| `com.sigcbqr.model.dto.response` | 19/23 | 82,6 % | 100,0 % |
+| `com.sigcbqr.security` | 83/123 | 67,5 % | 27,8 % |
+| `com.sigcbqr.exception` | 56/83 | 67,5 % | 50,0 % |
+| `com.sigcbqr.controller` | 187/394 | 47,5 % | 26,9 % |
+| `com.sigcbqr` | 1/3 | 33,3 % | 100,0 % |
+| `com.sigcbqr.service` | 801/1032 | 77,6 % | 58,6 % |
+| `com.sigcbqr.model.entity` | 1/71 | 1,4 % | 0,0 % |
 
 ### 3.2 Historial de esta cifra, y por qué se corrigió dos veces
 
@@ -167,6 +172,18 @@ pruebas nuevas ejercitan el endpoint `/auth/me` y la validación del registro,
 que hasta ahora no tocaba ninguna prueba. La cobertura de rama sigue siendo el
 punto débil: 16,84 % está muy lejos del 70 % que pide la guía.
 
+Con la **Fase 3 (cobertura)** se publica una cuarta medición, tomada el 5 de
+septiembre: **152 pruebas** —las 114 previas más 7 de `DashboardServiceTest`, 4 de
+`NotificacionProgramadaServiceTest`, 13 de `QrCodigoServiceTest` y 14 de
+`UsuarioServiceTest`— y dan **62,60 / 44,78 / 67,63**. El salto viene de cubrir
+los servicios con mayor déficit: `service` pasa de 32,1 % a 77,6 % de línea y de
+13,3 % a 58,6 % de rama; `DashboardService` de 4,3 % a 84,8 %,
+`NotificacionProgramadaService` de 0 % a 100 %, `QrCodigoService` de 1,7 % a
+98,3 % y `UsuarioService` de 9,7 % a 100 %. El umbral de JaCoCo se sube de 30 % a
+60 % en el mismo commit que los tests. Quedan como zonas con déficit
+`AuditoriaService` (19 %) y `ReporteService` (16,7 %), que esta fase no tocó, y
+la rama de `controller` y `security` (≈27 %).
+
 Se corrige tres veces en el mismo documento porque la cifra publicada debe ser la
 que se recalcula del crudo versionado, no la más favorable ni la más cómoda.
 
@@ -175,20 +192,25 @@ que se recalcula del crudo versionado, no la más favorable ni la más cómoda.
 **El reparto importa más que el total.** La cobertura no es uniforme y está
 concentrada donde debe estarlo:
 
-- `security` (48,0 %) y `controller` (43,9 %) contienen las reglas cuya rotura
-  tendría consecuencias: emisión y validación de tokens, revocación, límites de
-  préstamo, borrado lógico.
-- `model.entity` (1,5 %) son entidades JPA de datos con Lombok. La cifra es baja y
+- `service` (77,6 % de línea y 58,6 % de rama) es ahora la zona con mayor
+  cobertura, y es donde vive la lógica de negocio: después de la Fase 3 los
+  cuatro servicios con peor punto de partida quedan por encima del 84 %.
+- `security` (67,5 % de línea y 27,8 % de rama) y `controller` (47,5 % de línea
+  y 26,9 % de rama) contienen las reglas cuya rotura tendría consecuencias:
+  emisión y validación de tokens, revocación, autorización por rol, límites de
+  préstamo, borrado lógico. Sus pruebas `@WebMvcTest` ejercitan el camino feliz
+  pero pocas bifurcaciones.
+- `model.entity` (1,4 %) son entidades JPA de datos con Lombok. La cifra es baja y
   **carece de significado**: probar un *getter* generado no aporta información.
   Contribuye a hundir el total sin que eso indique riesgo.
-- `service` (32,1 % de línea y 13,3 % de rama) es hoy la zona con déficit real:
-  concentra la lógica de negocio y es donde menos bifurcaciones se ejercitan.
+- `AuditoriaService` (19 %) y `ReporteService` (16,7 %) son los dos servicios
+  con lógica sin probar; no se tocaron en esta fase.
 
-**La cobertura de rama, 16,31 %, es el dato preocupante**, no el 41,28 % de líneas.
-Significa que las pruebas recorren el camino feliz y dejan casi todas las
-bifurcaciones —validaciones, comprobaciones de estado, ramas de error— sin
-ejercitar. Es coherente con los tres defectos que la construcción no detectó y
-que sí encontró la auditoría manual (§5).
+**La cobertura de rama, 44,78 %, sigue siendo el dato más débil.** Con las
+pruebas de servicio subió de 16,84 % y la rama de `service` ya llega al 58,6 %,
+pero la de `controller` y `security` (≈27 %) indica que las pruebas recorren
+sobre todo el camino feliz y dejan bifurcaciones —validaciones, comprobaciones
+de estado, ramas de error— sin ejercitar.
 
 ## 5. Lo que la cobertura no vio
 
@@ -238,13 +260,14 @@ volvieron a ejecutar. Están corregidos, y por eso la cifra que se declara ahora
 
 En orden de valor, no de facilidad:
 
-1. **Pruebas de rama en `service`**: límite de préstamos alcanzado, ejemplar no
-   disponible, devolución fuera de plazo con generación de multa.
-2. **Pruebas de los diez controladores sin cubrir**, al menos autorización por rol
-   y forma de la respuesta.
+1. **Cubrir los servicios que quedaron sin probar**: `AuditoriaService` (19 %) y
+   `ReporteService` (16,7 %), ambos con lógica de negocio real.
+2. **Rama en `controller` y `security`** (≈27 %): autorización por rol y forma
+   de la respuesta, que es lo que los `@WebMvcTest` actuales no bifurcan.
 3. **Pruebas de integración con la caché activa**, que habrían detectado el
    defecto de ADR-0006 antes que un `curl`.
 4. **Excluir de la medición `model.entity` y los DTO**, para que el total refleje
    el código con lógica en lugar de diluirse en código generado.
-5. Subir el umbral de JaCoCo por pasos, **después** de 1 y 2, no antes: elevarlo
-   ahora sólo incentivaría pruebas que ejecutan líneas sin comprobar nada.
+5. Un escalón con 1 y 2 cerrados, subir el umbral de JaCoCo a **70 %** para
+   acompañar el objetivo de la guía: el 60 % ya está fijado desde la Fase 3 y se
+   cumple (67,63 %).
