@@ -32,8 +32,8 @@
                 <label class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
                 <select name="estado"
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
-                    <option value="">Todos</option>
-                    <option value="ACTIVO" @selected(request('estado') === 'ACTIVO')>Activos</option>
+                    <option value="" @selected(request()->has('estado') && request('estado') === '')>Todos</option>
+                    <option value="ACTIVO" @selected(!request()->has('estado') || request('estado') === 'ACTIVO')>Activos</option>
                     <option value="RENOVACION_PENDIENTE" @selected(request('estado') === 'RENOVACION_PENDIENTE')>Renovación pendiente</option>
                     <option value="DEVUELTO" @selected(request('estado') === 'DEVUELTO')>Devueltos</option>
                 </select>

@@ -289,11 +289,6 @@ class ApiClient
         return $response->json('data') ?? [];
     }
 
-    public function misReservas(array $params = []): array
-    {
-        return $this->withAuth()->get('/reservas', $params)->json() ?? [];
-    }
-
     public function cancelarReserva(int $id): array
     {
         return $this->withAuth()->delete("/reservas/{$id}")->json() ?? [];

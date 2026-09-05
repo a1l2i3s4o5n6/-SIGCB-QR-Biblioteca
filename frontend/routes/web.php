@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
     // ── Auto-servicio del estudiante ─────────────────────────────────
     Route::get('/estudiante/mis-prestamos',              [EstudianteController::class, 'misPrestamos'])->name('estudiante.mis-prestamos');
     Route::put('/estudiante/prestamos/{id}/solicitar-renovacion', [EstudianteController::class, 'solicitarRenovacion'])->name('estudiante.solicitar-renovacion');
+    Route::get('/estudiante/escaneo-qr',                 [EstudianteController::class, 'escaneoQr'])->name('estudiante.escaneo-qr');
     Route::get('/estudiante/mis-reservas',               [EstudianteController::class, 'misReservas'])->name('estudiante.mis-reservas');
     Route::post('/estudiante/reservar-libro',            [EstudianteController::class, 'reservarLibro'])->name('estudiante.reservar-libro');
     Route::delete('/estudiante/reservas/{id}',           [EstudianteController::class, 'cancelarReserva'])->name('estudiante.cancelar-reserva');

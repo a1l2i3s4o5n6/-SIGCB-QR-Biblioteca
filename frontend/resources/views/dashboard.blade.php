@@ -47,7 +47,7 @@
                 </span>
                 <div>
                     <h2 class="text-sm font-bold text-gray-800">¿Buscas un libro?</h2>
-                    <p class="text-xs text-gray-500">Escanea el código QR del libro para verlo y solicitarlo.</p>
+                    <p class="text-xs text-gray-500">Escanea el código QR del libro para verlo y reservarlo.</p>
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
@@ -57,7 +57,7 @@
                 </div>
                 <div class="bg-primary-50 border border-primary-100 rounded-lg px-4 py-3 text-center">
                     <span class="block text-lg font-bold text-primary-600">2</span>
-                    <p class="text-xs text-gray-600 mt-0.5">Haz clic en "Solicitar préstamo"</p>
+                    <p class="text-xs text-gray-600 mt-0.5">Pulsa "Reservar este libro"</p>
                 </div>
                 <div class="bg-primary-50 border border-primary-100 rounded-lg px-4 py-3 text-center">
                     <span class="block text-lg font-bold text-primary-600">3</span>
@@ -65,11 +65,11 @@
                 </div>
             </div>
             <p class="text-xs text-gray-400 mb-4">
-                Tu solicitud queda <strong>pendiente</strong> hasta que el personal la atienda y registre el préstamo en el mostrador.
+                Tu reserva queda <strong>pendiente</strong> hasta que el personal la atienda y registre el préstamo en el mostrador.
                 Recibirás una notificación de confirmación.
             </p>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('qr-codigos.validar') }}"
+                <a href="{{ route('estudiante.escaneo-qr') }}"
                     class="btn-primary-custom inline-flex items-center px-5 py-2.5 rounded-lg text-sm font-semibold text-white shadow">
                     <i class="fas fa-qrcode mr-2"></i> Escanear código QR
                 </a>
