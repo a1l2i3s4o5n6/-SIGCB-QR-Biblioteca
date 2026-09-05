@@ -157,6 +157,11 @@
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Mis Préstamos</span>
         </a>
+        <a href="{{ route('estudiante.escaneo-qr') }}"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.escaneo-qr') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
+            <span class="ml-3">Códigos QR</span>
+        </a>
         <a href="{{ route('estudiante.mis-reservas') }}"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-reservas') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-calendar-check w-5 text-center text-sm"></i>
@@ -318,6 +323,11 @@
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-prestamos') ? 'active text-white' : '' }}">
             <i class="nav-icon fas fa-exchange-alt w-5 text-center text-sm"></i>
             <span class="ml-3">Mis Préstamos</span>
+        </a>
+        <a href="{{ route('estudiante.escaneo-qr') }}" @click="$store.ui.sidebarOpen = false"
+            class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.escaneo-qr') ? 'active text-white' : '' }}">
+            <i class="nav-icon fas fa-qrcode w-5 text-center text-sm"></i>
+            <span class="ml-3">Códigos QR</span>
         </a>
         <a href="{{ route('estudiante.mis-reservas') }}" @click="$store.ui.sidebarOpen = false"
             class="nav-item flex items-center px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white transition {{ request()->routeIs('estudiante.mis-reservas') ? 'active text-white' : '' }}">

@@ -1,0 +1,88 @@
+% =============================================================================
+% Caratula de la Entrega Final del PFC — SIGCB-QR
+%
+% Criterio de piso P1: UNA sola pagina, con la URL del repositorio en UNA sola
+% linea. El documento esta deliberadamente construido para no poder desbordar a
+% una segunda pagina: sin secciones, sin indice, sin flotantes.
+%
+% El commit y el digest NO se escriben a mano: se generan con
+%   python scripts/entrega-digest.py
+% que deja commit.tex y digest.tex en este directorio. Asi la caratula no puede
+% declarar un commit que no sea el de la entrega.
+%
+% Compilar:
+%   python scripts/entrega-digest.py          (desde la raiz del repositorio)
+%   cd docs/caratula && pdflatex -interaction=nonstopmode caratula.tex
+% =============================================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage[top=2cm,bottom=1.8cm,left=2.3cm,right=2.3cm]{geometry}
+\usepackage{lmodern}
+\usepackage[hidelinks]{hyperref}
+\usepackage{array}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+    {\large\scshape Universidad Técnica Estatal de Quevedo}\\[0.12cm]
+    {\normalsize Facultad de Ciencias de la Ingeniería}\\[0.12cm]
+    {\normalsize Carrera de Ingeniería en Software}\\[0.18cm]
+
+    \rule{\textwidth}{0.8pt}\\[0.18cm]
+    {\LARGE\bfseries SIGCB-QR}\\[0.18cm]
+    {\large Sistema Integral de Gestión, Control y Seguimiento de Lectura\\
+     Interna en la Biblioteca Universitaria mediante Códigos QR}\\[0.3cm]
+    \rule{\textwidth}{0.8pt}\\[0.18cm]
+
+    {\normalsize\bfseries Proyecto Fin de Curso --- Entrega Final}\\[0.2cm]
+    {\normalsize Aplicaciones Web --- Quinto Nivel}\\[0.7cm]
+\end{center}
+
+{\bfseries Repositorio:}\\[0.12cm]
+% El criterio de piso exige la URL en UNA sola linea. No basta con que lo
+% parezca: se mide su anchura y se aborta la compilacion si no cabe entera en
+% el ancho de texto, que es la unica condicion bajo la cual TeX no la partiria.
+\newlength{\anchourl}
+\settowidth{\anchourl}{\small\ttfamily https://github.com/a1l2i3s4o5n6/-SIGCB-QR-Biblioteca}
+\ifdim\anchourl>\textwidth
+    \GenericError{}{ERROR: la URL del repositorio no cabe en una sola linea}{}{}
+\fi
+{\small\url{https://github.com/a1l2i3s4o5n6/-SIGCB-QR-Biblioteca}}\\[0.18cm]
+
+{\bfseries Integrantes:}\\[0.18cm]
+\begin{tabular}{@{}p{7.2cm}p{6.9cm}@{}}
+    Arias Moreira, Maybelin Gregoria & ORCID: \textit{pendiente de registro} \\[0.12cm]
+    Romero Méndez, Bryam Steven      & ORCID: \textit{pendiente de registro} \\[0.12cm]
+    Zambrano Moreira, Alison Ariana  & ORCID: \textit{pendiente de registro} \\
+\end{tabular}\\[0.45cm]
+
+{\bfseries Identificación de la entrega:}\\[0.18cm]
+\begin{tabular}{@{}p{4.0cm}p{10.0cm}@{}}
+    Versión        & \texttt{1.0.0} \\[0.12cm]
+    Etiqueta Git   & \texttt{v1.0.0} \\[0.12cm]
+    Commit         & \texttt{\input{commit.tex}\unskip} \\[0.12cm]
+    Digest SHA-256 & \texttt{\input{digest.tex}\unskip} \\[0.12cm]
+    DOI            & \textit{pendiente de depósito en Zenodo} \\[0.12cm]
+    Licencia       & MIT (código); CC BY 4.0 (datos y documentación) \\
+\end{tabular}\\[0.45cm]
+
+{\bfseries Documentos de la entrega:}\\[0.18cm]
+\begin{tabular}{@{}p{4.0cm}p{10.0cm}@{}}
+    Informe técnico & \texttt{docs/informe/informe-tecnico.pdf} \\[0.12cm]
+    Requisitos      & \texttt{docs/requisitos/SRS.md} \\[0.12cm]
+    Reproducción    & \texttt{make all} (ver \texttt{README.md}) \\
+\end{tabular}
+
+\vfill
+\begin{center}
+    Quevedo --- Los Ríos --- Ecuador\\
+    Septiembre de 2026
+\end{center}
+
+\end{document}

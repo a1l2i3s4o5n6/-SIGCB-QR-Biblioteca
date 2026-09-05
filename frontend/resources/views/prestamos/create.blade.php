@@ -30,6 +30,7 @@
         x-data="formularioPrestamo({
             usuarios: @js($usuarios),
             inventario: @js($inventario),
+            solicitudes: @js($solicitudesReg),
             oldUsuarioId: @js($oldUsuarioId ? (int) $oldUsuarioId : null),
             oldInventarioId: @js($oldInventarioId ? (int) $oldInventarioId : null),
          })">
@@ -151,6 +152,20 @@
                     @error('inventarioId')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror
+
+                    <div x-show="haySolicitudes" x-cloak
+                        class="mt-3 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
+                        <p class="text-sm font-semibold text-amber-800 flex items-center gap-2">
+                            <i class="fas fa-bell"></i>
+                            Solicitud(es) pendiente(s) para este libro
+                        </p>
+                        <p class="text-xs text-amber-700 mt-1.5 leading-relaxed">
+                            <span class="font-semibold" x-text="nombresSolicitantes"></span>
+                            <span>— atiende la solicitud antes de registrar el préstamo:</span>
+                            <a href="{{ route('reservas.index', ['estado' => 'PENDIENTE']) }}"
+                                class="underline font-semibold hover:text-amber-900">ver solicitudes</a>.
+                        </p>
+                    </div>
                 </div>
             </div>
 

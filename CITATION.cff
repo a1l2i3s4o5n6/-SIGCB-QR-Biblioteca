@@ -8,13 +8,20 @@ abstract: >-
   arquitectura, matriz de trazabilidad validada automáticamente y evidencia
   empírica reproducible de seguridad, cobertura, rendimiento y usabilidad.
 type: software
-version: 1.0.0-rc
-date-released: 2026-09-01
+version: 1.0.0
+date-released: 2026-09-04
 license: MIT
 authors:
-  - name: "Equipo SIGCB-QR"
+  - name: "Arias Moreira, Maybelin Gregoria"
+    orcid: "0000-0000-0000-0000"
     affiliation: "Universidad Técnica Estatal de Quevedo (UTEQ)"
-repository-code: "https://github.com/EQUIPO/sigcb-qr"
+  - name: "Romero Mendez, Bryam Steven"
+    orcid: "0000-0000-0000-0000"
+    affiliation: "Universidad Técnica Estatal de Quevedo (UTEQ)"
+  - name: "Zambrano Moreira, Alison Ariana"
+    orcid: "0000-0000-0000-0000"
+    affiliation: "Universidad Técnica Estatal de Quevedo (UTEQ)"
+repository-code: "https://github.com/a1l2i3s4o5n6/-SIGCB-QR-Biblioteca"
 keywords:
   - "gestión bibliotecaria"
   - "biblioteca universitaria"

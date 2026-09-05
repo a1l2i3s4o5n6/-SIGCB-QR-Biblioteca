@@ -173,10 +173,12 @@ class PrestamoController extends Controller
     {
         $usuarios = $this->api->getUsuarios(['size' => 200]);
         $inventario = $this->api->getInventarioDisponible(['size' => 500]);
+        $pendientes = $this->api->getReservas(['estado' => 'PENDIENTE', 'size' => 500]);
 
         return [
-            'usuarios'   => array_values(array_filter($usuarios['content'] ?? [], fn ($u) => ($u['rol'] ?? '') !== 'ADMIN')),
-            'inventario' => $inventario,
+            'usuarios'        => array_values(array_filter($usuarios['content'] ?? [], fn ($u) => ($u['rol'] ?? '') !== 'ADMIN')),
+            'inventario'      => $inventario,
+            'solicitudesReg' => $pendientes['content'] ?? [],
         ];
     }
 }

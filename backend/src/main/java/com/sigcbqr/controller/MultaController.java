@@ -34,15 +34,25 @@ public class MultaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'BIBLIOTECARIO')")
     @Transactional(readOnly = true)
-    @Operation(summary = "Listar multas", description = "Obtiene multas con paginación y filtro por estado de pago")
+    @Operation(summary = "Listar multas", description = "Obtiene multas con paginación y filtro por estado de pago (solo staff)")
     public ResponseEntity<PageResponse<MultaResponse>> listar(
-            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "pagada", required = false) Boolean pagada,
             @PageableDefault(size = 10) Pageable pageable) {
         var page = (pagada == null)
-                ? multaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse)
-                : multaRepository.findByUsuarioIdAndPagada(principal.id(), pagada, pageable).map(this::toResponse);
+                ? multaRepository.findAll(pageable).map(this::toResponse)
+                : multaRepository.findByPagada(pagada, pageable).map(this::toResponse);
+        return ResponseEntity.ok(PageResponse.from(page));
+    }
+
+    @GetMapping("/mis")
+    @Transactional(readOnly = true)
+    @Operation(summary = "Mis multas", description = "Multas del usuario autenticado")
+    public ResponseEntity<PageResponse<MultaResponse>> mis(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PageableDefault(size = 10) Pageable pageable) {
+        var page = multaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse);
         return ResponseEntity.ok(PageResponse.from(page));
     }
 

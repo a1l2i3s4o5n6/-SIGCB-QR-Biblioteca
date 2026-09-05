@@ -83,9 +83,17 @@ login() {
 # cookies en lugar de iniciar sesión de nuevo invalidaría también la sesión
 # original, y los bloques posteriores medirían 401 donde deben medir 403.
 ADMIN="$TMP/admin.txt"; EST="$TMP/estudiante.txt"; LOGOUT="$TMP/logout.txt"
-login admin@biblioteca.com          admin123       "$ADMIN"
-login carlos.garcia@estudiante.com  estudiante123  "$EST"
-login carlos.garcia@estudiante.com  estudiante123  "$LOGOUT"
+
+# Las credenciales de la sonda NO se versionan. Se toman del entorno y, si no
+# estan definidas, el script se detiene: es preferible no auditar a auditar con
+# una contrasena escrita en el repositorio. Para el entorno de demostracion
+# local, exporta las dos variables antes de invocar el script.
+: "${SIGCB_ADMIN_PASSWORD:?Define SIGCB_ADMIN_PASSWORD antes de ejecutar la auditoria}"
+: "${SIGCB_ESTUDIANTE_PASSWORD:?Define SIGCB_ESTUDIANTE_PASSWORD antes de ejecutar la auditoria}"
+
+login admin@biblioteca.com          "$SIGCB_ADMIN_PASSWORD"       "$ADMIN"
+login carlos.garcia@estudiante.com  "$SIGCB_ESTUDIANTE_PASSWORD"  "$EST"
+login carlos.garcia@estudiante.com  "$SIGCB_ESTUDIANTE_PASSWORD"  "$LOGOUT"
 LOGINS_CONSUMIDOS=3
 
 # ════════════════════════════════════════════════════════════════
@@ -146,6 +154,42 @@ check "GET /api/configuracion como estudiante"              403 "$(code -b "$EST
 # El control es efectivo solo si además no se creó nada.
 creado=$(curl -s -b "$ADMIN" "$API/api/usuarios?page=0&size=100" | grep -c 'sonda.bfla@example.invalid' || true)
 check "el intento BFLA no creó ningún usuario" 0 "$creado"
+
+# ── Catálogo: los OCHO endpoints de escritura ───────────────────
+#
+# Por qué están aquí y no se sondean tres rutas y se da por bueno el resto:
+# una revisión externa encontró que CatalogoController exponía sus ocho
+# endpoints de escritura SIN ninguna anotación de autorización, de modo que
+# cualquier ESTUDIANTE autenticado podía crear, modificar y borrar autores,
+# editoriales y categorías. Esta auditoría no lo detectó porque solo probaba
+# tres rutas y ninguna era del catálogo.
+#
+# La lección no es que faltara una anotación, sino que una auditoría con
+# cobertura parcial de rutas produce una falsa sensación de seguridad. Se
+# enumeran los ocho de forma explícita para que, si alguno pierde su
+# @PreAuthorize, la auditoría falle.
+echo
+echo "  Endpoints de escritura del catálogo como ESTUDIANTE (deben dar 403):"
+
+cuerpo_autor='{"nombre":"Sonda","apellido":"Catalogo","nacionalidad":"NA"}'
+cuerpo_edit='{"nombre":"Sonda Editorial","pais":"NA"}'
+cuerpo_cat='{"nombre":"Sonda Categoria","descripcion":"sonda"}'
+
+json_post() { code -b "$EST" -X POST "$API$1" -H 'Content-Type: application/json' -d "$2"; }
+json_put()  { code -b "$EST" -X PUT  "$API$1" -H 'Content-Type: application/json' -d "$2"; }
+
+check "POST   /api/autores como estudiante"       403 "$(json_post /api/autores      "$cuerpo_autor")"
+check "PUT    /api/autores/1 como estudiante"     403 "$(json_put  /api/autores/1    "$cuerpo_autor")"
+check "POST   /api/editoriales como estudiante"   403 "$(json_post /api/editoriales  "$cuerpo_edit")"
+check "PUT    /api/editoriales/1 como estudiante" 403 "$(json_put  /api/editoriales/1 "$cuerpo_edit")"
+check "DELETE /api/editoriales/1 como estudiante" 403 "$(code -b "$EST" -X DELETE "$API/api/editoriales/1")"
+check "POST   /api/categorias como estudiante"    403 "$(json_post /api/categorias   "$cuerpo_cat")"
+check "PUT    /api/categorias/1 como estudiante"  403 "$(json_put  /api/categorias/1 "$cuerpo_cat")"
+check "DELETE /api/categorias/1 como estudiante"  403 "$(code -b "$EST" -X DELETE "$API/api/categorias/1")"
+
+# El 403 no basta: hay que comprobar que tampoco se creó nada.
+sonda_autor=$(curl -s -b "$ADMIN" "$API/api/autores" | grep -c 'Sonda' || true)
+check "el intento sobre el catálogo no creó ningún autor" 0 "$sonda_autor"
 
 # ════════════════════════════════════════════════════════════════
 bloque "API8:2023 / A05:2021 — Configuración incorrecta"

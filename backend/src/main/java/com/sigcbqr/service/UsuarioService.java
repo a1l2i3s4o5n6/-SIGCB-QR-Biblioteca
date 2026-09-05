@@ -54,13 +54,17 @@ public class UsuarioService {
             throw new BadRequestException("El correo ya está registrado");
         }
 
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new BadRequestException("La contraseña es obligatoria");
+        }
+
         Rol rol = rolRepository.findById(request.getRolId() != null ? request.getRolId() : 3L)
                 .orElseThrow(() -> new ResourceNotFoundException("Rol"));
 
         Usuario usuario = Usuario.builder()
                 .nombre(request.getNombre())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword() != null ? request.getPassword() : "123456"))
+                .password(passwordEncoder.encode(request.getPassword()))
                 .telefono(request.getTelefono())
                 .activo(request.getActivo() != null ? request.getActivo() : true)
                 .rol(rol)

@@ -1,20 +1,34 @@
 # SIGCB-QR — Makefile para reproducibilidad
-# Uso: make up | down | test | verify | audit | metrics | logs | clean
-# Comprobar contraseña: make test DB_PASSWORD=MiClave
+# Uso: make all | up | down | test | verify | audit | metrics | logs | clean
+# La suite es autocontenida: 'make test' no necesita Maven ni JDK instalados.
 
-DB_PASSWORD ?= Doctora2025
 
-.PHONY: up down test logs metrics clean verify audit docs-check
+.PHONY: all up down test logs metrics clean verify audit docs-check
 
+# Reproducción end-to-end en un solo comando.
+# Orden: validaciones estáticas -> infraestructura -> esquema -> suite -> auditoría.
+all: verify up docs-check test audit
+	@echo ""
+	@echo "=== Reproducción completa terminada ==="
+	@echo "API:      http://localhost:8080"
+	@echo "Swagger:  http://localhost:8080/swagger-ui.html"
+	@echo "Frontend: http://localhost:8000"
+
+# Levanta la infraestructura y espera a que los healthcheck estén en verde.
 up:
 	docker compose up --build -d
-	@echo "Sistema operativo. API: http://localhost:8080, Swagger: http://localhost:8080/swagger-ui.html, Frontend: http://localhost:8000"
+	@echo "Esperando a que postgres y redis pasen el healthcheck..."
+	@for i in $$(seq 1 30); do 		if [ "$$(docker inspect -f '{{.State.Health.Status}}' sigcbqr-postgres 2>/dev/null)" = "healthy" ] 		&& [ "$$(docker inspect -f '{{.State.Health.Status}}' sigcbqr-redis 2>/dev/null)" = "healthy" ]; then 			echo "Infraestructura lista."; exit 0; 		fi; 		sleep 2; 	done; 	echo "ERROR: los contenedores no alcanzaron el estado healthy en 60 s."; 	docker compose ps; exit 1
 
 down:
 	docker compose down
 
+# Suite del backend con cobertura. Autocontenida: levanta PostgreSQL y Redis de
+# prueba, ejecuta Maven en contenedor y limpia al terminar. No exige Maven ni
+# JDK instalados, en coherencia con el unico requisito que declara el README.
+# Para ejecutar en local con el wrapper: cd backend && ./mvnw verify
 test:
-	cd backend && TEST_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sigcbqr_test TEST_DATASOURCE_USERNAME=postgres TEST_DATASOURCE_PASSWORD=$(DB_PASSWORD) mvn clean test
+	@bash scripts/run-tests.sh
 
 logs:
 	docker compose logs -f
@@ -29,6 +43,12 @@ verify:
 	@echo ""
 	@echo "=== Índice de ADR ==="
 	@bash scripts/validate-adr.sh
+	@echo ""
+	@echo "=== Auditoría de SQL dinámico (con autotest del instrumento) ==="
+	@bash scripts/audit-sql-dynamic.sh
+	@echo ""
+	@echo "=== Digest de la entrega ==="
+	@python scripts/entrega-digest.py --check
 
 # Comprueba que el diccionario de datos no se haya quedado desfasado.
 # Necesita el contenedor de PostgreSQL en marcha.

@@ -46,7 +46,8 @@ public class ReservaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar reservas", description = "Obtiene reservas con paginación, búsqueda y filtro por estado")
+    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")
+    @Operation(summary = "Listar reservas", description = "Obtiene reservas con paginación, búsqueda y filtro por estado (solo staff)")
     public ResponseEntity<PageResponse<ReservaResponse>> listar(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "q", required = false) String q,
@@ -67,6 +68,15 @@ public class ReservaController {
         return ResponseEntity.ok(PageResponse.from(page));
     }
 
+    @GetMapping("/mis")
+    @Operation(summary = "Mis reservas", description = "Reservas del usuario autenticado")
+    public ResponseEntity<PageResponse<ReservaResponse>> mis(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PageableDefault(size = 10) Pageable pageable) {
+        var page = reservaRepository.findByUsuarioId(principal.id(), pageable).map(this::toResponse);
+        return ResponseEntity.ok(PageResponse.from(page));
+    }
+
     private ReservaResponse toResponse(Reserva reserva) {
         return ReservaResponse.builder()
                 .id(reserva.getId())
@@ -82,9 +92,15 @@ public class ReservaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','BIBLIOTECARIO')")
-    @Operation(summary = "Crear reserva", description = "Registra una nueva reserva de libro")
-    public ResponseEntity<ApiResponse> crear(@Valid @RequestBody ReservaRequest request) {
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Crear reserva", description = "Registra una nueva reserva de libro (staff para cualquier usuario; el estudiante solo puede reservarse a sí mismo)")
+    public ResponseEntity<ApiResponse> crear(@AuthenticationPrincipal UserPrincipal principal,
+                                             @Valid @RequestBody ReservaRequest request) {
+        boolean esStaff = "ADMIN".equals(principal.rol()) || "BIBLIOTECARIO".equals(principal.rol());
+        if (!esStaff && !request.getUsuarioId().equals(principal.id())) {
+            throw new AccessDeniedException("No puede crear una reserva para otro usuario");
+        }
+
         var usuario = usuarioRepository.findById(request.getUsuarioId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", request.getUsuarioId()));
         var libro = libroRepository.findById(request.getLibroId())

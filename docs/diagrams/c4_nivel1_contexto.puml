@@ -1,0 +1,22 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title C4 Nivel 1 - Diagrama de Contexto del Sistema SIGCB-QR
+
+Person(estudiante, "Estudiante", "Usuario que solicita préstamos, hace reservas y visualiza su historial")
+Person(bibliotecario, "Bibliotecario", "Gestiona catálogo, préstamos, devoluciones y reportes")
+Person(admin, "Administrador", "Administra usuarios, configuración y auditoría")
+
+System(sigcbqr, "SIGCB-QR", "Sistema Integral de Gestión Bibliotecaria con Códigos QR. Frontend BFF Laravel + API Spring Boot sobre PostgreSQL y Redis")
+
+System_Ext(base_datos, "PostgreSQL 16", "Base de datos relacional con 13 procedimientos almacenados")
+System_Ext(cache, "Redis 7", "Caché distribuida (solo caché, no cola de mensajes)")
+
+Rel(estudiante, sigcbqr, "Usa navegador web (HTTP)")
+Rel(bibliotecario, sigcbqr, "Usa navegador web (HTTP)")
+Rel(admin, sigcbqr, "Usa navegador web (HTTP)")
+
+Rel(sigcbqr, base_datos, "Lee y escribe (JDBC/ORM)")
+Rel(sigcbqr, cache, "Consultas de catálogo (cache-aside)")
+
+@enduml

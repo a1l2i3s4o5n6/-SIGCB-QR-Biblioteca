@@ -1,0 +1,19 @@
+Corridas analizadas: 5
+
+Corrida              VU max   Iter.   Pet.    Media  Mediana      p95  Errores
+------------------------------------------------------------------------------
+k6-50vu-run1.txt         50    2150   2151    3.93ms   3.64ms   5.56ms        0
+k6-50vu-run2.txt         50    2150   2151    3.35ms   3.21ms   4.72ms        0
+k6-50vu-run3.txt         50    2150   2151    2.79ms   2.56ms   4.66ms        0
+k6-50vu-run4.txt         50    2150   2151    3.99ms   2.95ms   7.58ms        0
+k6-50vu-run5.txt         50    2150   2151    3.19ms   2.85ms   5.23ms        0
+
+p95     : media=  5.55 ms  DE= 1.19  IC95%=[4.07, 7.03] ms  (+/-1.48)
+Media   : media=  3.45 ms  DE= 0.51  IC95%=[2.82, 4.08] ms  (+/-0.63)
+Mediana : media=  3.04 ms  DE= 0.41  IC95%=[2.54, 3.55] ms  (+/-0.51)
+
+Iteraciones totales : 10750
+Peticiones totales  : 10755
+Peticiones fallidas : 0
+Comprobaciones      : 21500/21500
+VU maximos          : {50} (el perfil exigido es 50)

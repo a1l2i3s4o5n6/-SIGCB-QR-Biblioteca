@@ -183,7 +183,7 @@ tal y la sanción vigente caduca más allá del umbral.
 
 ## 17. Calidad y verificación
 
-- **Suite backend**: `mvn verify` en contenedor → 55 pruebas, 0 fallos, 0
+- **Suite backend**: `mvn verify` en contenedor → 95 pruebas, 0 fallos, 0
   errores; checks JaCoCo cumplidos. Procedimiento en `COBERTURA.md`.
 - **Correcciones posteriores a la suite**: `librosDisponibles` en el contrato
   staff y `prestamosDevueltosPeriodo` scoped al estudiante (método

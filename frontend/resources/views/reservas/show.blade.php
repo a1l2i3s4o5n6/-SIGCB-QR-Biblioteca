@@ -10,7 +10,7 @@
                     class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition">
                     <i class="fas fa-arrow-left mr-1"></i> Volver
                 </a>
-                @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) && ($reserva['estado'] ?? '') === 'PENDIENTE')
+                @if ((($reserva['estado'] ?? '') === 'PENDIENTE') && in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO', 'ESTUDIANTE']))
                     <form method="POST" action="{{ route('reservas.cancelar', $reserva['id']) }}"
                         onsubmit="return confirm('¿Cancelar esta reserva?')">
                         @csrf

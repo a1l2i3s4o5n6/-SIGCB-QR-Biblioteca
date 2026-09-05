@@ -26,6 +26,20 @@
         </div>
     @endif
 
+    @php
+        $libroPreseleccionado = (int) request('libro', 0);
+        $tituloSeleccionado = trim((string) request('titulo', ''));
+    @endphp
+
+    @if ($libroPreseleccionado > 0)
+        <div class="mb-6 px-4 py-3 bg-primary-50 border border-primary-200 text-primary-700 text-sm rounded-lg flex items-center gap-2">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Libro seleccionado desde el QR:
+                <strong>{{ $tituloSeleccionado ?: '#' . $libroPreseleccionado }}</strong>. Pulsa <strong>Reservar</strong> para guardar tu reserva.
+            </span>
+        </div>
+    @endif
+
     <!-- Reservar un libro -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
         <h2 class="text-sm font-semibold text-gray-800 mb-3">
@@ -37,7 +51,7 @@
                 class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-400 bg-white">
                 <option value="">Selecciona un libro...</option>
                 @foreach ($libros as $libro)
-                    <option value="{{ $libro['id'] }}">{{ $libro['titulo'] ?? '' }}</option>
+                    <option value="{{ $libro['id'] }}" @selected((int) $libro['id'] === $libroPreseleccionado)>{{ $libro['titulo'] ?? '' }}</option>
                 @endforeach
             </select>
             <button type="submit"
@@ -47,7 +61,7 @@
         </form>
     </div>
 
-    <!-- Mis reservas -->
+    <!-- Mis reservas (tarjetas horizontales) -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="px-5 py-3 border-b border-gray-200 bg-gray-50">
             <h2 class="text-sm font-semibold text-gray-700">Mis reservas activas</h2>
@@ -59,56 +73,44 @@
                 <p class="text-sm">No tienes reservas.</p>
             </div>
         @else
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="text-left px-4 py-3 font-semibold text-gray-600">Libro</th>
-                            <th class="text-left px-4 py-3 font-semibold text-gray-600">Fecha</th>
-                            <th class="text-left px-4 py-3 font-semibold text-gray-600">Vence</th>
-                            <th class="text-left px-4 py-3 font-semibold text-gray-600">Posición</th>
-                            <th class="text-left px-4 py-3 font-semibold text-gray-600">Estado</th>
-                            <th class="text-right px-4 py-3 font-semibold text-gray-600">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach ($reservas as $reserva)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 text-gray-800">{{ $reserva['libroTitulo'] ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-600">
-                                    {{ $reserva['fechaReserva'] ? \Carbon\Carbon::parse($reserva['fechaReserva'])->format('d/m/Y') : '—' }}
-                                </td>
-                                <td class="px-4 py-3 text-gray-600">
-                                    {{ $reserva['fechaVencimiento'] ? \Carbon\Carbon::parse($reserva['fechaVencimiento'])->format('d/m/Y') : '—' }}
-                                </td>
-                                <td class="px-4 py-3 text-gray-600">{{ $reserva['posicionLista'] ?? '—' }}</td>
-                                <td class="px-4 py-3">
-                                    @php $estado = $reserva['estado'] ?? ''; @endphp
-                                    @if ($estado === 'PENDIENTE')
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Pendiente</span>
-                                    @elseif ($estado === 'CONFIRMADA')
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Confirmada</span>
-                                    @else
-                                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">{{ $estado }}</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-right">
-                                    @if ($estado === 'PENDIENTE')
-                                        <form method="POST" action="{{ route('estudiante.cancelar-reserva', $reserva['id']) }}"
-                                            onsubmit="return confirm('¿Cancelar esta reserva?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition">
-                                                <i class="fas fa-times mr-1"></i> Cancelar
-                                            </button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                @foreach ($reservas as $reserva)
+                    @php $estado = $reserva['estado'] ?? ''; @endphp
+                    <div class="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow transition flex flex-col">
+                        <div class="px-4 py-3 flex items-start justify-between gap-2 border-b border-gray-100">
+                            <p class="text-sm font-semibold text-gray-800 leading-snug">{{ $reserva['libroTitulo'] ?? '—' }}</p>
+                            @if ($estado === 'PENDIENTE')
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">Pendiente</span>
+                            @elseif ($estado === 'CONFIRMADA')
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-700">Confirmada</span>
+                            @else
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600">{{ $estado }}</span>
+                            @endif
+                        </div>
+                        <div class="px-4 py-3 space-y-1.5 text-xs text-gray-500 flex-1">
+                            <p><i class="fas fa-calendar-plus mr-1.5 text-gray-300"></i>Solicitada:
+                                {{ $reserva['fechaReserva'] ? \Carbon\Carbon::parse($reserva['fechaReserva'])->format('d/m/Y') : '—' }}</p>
+                            <p><i class="fas fa-hourglass-end mr-1.5 text-gray-300"></i>Vence:
+                                {{ $reserva['fechaVencimiento'] ? \Carbon\Carbon::parse($reserva['fechaVencimiento'])->format('d/m/Y') : '—' }}</p>
+                            <p><i class="fas fa-arrow-up mr-1.5 text-gray-300"></i>Posición en lista: {{ $reserva['posicionLista'] ?? '—' }}</p>
+                        </div>
+                        <div class="px-4 py-3 border-t border-gray-100">
+                            @if ($estado === 'PENDIENTE')
+                                <form method="POST" action="{{ route('estudiante.cancelar-reserva', $reserva['id']) }}"
+                                    onsubmit="return confirm('¿Eliminar esta reserva?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="w-full px-3 py-2 rounded-lg text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition">
+                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar reserva
+                                    </button>
+                                </form>
+                            @else
+                                <p class="text-center text-[11px] text-gray-400">Reserva {{ $estado === 'CONFIRMADA' ? 'confirmada' : 'cerrada' }}</p>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
             </div>
         @endif
     </div>

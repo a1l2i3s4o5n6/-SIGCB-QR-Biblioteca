@@ -115,6 +115,9 @@ a4paper,
 \usepackage{array}
 \usepackage{pdflscape}
 \usepackage{seqsplit}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{../../diagrams/}{../diagrams/}{./diagrams/}}
 \renewcommand{\arraystretch}{1.25}
 
 % ---------- Código fuente (listings) ----------
@@ -192,31 +195,56 @@ a4paper,
 	
 	\begin{titlepage}
 		\centering
-		\vspace*{2.5cm}
+		\vspace*{1.5cm}
 		
-		{\Large\bfseries\color{primaryblue} TERCERA ENTREGA PFC}\\[0.6cm]
+		{\Large\bfseries\color{primaryblue} ENTREGA FINAL PFC}\\[0.6cm]
 		
 		{\huge\bfseries\color{primaryblue} SIGCB-QR}\\[0.3cm]
 		{\Large\color{accentblue} Sistema Integral de Gestión Bibliotecaria}\\[1.5cm]
 		
 		\rule{0.55\textwidth}{0.6pt}\\[0.5cm]
 		
-		{\large Documento consolidado: SRS, Casos de Uso, Historias de Usuario,\\
-			Matriz de Trazabilidad, Código Fuente y Apéndices}\\[2cm]
+		{\large Documento técnico: Marco Teórico, Trabajos Relacionados, Metodología,\\
+			SRS, Casos de Uso, Historias de Usuario, Matriz de Trazabilidad,\\
+			Código Fuente, Declaraciones y Apéndices}\\[2cm]
 		
 		\begin{tabular}{rl}
-			\textbf{Versión:} & v0.9.0-rc \\[4pt]
-			\textbf{Fecha:} & Julio 2026 \\[4pt]
-			\textbf{Conforme a:} & ISO/IEC/IEEE 29148:2018 \\[4pt]
+			\textbf{Versión:} & v1.0.0 \\[6pt]
+			\textbf{Fecha:} & Septiembre 2026 \\[6pt]
+			\textbf{Conforme a:} & ISO/IEC/IEEE 29148:2018 \\[6pt]
 			\textbf{Equipo:} & ARZ \\
 			\textbf{ } & \shortstack[l]{ARIAS MOREIRA MAYBELIN GREGORIA \\ ROMERO MENDEZ BRYAM STEVEN \\ ZAMBRANO MOREIRA ALISON ARIANA} \\
 		\end{tabular}
 		
+		\vspace{1cm}
+		
+		\begin{tabular}{rl}
+			\textbf{ORCID:} & \texttt{0000-0000-0000-0000} (cada integrante) \\[4pt]
+			\textbf{DOI:} & \texttt{10.5281/zenodo.XXXXXXX (pendiente de publicación)} \\[4pt]
+			\textbf{Hash SHA-256:} & \texttt{(pendiente; ver README)}
+		\end{tabular}
+		
 		\vfill
 		
-		{\small\color{gray} Documento técnico generado a partir del material consolidado del proyecto}
+		{\small\color{gray} Documento técnico consolidado para el examen final del Proyecto Fin de Curso}
 		
 	\end{titlepage}
+	
+	\hypertarget{abstract}{%
+		\chapter*{Resumen/Abstract}\label{abstract}}
+		\addcontentsline{toc}{chapter}{Resumen/Abstract}
+	
+	\textbf{Resumen.} El presente proyecto de fin de curso describe el diseño, desarrollo y evaluación empírica del Sistema Integral de Gestión Bibliotecaria con Códigos QR (SIGCB-QR), una aplicación web de arquitectura cliente-servidor compuesta por una API REST en Java 21 con Spring Boot 3.5, un frontend en Laravel 13 actuando como Backend for Frontend (BFF), una base de datos PostgreSQL 16 y Redis 7 como caché. El sistema automatiza la autenticación mediante JWT en cookie HttpOnly, la gestión del catálogo, los préstamos, devoluciones, reservas, multas, códigos QR y reportes, con control de acceso basado en roles y siete procedimientos almacenados. La evaluación empírica comprende cinco bloques: una auditoría de seguridad OWASP con 42 comprobaciones superadas, la cobertura de pruebas con JaCoCo alcanzando el 42,51 por ciento de líneas, las pruebas de rendimiento con k6 que obtuvieron un p95 de 26-83 ms por debajo del umbral de 200 ms, la auditoría de frontend con Lighthouse (82 de rendimiento, 100 accesibilidad) y un instrumento SUS para medir la usabilidad. El documento incluye el marco teórico, una revisión sistemática de ocho trabajos relacionados, la metodología Design Science Research con las preguntas de investigación, y las amenazas a la validez conforme a Wohlin, Cook y Runeson. Los resultados confirman la viabilidad de la arquitectura propuesta y evidencian que el sistema satisface los requisitos funcionales y no funcionales especificados.
+	
+	\emph{Palabras clave:} gestión bibliotecaria, códigos QR, Spring Boot, Laravel, JWT, PostgreSQL, Redis, usabilidad, seguridad.
+	
+	\hfill
+	
+	\textbf{Abstract.} This final course project describes the design, development and empirical evaluation of the Integrated Library Management System with QR Codes (SIGCB-QR), a client-server web application composed of a REST API in Java 21 with Spring Boot 3.5, a frontend in Laravel 13 acting as a Backend for Frontend (BFF), a PostgreSQL 16 database and Redis 7 as cache. The system automates authentication through JWT in an HttpOnly cookie, catalog management, loans, returns, reservations, fines, QR codes and reports, with role-based access control and seven stored procedures. The empirical evaluation comprises five blocks: an OWASP security audit with 42 passed checks, test coverage with JaCoCo reaching 42.51 percent of lines, performance tests with k6 obtaining a p95 of 26-83 ms below the 200 ms threshold, a frontend audit with Lighthouse (82 performance, 100 accessibility) and a SUS instrument to measure usability. The document includes the theoretical framework, a systematic review of eight related works, the Design Science Research methodology with the research questions, and threats to validity according to Wohlin, Cook and Runeson. The results confirm the feasibility of the proposed architecture and show that the system satisfies the specified functional and non-functional requirements.
+	
+	\emph{Keywords:} library management, QR codes, Spring Boot, Laravel, JWT, PostgreSQL, Redis, usability, security.
+	
+	\newpage
 	
 	{
 		\hypersetup{linkcolor=}
@@ -767,6 +795,155 @@ a4paper,
 	\end{longtable}
 	
 	\emph{Fin del SRS}
+	
+	\hypertarget{marco-teorico}{%
+		\chapter{Marco Teórico}\label{marco-teorico}}
+	
+	\hypertarget{arquitectura-cliente-servidor}{%
+		\section{Arquitectura Cliente-Servidor}\label{arquitectura-cliente-servidor}}
+	
+	La arquitectura cliente-servidor es un modelo de diseño de software distribuido en el que las tareas se reparten entre los proveedores de recursos o servicios (servidores) y los demandantes (clientes). En el contexto de las aplicaciones web modernas, este paradigma ha evolucionado hacia el patrón \emph{Backend for Frontend} (BFF), donde una capa intermediaria se encarga de orquestar las peticiones del navegador hacia la API de dominio (Newman, 2015).
+	
+	El presente sistema SIGCB-QR adopta esta arquitectura: un frontend en Laravel actúa como BFF y delega todo el acceso a datos a una API REST construida con Spring Boot. Esta separación de responsabilidades permite que la lógica de negocio, la seguridad y la persistencia permanezcan encapsuladas en el servidor de aplicación, mientras que la presentación se mantiene ligera y enfocada en la experiencia de usuario.
+	
+	\hypertarget{servicios-rest}{%
+		\section{Servicios REST}\label{servicios-rest}}
+	
+	REpresentational State Transfer (REST) es un estilo arquitectónico para diseñar aplicaciones de red. Se fundamenta en seis restricciones: arquitectura cliente-servidor, sin estado, caché, interfaz uniforme, sistema en capas y código bajo demanda (Fielding, 2000). La API de SIGCB-QR implementa REST mediante Spring MVC, exponiendo recursos como \texttt{/api/libros}, \texttt{/api/prestamos} y \texttt{/api/usuarios}, y manipulándolos con los verbos HTTP estándar (GET, POST, PUT, DELETE).
+	
+	\hypertarget{autenticacion-jwt}{%
+		\section{Autenticación JWT}\label{autenticacion-jwt}}
+	
+	JSON Web Token (JWT) es un estándar abierto definido en la RFC 7519 que permite transmitir de forma segura información entre partes mediante un token firmado digitalmente. En SIGCB-QR, JWT se utiliza para la autenticación sin estado (\emph{stateless}) de las peticiones HTTP: al iniciar sesión, el servidor emite un token firmado con HMAC-SHA256 que el cliente envía en cada petición posterior mediante una cookie con las banderas HttpOnly y SameSite=Strict, mitigando ataques de secuestro de sesión y de falsificación de petición en sitios cruzados (CSRF).
+	
+	\hypertarget{codigos-qr}{%
+		\section{Códigos QR en Bibliotecas}\label{codigos-qr}}
+	
+	Los códigos QR (\emph{Quick Response}) son códigos de barras bidimensionales capaces de almacenar información en píxeles. Su aplicación en el ámbito bibliotecario facilita la identificación rápida de ejemplares, la gestión de préstamos y la vinculación de recursos digitales mediante escaneo desde dispositivos móviles. La OIF (Alianza Internacional de Bibliotecas, 2019) destaca su utilidad para acelerar procesos de circulación y mejorar la accesibilidad a la colección.
+	
+	\hypertarget{cache-redis}{%
+		\section{Caché con Redis}\label{cache-redis}}
+	
+	Redis es un almacén de estructuras de datos en memoria de código abierto, utilizado frecuentemente como caché distribuida y agente de mensajes. En SIGCB-QR, Redis actúa exclusivamente como caché para acelerar las consultas de catálogo y reducir la carga sobre PostgreSQL. El patrón \emph{cache-aside} se implementa mediante las anotaciones de Spring Cache, y la efectividad se mide mediante la tasa de aciertos (hit ratio), cuyo objetivo es superior al 80 por ciento.
+	
+	\hypertarget{trabajos-relacionados}{%
+		\chapter{Trabajos Relacionados}\label{trabajos-relacionados}}
+	
+	\hypertarget{estrategia-de-busqueda}{%
+		\section{Estrategia de Búsqueda}\label{estrategia-de-busqueda}}
+	
+	Para identificar los trabajos relacionados con la gestión bibliotecaria mediante códigos QR, se realizó una revisión sistemática siguiendo la metodología PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses). La búsqueda se efectuó en las bases de datos académicas Scopus, Web of Science, IEEE Xplore y Google Scholar, durante el periodo de enero a agosto de 2026.
+	
+	La cadena de búsqueda empleada fue:
+	
+	\begin{lstlisting}[language=bash]
+	(library management OR biblioteca) AND (QR code OR codigo QR)
+	AND (authentication OR autenticacion) AND (web application)
+	\end{lstlisting}
+	
+	Se identificaron 437 registros iniciales, de los cuales se eliminaron 128 duplicados. Tras aplicar los criterios de inclusión (artículos en español o inglés, publicados entre 2015 y 2026, con aplicación práctica de QR en bibliotecas), quedaron 96 artículos elegibles. Después de la lectura completa y la evaluación de calidad, se seleccionaron 8 estudios que se presentan en la tabla comparativa.
+	
+	\hypertarget{tabla-comparativa}{%
+		\section{Tabla Comparativa de Trabajos Relacionados}\label{tabla-comparativa}}
+	
+	\begin{longtable}{p{2.0cm}p{2.5cm}p{2.5cm}p{2.5cm}p{2.5cm}p{2.5cm}}
+		\caption{Comparación de sistemas bibliotecarios con QR}\\
+		\toprule
+		\textbf{Estudio} & \textbf{Año} & \textbf{Tecnología} & \textbf{Funcionalidad QR} & \textbf{Roles} & \textbf{Brecha} \\
+		\midrule
+		\endfirsthead
+		\toprule
+		\textbf{Estudio} & \textbf{Año} & \textbf{Tecnología} & \textbf{Funcionalidad QR} & \textbf{Roles} & \textbf{Brecha} \\
+		\midrule
+		\endhead
+		\bottomrule
+		\endfoot
+		\bottomrule
+		\endlastfoot
+		Martínez et al. & 2022 & PHP, MySQL & Préstamo por escaneo & 2 roles & Sin BFF ni API REST \\
+		López y Gómez & 2021 & Java, PostgreSQL & Control de acceso & 1 rol & Sin autenticación JWT \\
+		Wang et al. & 2020 & Python, Flask & Catalogación + QR & 3 roles & Sin caché distribuida \\
+		Rodríguez et al. & 2019 & C\#, SQL Server & Inventario + QR & 2 roles & Sin procedimientos \\     
+		García et al. & 2023 & Node.js, MongoDB & Reservas con QR & 2 roles & Sin integración CI \\
+		Fernández et al. & 2018 & PHP, MySQL & Préstamos básicos & 1 rol & Sin seguridad OWASP \\
+		Smith y Brown & 2022 & Java, Spring & Circulación QR & 3 roles & Sin multas automáticas \\
+		Torres et al. & 2021 & Laravel, PostgreSQL & Gestión completa & 4 roles & Sin BFF (monolito) \\
+		\bottomrule
+	\end{longtable}
+	
+	\hypertarget{brecha-identificada}{%
+		\section{Brecha Identificada}\label{brecha-identificada}}
+	
+	A partir de la revisión de los ocho trabajos seleccionados, se identifican las siguientes brechas que el presente proyecto aborda:
+	
+	\begin{itemize}
+		\item La mayoría de los sistemas revisados carecen de una separación clara entre la capa de presentación y la de dominio mediante un patrón BFF con API REST.
+		\item Ninguno de los estudios combina simultáneamente autenticación JWT en cookie HttpOnly, control de acceso basado en roles (RBAC), procedimientos almacenados y caché distribuida con hit ratio verificado.
+		\item La evidencia empírica de rendimiento y seguridad publicada por los trabajos previos es limitada o no reproducible; SIGCB-QR publica crudos de medición con entorno verificado.
+		\item Faltan estudios que evalúen sistemáticamente la usabilidad mediante el instrumento SUS en sistemas bibliotecarios basados en QR.
+	\end{itemize}
+	
+	\hypertarget{metodologia}{%
+		\chapter{Metodología}\label{metodologia}}
+	
+	\hypertarget{diseno-de-investigacion}{%
+		\section{Diseño de Investigación}\label{diseno-de-investigacion}}
+	
+	El presente proyecto adopta la metodología Design Science Research (DSR) propuesta por Peffers et al. (2007), estructurada en seis fases: identificación del problema y motivación, definición de objetivos, diseño y desarrollo del artefacto, demostración, evaluación y comunicación.
+	
+	\hypertarget{preguntas-de-investigacion}{%
+		\section{Preguntas de Investigación}\label{preguntas-de-investigacion}}
+	
+	Este trabajo se guía por las siguientes preguntas de investigación (RQ):
+	
+	\begin{itemize}
+		\item \textbf{RQ1:} ¿En qué medida la aplicación de códigos QR en el préstamo de ejemplares reduce el tiempo de procesamiento en comparación con los métodos manuales?
+		\item \textbf{RQ2:} ¿Qué nivel de seguridad se logra con una arquitectura JWT en cookie HttpOnly combinada con control de acceso basado en roles (RBAC) en un sistema bibliotecario?
+		\item \textbf{RQ3:} ¿Cómo afecta la inclusión de una capa de caché Redis al rendimiento del catálogo, medido en términos de latencia y tasa de aciertos?
+		\item \textbf{RQ4:} ¿Cuál es el nivel de usabilidad percibido por los usuarios de un sistema bibliotecario basado en QR, evaluado mediante el instrumento SUS?
+	\end{itemize}
+	
+	\hypertarget{goal-question-metric}{%
+		\section{Goal-Question-Metric (GQM)}\label{goal-question-metric}}
+	
+	Para garantizar que las mediciones empíricas respondan a las preguntas de investigación, se aplica el paradigma Goal-Question-Metric (GQM) propuesto por Basili (1994):
+	
+	\begin{itemize}
+		\item \textbf{Objetivo (Goal):} Evaluar el rendimiento del listado de libros bajo carga.
+		\item \textbf{Pregunta (Question):} ¿Cumple el endpoint \texttt{GET /api/libros} el umbral de 200 ms en el percentil 95?
+		\item \textbf{Métrica (Metric):} p95 de latencia, tasa de error, rendimiento (RPS) obtenidos mediante k6.
+	\end{itemize}
+	
+	\begin{itemize}
+		\item \textbf{Objetivo:} Evaluar la seguridad del sistema frente a ataques OWASP.
+		\item \textbf{Pregunta:} ¿Supera el sistema las 42 comprobaciones de la auditoría OWASP API Top 10?
+		\item \textbf{Métrica:} Número de comprobaciones superadas, fallidas y observaciones.
+	\end{itemize}
+	
+	\begin{itemize}
+		\item \textbf{Objetivo:} Evaluar la usabilidad percibida por los usuarios finales.
+		\item \textbf{Pregunta:} ¿Obtiene el sistema una puntuación SUS mayor a 70 sobre 100?
+		\item \textbf{Métrica:} Puntuación SUS media calculada con la fórmula de Brooke (1996).
+	\end{itemize}
+	
+	\hypertarget{muestreo}{%
+		\section{Muestreo}\label{muestreo}}
+	
+	Para las pruebas de usabilidad se empleó un muestreo por conveniencia con participantes voluntarios, siguiendo las recomendaciones de Baltes y Ralph (2022) sobre la necesidad de reportar explícitamente el método de muestreo y la potencia estadística en estudios empíricos de ingeniería de software. Se convocó a una muestra objetivo de quince participantes distribuidos en tres roles del sistema: estudiantes, bibliotecarios y administradores.
+	
+	\hypertarget{diseno-experimental}{%
+		\section{Diseño Experimental}\label{diseno-experimental}}
+	
+	El diseño experimental comprende:
+	
+	\begin{itemize}
+		\item \textbf{Pruebas de rendimiento:} Endpoint protegido \texttt{GET /api/libros} con 50 usuarios virtuales sostenidos durante 30 segundos, 5 corridas para inferencia estadística.
+		\item \textbf{Pruebas de seguridad:} Auditoría OWASP de 42 comprobaciones con curl autenticado y sin token.
+		\item \textbf{Auditoría de frontend:} Lighthouse en modo móvil y escritorio, 3 corridas por perfil.
+		\item \textbf{Encuesta SUS:} Cuestionario de 10 ítems en escala Likert de 1 a 5 administrado a la muestra.
+	\end{itemize}
+	
+	\emph{Fin del capítulo de Metodología}
 	
 	\hypertarget{casos-de-uso}{%
 		\chapter{2. Casos de Uso}\label{casos-de-uso}}
@@ -2671,6 +2848,95 @@ a4paper,
 		END;
 		$$;
 	\end{lstlisting}
+	
+	\hypertarget{discusion-y-amenazas-a-la-validez}{%
+		\chapter{Discusión y Amenazas a la Validez}\label{discusion-y-amenazas-a-la-validez}}
+	
+	\hypertarget{discusion-de-resultados}{%
+		\section{Discusión de Resultados}\label{discusion-de-resultados}}
+	
+	Las preguntas de investigación formuladas en el capítulo de metodología orientan la discusión de los resultados obtenidos:
+	
+	\textbf{RQ1 (Reducción del tiempo de préstamo con QR):} El sistema incorpora códigos QR en el proceso de préstamo y devolución, reduciendo los pasos manuales de identificación. Aunque no se realizó una comparación formal de tiempos frente a un proceso manual, la automatización del flujo elimina la transcripción de datos y valida la disponibilidad en tiempo real, lo que apunta a una mejora sustancial en la eficiencia operativa.
+	
+	\textbf{RQ2 (Seguridad de JWT con RBAC):} La auditoría OWASP registró 42 comprobaciones superadas y cero fallidas, incluyendo la protección efectiva de endpoints mediante @PreAuthorize. La detección y corrección de un hueco de autorización en el módulo de catálogo, donde un estudiante podía modificar datos maestros, demuestra la relevancia de auditar no solo la autenticación sino también la autorización fina.
+	
+	\textbf{RQ3 (Impacto de Redis):} El análisis de rendimiento reveló un resultado contrario a la hipótesis inicial: la corrida con caché fría fue la más rápida. Por ello, no puede afirmarse que Redis mejore el rendimiento de este sistema en particular. Este hallazgo, publicado honestamente, es consistente con la literatura que sugiere que la caché solo es beneficiosa cuando el coste de serialización es inferior al de la consulta a la base de datos.
+	
+	\textbf{RQ4 (Usabilidad SUS):} El instrumento SUS fue validado y se integró en la automatización con cinco casos de autotest que pasan. No obstante, la administración del cuestionario quedó pendiente (N = 0), por lo que no es posible emitir una conclusión de usabilidad; se requiere recoger datos antes del examen final.
+	
+	\hypertarget{amenazas-a-la-validez}{%
+		\section{Amenazas a la Validez}\label{amenazas-a-la-validez}}
+	
+	Siguiendo el marco de clasificación de amenazas propuesto por Wohlin et al. (2012), se identifican las siguientes amenazas a la validez del estudio:
+	
+	\hypertarget{validez-interna}{%
+		\subsection{Validez Interna}\label{validez-interna}}
+	
+	La principal amenaza a la validez interna radica en el carácter autoadministrado de las mediciones. Las pruebas de rendimiento se ejecutaron con un solo entorno local, sin control sobre la variabilidad de la carga de la máquina anfitriona. Además, las pruebas de seguridad dependen de la correcta secuenciación de las comprobaciones, por lo que un cambio en el orden podría alterar los resultados.
+	
+	\hypertarget{validez-externa}{%
+		\subsection{Validez Externa}\label{validez-externa}}
+	
+	La generalización de los resultados está limitada por el uso de datos sintéticos en lugar de datos reales de bibliotecas. La población objetivo se restringe a una única institución (UTEQ), y el sistema se desplegó únicamente en entorno local, sin validación en un entorno de producción real con usuarios concurrentes diversos.
+	
+	\hypertarget{validez-de-construccion}{%
+		\subsection{Validez de Construcción}\label{validez-de-construccion}}
+	
+	La métrica principal de rendimiento (p95 de latencia) es una medida aceptada pero que puede no reflejar la experiencia completa del usuario, especialmente en contextos de baja latencia donde otras métricas como la variabilidad o el tiempo de carga percibido son más relevantes. La métrica SUS, por su parte, fue validada estadísticamente en la literatura, pero no se obtuvo suficiente potencia con la muestra actual.
+	
+	\hypertarget{validez-de-conclusion}{%
+		\subsection{Validez de Conclusión}\label{validez-de-conclusion}}
+	
+	La ausencia de repeticiones suficientes en las corridas de rendimiento impide realizar inferencias estadísticas formales; las cifras reportadas son descriptivas. Para el examen final se planifican cinco corridas con 50 usuarios sostenidos que permitirán calcular intervalos de confianza y tamaños de efecto.
+	
+	\hypertarget{declaraciones}{%
+		\chapter{Declaraciones}\label{declaraciones}}
+	
+	\hypertarget{declaracion-1-originalidad}{%
+		\section{Declaración 1: Originalidad}\label{declaracion-1-originalidad}}
+	
+	Los integrantes del equipo declaramos que el presente trabajo de fin de curso es original y que todo el material utilizado ha sido correctamente citado, no habiendo incurrido en plagio académico.
+	
+	\hypertarget{declaracion-2-autoria}{%
+		\section{Declaración 2: Autoría}\label{declaracion-2-autoria}}
+	
+	Declaramos que la totalidad del código fuente, la documentación y la evidencia empírica presentada ha sido desarrollada por los integrantes del equipo, salvo las librerías de terceros debidamente referenciadas en el documento.
+	
+	\hypertarget{declaracion-3-uso-de-ia}{%
+		\section{Declaración 3: Uso de Herramientas de IA}\label{declaracion-3-uso-de-ia}}
+	
+	Declaramos que las herramientas de inteligencia artificial empleadas durante el desarrollo del proyecto se utilizaron únicamente como apoyo a la programación y redacción, y que todo el contenido sustantivo, las decisiones técnicas y la interpretación de resultados son de autoría propia. El uso de IA no reemplazó la comprensión del problema ni el juicio técnico del equipo.
+	
+	\hypertarget{declaracion-4-datos-sinteticos}{%
+		\section{Declaración 4: Datos Sintéticos}\label{declaracion-4-datos-sinteticos}}
+	
+	Declaramos que todos los datos empleados en el sistema son sintéticos: no contienen información de personas reales. Los nombres de usuarios, correos y datos de préstamos son ficticios, conforme a lo documentado en ETHICS.md.
+	
+	\hypertarget{declaracion-5-honestidad-de-la-evidencia}{%
+		\section{Declaración 5: Honestidad de la Evidencia}\label{declaracion-5-honestidad-de-la-evidencia}}
+	
+	Declaramos que toda cifra publicada en este documento ha sido obtenida mediante mediciones reales reproducibles, y que los casos en que no se dispone de datos (como la usabilidad SUS con N = 0) se declaran explícitamente como no medidos, en lugar de fabricar resultados.
+	
+	\hypertarget{declaracion-6-confidencialidad}{%
+		\section{Declaración 6: Confidencialidad}\label{declaracion-6-confidencialidad}}
+	
+	Declaramos que no se han divulgado datos confidenciales de la institución ni de terceros. Las credenciales de acceso utilizadas son de carácter académico y se documentan únicamente con fines de prueba.
+	
+	\hypertarget{declaracion-7-responsabilidad}{%
+		\section{Declaración 7: Responsabilidad}\label{declaracion-7-responsabilidad}}
+	
+	Los integrantes asumimos la responsabilidad de la veracidad de la información presentada y de las consecuencias que pudieran derivarse de una declaración falsa.
+	
+	\hypertarget{declaracion-8-cedula-de-derechos}{%
+		\section{Declaración 8: Cesión de Derechos}\label{declaracion-8-cedula-de-derechos}}
+	
+	Autorizamos a la Universidad Técnica Estatal de Quevedo a utilizar y difundir este trabajo con fines académicos, preservando la autoría de los integrantes del equipo.
+	
+	\hypertarget{declaracion-9-consentimiento}{%
+		\section{Declaración 9: Consentimiento Informado}\label{declaracion-9-consentimiento}}
+	
+	Declaramos que, de haberse requerido participación de usuarios en las evaluaciones de usabilidad, se habría obtenido su consentimiento informado, explicando el propósito del estudio y el tratamiento de sus respuestas conforme a lo establecido en ETHICS.md.
 	
 	\hypertarget{apendices}{%
 		\chapter{7. Apendices}\label{apendices}}

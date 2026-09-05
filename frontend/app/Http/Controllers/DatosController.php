@@ -75,7 +75,9 @@ class DatosController extends Controller
             }
         }
 
-        $data = $this->api->getReservas($params);
+        $data = in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO'])
+            ? $this->api->getReservas($params)
+            : $this->api->getReservasMias(['page' => $params['page'] ?? 0, 'size' => $params['size'] ?? 10]);
 
         return response()->view('reservas._tabla', array_merge(
             $this->vars($data),

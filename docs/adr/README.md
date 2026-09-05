@@ -30,6 +30,7 @@ deja de valer se marca como `Reemplazado por ADR-NNNN` y se escribe uno nuevo.
 | [0007](0007-anclar-imagenes-por-digest-sha256.md) | Anclar las imágenes de contenedor por digest SHA256 | Aceptado | 2026-08-30 |
 | [0008](0008-flyway-como-fuente-unica-del-esquema.md) | Flyway como fuente única del esquema de base de datos | Aceptado | 2026-08-30 |
 | [0009](0009-revocacion-de-jwt-por-lista-negra-de-jti.md) | Revocar JWT mediante lista negra de `jti` en base de datos | Aceptado | 2026-08-31 |
+| [0010](0010-csrf-deshabilitado-y-samesite-strict.md) | Deshabilitar la protección CSRF de Spring y apoyar la defensa en `SameSite=Strict` | Aceptado | 2026-09-03 |
 
 ## Cómo añadir un ADR
 

@@ -7,6 +7,62 @@ versionado sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [1.0.0] — 2026-09-04 — Versión publicada
+
+Primera versión estable. Cierra la única limitación de instrumento que quedaba
+declarada —el análisis dinámico de seguridad— y corrige los dos defectos que ese
+análisis destapó.
+
+### Añadido
+
+- **Análisis dinámico con OWASP ZAP**, en modo pasivo, sobre la API y el
+  frontend. Los crudos (`JSON`, `HTML` y `Markdown` de ambos sitios) y el plan
+  `zap.yaml` quedan versionados en `docs/mediciones/seguridad/zap/`, con el
+  procedimiento, la lectura de cada alerta y los límites del método en
+  `docs/mediciones/seguridad/zap/ZAP.md`. Resultado: **0 alertas altas** en
+  ambos sitios.
+- `GET /api/multas/mis` y `GET /api/reservas/mis`: cada usuario consulta lo suyo
+  sin necesidad de los permisos de personal.
+- Las reservas pendientes se **completan solas** al registrarse el préstamo del
+  libro reservado, con su asiento de auditoría y su notificación al usuario.
+- Dos pruebas de regresión nuevas, una por defecto corregido:
+  `AuthMeEndpointTest` y `RegisterValidationTest`.
+
+### Corregido
+
+- **`GET /api/auth/me` devolvía 500 en lugar de 401 sin token.** La regla
+  `permitAll` de `/api/auth/**` casaba antes que ninguna otra, así que la
+  petición llegaba al controlador con `@AuthenticationPrincipal` a `null` y el
+  método lanzaba `NullPointerException`. Se resuelve en `SecurityConfig`, donde
+  corresponde: decidir si una petición está autenticada es cosa del filtro, no
+  del método. Lo detectó ZAP; la auditoría propia no, porque solo sondea rutas
+  cuyo comportamiento correcto ya conoce.
+- **El registro devolvía 500 con campos más largos que su columna.** Los `@Size`
+  de `RegisterRequest` no declaraban máximos, de modo que la cadena superaba la
+  validación y fallaba al insertar, con `PSQLException` convertida en 500. Ahora
+  los máximos coinciden con los anchos de `V1__schema.sql` y la respuesta es 400
+  con el motivo. Este es el hallazgo que ZAP etiquetó como «Buffer Overflow».
+- **Multas, préstamos y reservas exponían los datos de todos los usuarios.** Los
+  listados generales no exigían rol y cualquier autenticado podía leerlos. Ahora
+  llevan `@PreAuthorize` de `ADMIN`/`BIBLIOTECARIO`, y el usuario corriente tiene
+  sus propios extremos `/mis`.
+- Dos macros de LaTeX partidas por un reemplazo mal escapado en un commit
+  anterior (`eq{REQ-U-002}` y `ef{sec:discusion}`), que el PDF imprimía como
+  texto suelto.
+
+### Cambiado
+
+- Cifras de cobertura actualizadas a la medición del 4 de septiembre: **95
+  pruebas**, 0 fallos, y 36,20 / 16,84 / 42,51 % de instrucción, rama y línea.
+  Se corrigen en `COBERTURA.md`, en el informe técnico, en `INCOSE.md` y en
+  `DATA-PROVENANCE.md`, que arrastraban cifras de hasta dos mediciones atrás.
+- JaCoCo 0.8.12 → 0.8.15, SpotBugs 4.8.6.6 → 4.10.4.0 y find-sec-bugs 1.13.0 →
+  1.14.0, con sus versiones extraídas a propiedades del `pom.xml`.
+- `docker-compose.override.yml` pasa a estar ignorado: los remapeos de puerto son
+  de cada máquina y versionarlos impone los conflictos de uno a todos.
+
+---
+
 ## [1.0.0-rc] — 2026-09-01 — Entrega Final
 
 Esta versión responde a las observaciones formales de la Tercera Entrega. Los

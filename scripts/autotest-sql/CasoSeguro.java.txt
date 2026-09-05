@@ -1,0 +1,5 @@
+class Bueno {
+    @Query("SELECT u FROM Usuario u " +
+           "WHERE u.nombre = :nombre AND u.activo = true")
+    List<Usuario> buscar(@Param("nombre") String nombre);
+}

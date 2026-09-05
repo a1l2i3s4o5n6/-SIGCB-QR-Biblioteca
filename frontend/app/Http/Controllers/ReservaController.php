@@ -13,6 +13,11 @@ class ReservaController extends Controller
 
     public function __construct(protected ApiClient $api) {}
 
+    private function esStaff(): bool
+    {
+        return in_array(session('rol'), self::STAFF);
+    }
+
     public function index(Request $request): View
     {
         $page = max(0, (int) $request->query('page', 0));
@@ -26,7 +31,9 @@ class ReservaController extends Controller
             }
         }
 
-        $data = $this->api->getReservas($params);
+        $data = $this->esStaff()
+            ? $this->api->getReservas($params)
+            : $this->api->getReservasMias(['page' => $page, 'size' => $size]);
 
         return view('reservas.index', [
             'reservas'    => $data['content'] ?? [],
@@ -41,36 +48,53 @@ class ReservaController extends Controller
 
     public function show(int $id): View
     {
-        $data = $this->api->getReservas(['size' => 500]);
+        $data = $this->esStaff()
+            ? $this->api->getReservas(['size' => 500])
+            : $this->api->getReservasMias(['size' => 500]);
         $reservas = $data['content'] ?? [];
         $reserva = collect($reservas)->firstWhere('id', $id) ?? [];
 
-        return view('reservas.show', ['reserva' => $reserva]);
+        return view('reservas.show', [
+            'reserva' => $reserva,
+            'esStaff' => $this->esStaff(),
+        ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        abort_unless(in_array(session('rol'), self::STAFF), 403, 'No tienes permisos para registrar reservas.');
+        $esStaff = $this->esStaff();
 
-        return view('reservas.create', $this->formData());
+        $data = $this->formData();
+
+        $data['esStaff'] = $esStaff;
+
+        // Prefill libro desde ?libro=X (ej. al escanear QR)
+        $libroId = (int) $request->query('libro', 0) ?: null;
+        $data['prefillLibroId'] = $libroId;
+
+        // El estudiante solo puede reservar para sí mismo.
+        $data['currentUserId'] = (int) (session('user.id') ?? 0);
+        $data['currentUserName'] = session('user.nombre', '');
+
+        return view('reservas.create', $data);
     }
 
     public function store(Request $request): RedirectResponse
     {
-        abort_unless(in_array(session('rol'), self::STAFF), 403);
+        $esStaff = $this->esStaff();
 
         $request->validate([
-            'usuarioId' => ['required', 'integer'],
             'libroId'   => ['required', 'integer'],
         ]);
 
-        try {
-            $this->api->crearReserva(
-                (int) $request->input('usuarioId'),
-                (int) $request->input('libroId')
-            );
+        // El estudiante solo puede crear su propia reserva (el backend lo refuerza también).
+        $usuarioId = $esStaff ? (int) $request->input('usuarioId') : (int) (session('user.id') ?? 0);
 
-            return redirect()->route('reservas.index')
+        try {
+            $this->api->crearReserva($usuarioId, (int) $request->input('libroId'));
+
+            $redirect = $esStaff ? route('reservas.index') : route('dashboard');
+            return redirect($redirect)
                 ->with('success', 'Reserva registrada exitosamente.');
         } catch (\Exception $e) {
             return back()->withInput()->withErrors(['error' => $e->getMessage()]);
@@ -79,8 +103,6 @@ class ReservaController extends Controller
 
     public function cancelar(int $id): RedirectResponse
     {
-        abort_unless(in_array(session('rol'), self::STAFF), 403);
-
         try {
             $this->api->cancelarReserva($id);
             return redirect()->route('reservas.index')

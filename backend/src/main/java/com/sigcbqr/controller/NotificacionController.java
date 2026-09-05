@@ -4,8 +4,8 @@ import com.sigcbqr.model.dto.request.NotificacionRequest;
 import com.sigcbqr.model.dto.response.ApiResponse;
 import com.sigcbqr.model.dto.response.NotificacionResponse;
 import com.sigcbqr.model.dto.response.PageResponse;
-import com.sigcbqr.security.UserPrincipal;
 import com.sigcbqr.service.NotificacionService;
+import com.sigcbqr.security.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -58,16 +59,10 @@ public class NotificacionController {
     }
 
     @PutMapping("/{id}/leida")
-    @Operation(summary = "Marcar como leída")
+    @Operation(summary = "Marcar como leída", description = "Marca como leída una notificación del usuario autenticado")
     public ResponseEntity<ApiResponse> marcarLeida(@AuthenticationPrincipal UserPrincipal principal,
-                                                    @PathVariable Long id) {
-        var notificacion = notificacionService.obtenerPorId(id);
-        if ("ESTUDIANTE".equals(principal.rol())
-                && !principal.id().equals(notificacion.getUsuarioId())) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "No tiene acceso a esta notificación");
-        }
-        notificacionService.marcarLeida(id);
+                                                   @PathVariable Long id) {
+        notificacionService.marcarLeidaSiEsPropia(id, principal.id());
         return ResponseEntity.ok(ApiResponse.success("Notificación marcada como leída", null));
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
@@ -27,6 +28,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             "GROUP BY FUNCTION('date', r.createdAt) ORDER BY FUNCTION('date', r.createdAt)")
     List<Object[]> countReservasPorDia(LocalDateTime inicio, LocalDateTime fin);
     boolean existsByLibroIdAndEstado(Long libroId, String estado);
+    Optional<Reserva> findByLibroIdAndUsuarioIdAndEstado(Long libroId, Long usuarioId, String estado);
 
     @Override
     @EntityGraph(attributePaths = {"usuario", "libro"})

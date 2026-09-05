@@ -23,8 +23,13 @@ class EstudianteController extends Controller
         $size = min(50, max(5, (int) $request->query('size', 10)));
 
         $params = ['page' => $page, 'size' => $size];
-        if ($request->filled('estado')) {
-            $params['estado'] = $request->query('estado');
+        if ($request->has('estado')) {
+            $estado = (string) $request->query('estado', '');
+            if ($estado !== '') {
+                $params['estado'] = $estado;
+            }
+        } else {
+            $params['estado'] = 'ACTIVO';
         }
 
         $data = $this->api->misPrestamos($params);
@@ -60,7 +65,7 @@ class EstudianteController extends Controller
 
         $params = ['page' => $page, 'size' => $size];
 
-        $data = $this->api->misReservas($params);
+        $data = $this->api->getReservasMias($params);
         $libros = $this->api->getLibros(['size' => 500]);
 
         return view('estudiante.mis-reservas', [
@@ -72,6 +77,29 @@ class EstudianteController extends Controller
             'totalPages'  => $data['totalPages'] ?? 0,
             'first'       => $data['first'] ?? true,
             'last'        => $data['last'] ?? true,
+        ]);
+    }
+
+    public function escaneoQr(Request $request): View
+    {
+        $this->authorizeEstudiante();
+
+        $codigo = trim((string) $request->query('codigo', ''));
+        $resultado = null;
+        $error = null;
+
+        if ($codigo !== '') {
+            try {
+                $resultado = $this->api->validarQr($codigo);
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
+            }
+        }
+
+        return view('estudiante.escaneo-qr', [
+            'codigo'    => $codigo,
+            'resultado' => $resultado,
+            'error'     => $error,
         ]);
     }
 

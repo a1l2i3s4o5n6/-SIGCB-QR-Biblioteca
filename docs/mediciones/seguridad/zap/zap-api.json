@@ -1,0 +1,2537 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.17.0",
+	"@generated": "Fri, 4 Sept 2026 00:08:29",
+	"created": "2026-09-04T00:08:29.433320009Z",
+	"insights":[
+		{
+			"level": "Low",
+			"reason": "Warning",
+			"site": "",
+			"key": "insight.log.error",
+			"description": "ZAP errors logged - see the zap.log file for details",
+			"statistic": "4"
+		},
+		{
+			"level": "Low",
+			"reason": "Warning",
+			"site": "",
+			"key": "insight.log.warn",
+			"description": "ZAP warnings logged - see the zap.log file for details",
+			"statistic": "4"
+		},
+		{
+			"level": "Low",
+			"reason": "Exceeded High",
+			"site": "http://api:8080",
+			"key": "insight.code.4xx",
+			"description": "Percentage of responses with status code 4xx",
+			"statistic": "99"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.code.2xx",
+			"description": "Percentage of responses with status code 2xx",
+			"statistic": "1"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.ctype.application/json",
+			"description": "Percentage of endpoints with content type application/json",
+			"statistic": "1"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.ctype.application/problem+json",
+			"description": "Percentage of endpoints with content type application/problem+json",
+			"statistic": "99"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.method.DELETE",
+			"description": "Percentage of endpoints with method DELETE",
+			"statistic": "4"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.method.GET",
+			"description": "Percentage of endpoints with method GET",
+			"statistic": "65"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.method.POST",
+			"description": "Percentage of endpoints with method POST",
+			"statistic": "17"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.method.PUT",
+			"description": "Percentage of endpoints with method PUT",
+			"statistic": "12"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.endpoint.total",
+			"description": "Count of total endpoints",
+			"statistic": "217"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://api:8080",
+			"key": "insight.response.slow",
+			"description": "Percentage of slow responses",
+			"statistic": "2"
+		}
+	],
+	"site":[ 
+		{
+			"@name": "http://api:8080",
+			"@host": "api",
+			"@port": "8080",
+			"@ssl": "false",
+			"alerts": [ 
+				{
+					"pluginid": "30001",
+					"alertRef": "30001",
+					"alert": "Buffer Overflow",
+					"name": "Buffer Overflow",
+					"riskcode": "2",
+					"confidence": "2",
+					"riskdesc": "Medium (Medium)",
+					"desc": "<p>Buffer overflow errors are characterized by the overwriting of memory spaces of the background web process, which should have never been modified intentionally or unintentionally. Overwriting values of the IP (Instruction Pointer), BP (Base Pointer) and other registers causes exceptions, segmentation faults, and other process errors to occur. Usually these errors end execution of the application in an unexpected way.</p>",
+					"instances":[ 
+						{
+							"id": "13896",
+							"uri": "http://api:8080/api/auth/register",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/register ()({nombre,email,password,telefono,rolId})",
+							"method": "POST",
+							"param": "rolId",
+							"attack": "UtauIHLuNgZyehHLfZyHSnCWCuuqvVPtRbcGBBMgdeYpVXOpxXRqAxFpOLRoDlBkhDwfFwfOwtwUWulZQyIFOoRPOUsgoxgvQrylCSfmgnaRutQVjSATorHiBrnYyOHDywEoruwunwLPSDRwfIyuLvnXgPlSJyogMQWxfAqHZoMwWmLdfMNFucBcnFohGbNyUJhqRdhxGgyWLcVmsXbUAOYgfJnfoBQqZxnOkxakgyLSyWrqAayBOQlsQdmrwvUKEscPLASElqSUecROmGdClpdXLIKxPYUxFsFxsvLXURMOIlGBNQxTCkLbDYOrxrPgIYoefjUrLCAQqkTUXOjGxkmIqeQskOSuTkEPRnxtPILVjjxjmMLLlvJweHCIHbDIALbMgHygGAYpBYhNmxPCTCPYopOyGoeTlRqTmIHysEZKxcuHuyFNUFMGHsrmNmpWIPLfVMSElDcDKJoWbMCVGRpNGefFFnVXWUiQNIRDHYrUnyNGkAZgbkZHhMMGCelGHSICofWqqBMJcScgFUMirVxcnIVJUuTSWJfvwYPNaYEWntsmGRYawciInBpxnhaOXLxSNfdFNDuhNEdmWbrTjaTDewnkhcDqrTKPbFklTtXjoGRTBlFLgkaDYRgBBKYGgIetdyBeyXfwmTqNwxLTBoXrmdTpKKZrFyjpLicUEEVwGOCrkOwxYNhcjCdjLYwqKUChxpXmkJcrMdBbhevSNkNAalUBiNFCDwkiIXCCQDQAOLjWtZldRcAUvPKmhhyvMjQLNdRjDkQYwSaFBJcDnLWnRoSouMVwnLiSEuUQiNqSusaNxPIKgjVMdodpHPwEpfhQpAbpommUQmBVEdbKtIAgonASRHBBFXsXKEWJNAInqHuKSVmLkrQkygMBmDjtveSAqfnaJBndPmQBaSDLmwhyasMSkKymgoYGTDYcnQVKdXxOgAJVpaJikshclGxhKjEIVuSVJUrdjKBSTaiWirVTbsvRaAMRduDLyPOWXLGVHapcmdgoRbFOuaPWetLnbZaAJwibDNwepbfHaZtxFIswnRlMsZuGSwVQDfSyWqDaoZKUcVtxsejEIwnxZCFLWrfQMHtDTwOjvhwXWunQppBdHfVKJSdEggGyhtFIHiQKkHAFEXchfNClJMGHgaXWUjEPYpEvpyGDLLrjfvIfHcFkRcXrDItKQEWyOSkXWEVSwVsPryhhQyaJOfRmgvVcEBCXxcSrFHTinJgqGpGeTqxMSUgTQNeVfvdeaxJRAYOPfmjeOQKcIgEMljnEZvMpuSnxSjDcvVGdFcQWKUsWKgNJOiDIqRAaEguOdYTDjBTZYUQRtvmCjlFsSfEZCsaDscrorFxUUkfvSFtLrGhdemiGZwKpQXhaVlLOCUsuCHCkSJUYgwPWNBrZXnNDamxsPLAZHXqFmSVHwoDGSFSgnKNvReNaFXicPEHFVsaSjLTystCZrMKDEZvNfPSOAHLEhxohtIDcXCjIZHpqBPGawoxhQLQnahwiLjlZXKOqDbytQErjPCiBTcXmFZNdrjBjFLlAdIyHUawEBjoOJhGmCFtTEcIodIXEbiEdjguQqnNqDSRmsPXSOkoiOIjqRidPrTYYBwDnIKctgPQLgpiSbcKsuLGPOykwlvbGNSCdwUHCkUvDDcOyaoRZgtweOBjGkAsdrtAENLSGZwDpknDPoglkKnrIwrHOirDYjRvByCroCWFnoOOJPRRLyhnUSgWYXtLZZBcpAnnkCBOwXLyujnaVRpmnBaTVbQlBhTFRtcVksVARbQmLvjWsIqqWUKYdBEdpVErkyDNkZCoVLMvTxiaLwLbkmGBQuaRwbucWorvgyZQapTinRTsTMkRElPAWfWhNwpUOVbnoVTrocCWAtXdfesWepAtqHcTsmOAfbomvLZcJqggbvJcNGtMhOhbgqiaQCstveSmfaxWyvGFkLLAPESNCQEVgdIsVWAVFalarZsPWrEfZPmrKFGPXDtRIbhUIgHXSSehtdIZACJSajXhnplhXoAZuobJyHyGIJKDbRDjASCVsiepZptJFIfJccovNQbRnKPaWwLyfwjuPXmVuwgUFXNZWrIyKZdtJktvNxZdyFKkp",
+							"evidence": "Connection: close",
+							"otherinfo": "Potential Buffer Overflow. The script closed the connection and threw a 500 Internal Server Error."
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "<p>Rewrite the background program using proper return length checking. This will require a recompile of the background executable.</p>",
+					"otherinfo": "<p>Potential Buffer Overflow. The script closed the connection and threw a 500 Internal Server Error.</p>",
+					"reference": "<p>https://owasp.org/www-community/attacks/Buffer_overflow_attack</p>",
+					"cweid": "120",
+					"wascid": "7",
+					"sourceid": "13976"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-2",
+					"alert": "A Server Error response code was returned by the server",
+					"name": "A Server Error response code was returned by the server",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A response code of 500 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "1286",
+							"uri": "http://api:8080/api/auth/register",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/register ()({nombre,email,password,telefono,rolId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "1315"
+				},
+				{
+					"pluginid": "90004",
+					"alertRef": "90004-1",
+					"alert": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+					"name": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+					"riskcode": "1",
+					"confidence": "2",
+					"riskdesc": "Low (Medium)",
+					"desc": "<p>Cross-Origin-Resource-Policy header is an opt-in header designed to counter side-channels attacks like Spectre. Resource should be specifically set as shareable amongst different origins.</p>",
+					"instances":[ 
+						{
+							"id": "1",
+							"uri": "http://api:8080/api-docs",
+							"nodeName": "http:\/\/api:8080\/api-docs",
+							"method": "GET",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "120",
+							"uri": "http://api:8080/api/auth/logout",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/logout",
+							"method": "POST",
+							"param": "Cross-Origin-Resource-Policy",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "2",
+					"systemic": false,
+					"solution": "<p>Ensure that the application/web server sets the Cross-Origin-Resource-Policy header appropriately, and that it sets the Cross-Origin-Resource-Policy header to 'same-origin' for all web pages.</p><p>'same-site' is considered as less secured and should be avoided.</p><p>If resources must be shared, set the header to 'cross-origin'.</p><p>If possible, ensure that the end user uses a standards-compliant and modern web browser that supports the Cross-Origin-Resource-Policy header (https://caniuse.com/mdn-http_headers_cross-origin-resource-policy).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy</p>",
+					"cweid": "693",
+					"wascid": "14",
+					"sourceid": "1"
+				},
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-1",
+					"alert": "A Client Error response code was returned by the server",
+					"name": "A Client Error response code was returned by the server",
+					"riskcode": "0",
+					"confidence": "3",
+					"riskdesc": "Informational (High)",
+					"desc": "<p>A response code of 401 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "19",
+							"uri": "http://api:8080/api/categorias/10",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13687",
+							"uri": "http://api:8080/api/categorias/10/",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "16",
+							"uri": "http://api:8080/api/editoriales/10",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13705",
+							"uri": "http://api:8080/api/editoriales/10/",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "14",
+							"uri": "http://api:8080/api/libros/10",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13706",
+							"uri": "http://api:8080/api/libros/10/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "95",
+							"uri": "http://api:8080/api/reservas/10",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13699",
+							"uri": "http://api:8080/api/reservas/10/",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "4",
+							"uri": "http://api:8080/api/usuarios/10",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13701",
+							"uri": "http://api:8080/api/usuarios/10/",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10\/",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "144",
+							"uri": "http://api:8080",
+							"nodeName": "http:\/\/api:8080",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13715",
+							"uri": "http://api:8080/",
+							"nodeName": "http:\/\/api:8080\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "96",
+							"uri": "http://api:8080/852044903617926102",
+							"nodeName": "http:\/\/api:8080\/852044903617926102",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "162",
+							"uri": "http://api:8080/api",
+							"nodeName": "http:\/\/api:8080\/api",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13800",
+							"uri": "http://api:8080/api-docs/",
+							"nodeName": "http:\/\/api:8080\/api-docs\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13717",
+							"uri": "http://api:8080/api/",
+							"nodeName": "http:\/\/api:8080\/api\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "97",
+							"uri": "http://api:8080/api/6038247929212166945",
+							"nodeName": "http:\/\/api:8080\/api\/6038247929212166945",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "94",
+							"uri": "http://api:8080/api/auditoria?usuarioId=10&desde=desde&hasta=hasta&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/auditoria (desde,hasta,pageable,usuarioId)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13718",
+							"uri": "http://api:8080/api/auditoria/",
+							"nodeName": "http:\/\/api:8080\/api\/auditoria\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "195",
+							"uri": "http://api:8080/api/auth",
+							"nodeName": "http:\/\/api:8080\/api\/auth",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13722",
+							"uri": "http://api:8080/api/auth/",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "98",
+							"uri": "http://api:8080/api/auth/3724397710631937142",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/3724397710631937142",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "15468",
+							"uri": "http://api:8080/api/auth/actuator/health",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/actuator\/health",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "93",
+							"uri": "http://api:8080/api/auth/me",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/me",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13721",
+							"uri": "http://api:8080/api/auth/me/",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/me\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "230",
+							"uri": "http://api:8080/api/autores",
+							"nodeName": "http:\/\/api:8080\/api\/autores",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "41",
+							"uri": "http://api:8080/api/autores?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/autores (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13723",
+							"uri": "http://api:8080/api/autores/",
+							"nodeName": "http:\/\/api:8080\/api\/autores\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "99",
+							"uri": "http://api:8080/api/autores/7556817103998963816",
+							"nodeName": "http:\/\/api:8080\/api\/autores\/7556817103998963816",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "92",
+							"uri": "http://api:8080/api/carreras?facultadId=10",
+							"nodeName": "http:\/\/api:8080\/api\/carreras (facultadId)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13725",
+							"uri": "http://api:8080/api/carreras/",
+							"nodeName": "http:\/\/api:8080\/api\/carreras\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "260",
+							"uri": "http://api:8080/api/categorias",
+							"nodeName": "http:\/\/api:8080\/api\/categorias",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "39",
+							"uri": "http://api:8080/api/categorias?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/categorias (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13727",
+							"uri": "http://api:8080/api/categorias/",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "100",
+							"uri": "http://api:8080/api/categorias/2089205490134518044",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/2089205490134518044",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "91",
+							"uri": "http://api:8080/api/configuracion",
+							"nodeName": "http:\/\/api:8080\/api\/configuracion",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13730",
+							"uri": "http://api:8080/api/configuracion/",
+							"nodeName": "http:\/\/api:8080\/api\/configuracion\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "101",
+							"uri": "http://api:8080/api/configuracion/3374302808347702750",
+							"nodeName": "http:\/\/api:8080\/api\/configuracion\/3374302808347702750",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "288",
+							"uri": "http://api:8080/api/dashboard",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13734",
+							"uri": "http://api:8080/api/dashboard/",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "102",
+							"uri": "http://api:8080/api/dashboard/3691079327144273395",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/3691079327144273395",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "90",
+							"uri": "http://api:8080/api/dashboard/resumen?desde=desde&hasta=hasta",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/resumen (desde,hasta)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13732",
+							"uri": "http://api:8080/api/dashboard/resumen/",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/resumen\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "89",
+							"uri": "http://api:8080/api/dashboard/stats",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/stats",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13733",
+							"uri": "http://api:8080/api/dashboard/stats/",
+							"nodeName": "http:\/\/api:8080\/api\/dashboard\/stats\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "307",
+							"uri": "http://api:8080/api/editoriales",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "37",
+							"uri": "http://api:8080/api/editoriales?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13737",
+							"uri": "http://api:8080/api/editoriales/",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "103",
+							"uri": "http://api:8080/api/editoriales/3965418308347045245",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/3965418308347045245",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "88",
+							"uri": "http://api:8080/api/facultades",
+							"nodeName": "http:\/\/api:8080\/api\/facultades",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13736",
+							"uri": "http://api:8080/api/facultades/",
+							"nodeName": "http:\/\/api:8080\/api\/facultades\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "329",
+							"uri": "http://api:8080/api/inventario",
+							"nodeName": "http:\/\/api:8080\/api\/inventario",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "85",
+							"uri": "http://api:8080/api/inventario?estado=estado",
+							"nodeName": "http:\/\/api:8080\/api\/inventario (estado)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13739",
+							"uri": "http://api:8080/api/inventario/",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "104",
+							"uri": "http://api:8080/api/inventario/4333057273583603930",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/4333057273583603930",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "87",
+							"uri": "http://api:8080/api/inventario/buscar?codigo=codigo",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/buscar (codigo)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13742",
+							"uri": "http://api:8080/api/inventario/buscar/",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/buscar\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "86",
+							"uri": "http://api:8080/api/inventario/disponibles?libroId=10",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/disponibles (libroId)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13741",
+							"uri": "http://api:8080/api/inventario/disponibles/",
+							"nodeName": "http:\/\/api:8080\/api\/inventario\/disponibles\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "363",
+							"uri": "http://api:8080/api/libros",
+							"nodeName": "http:\/\/api:8080\/api\/libros",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "35",
+							"uri": "http://api:8080/api/libros?q=q&categoriaId=10&editorialId=10&anio=10&soloDisponibles=true&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/libros (anio,categoriaId,editorialId,pageable,q,soloDisponibles)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13744",
+							"uri": "http://api:8080/api/libros/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "12",
+							"uri": "http://api:8080/api/libros/10",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13748",
+							"uri": "http://api:8080/api/libros/10/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "105",
+							"uri": "http://api:8080/api/libros/3884009955334154835",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/3884009955334154835",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "84",
+							"uri": "http://api:8080/api/libros/buscar?q=q&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/buscar (pageable,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13745",
+							"uri": "http://api:8080/api/libros/buscar/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/buscar\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "408",
+							"uri": "http://api:8080/api/multas",
+							"nodeName": "http:\/\/api:8080\/api\/multas",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "81",
+							"uri": "http://api:8080/api/multas?pagada=true&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/multas (pagada,pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13750",
+							"uri": "http://api:8080/api/multas/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "434",
+							"uri": "http://api:8080/api/multas/10",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13753",
+							"uri": "http://api:8080/api/multas/10/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "107",
+							"uri": "http://api:8080/api/multas/10/9115247226695845302",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/10\/9115247226695845302",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "106",
+							"uri": "http://api:8080/api/multas/3460918175525437511",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/3460918175525437511",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "83",
+							"uri": "http://api:8080/api/multas/mis?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/mis (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13752",
+							"uri": "http://api:8080/api/multas/mis/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/mis\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "457",
+							"uri": "http://api:8080/api/multas/usuario",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/usuario",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13755",
+							"uri": "http://api:8080/api/multas/usuario/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/usuario\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "82",
+							"uri": "http://api:8080/api/multas/usuario/10?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/usuario\/10 (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13757",
+							"uri": "http://api:8080/api/multas/usuario/10/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/usuario\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "108",
+							"uri": "http://api:8080/api/multas/usuario/8782514334481481488",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/usuario\/8782514334481481488",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "488",
+							"uri": "http://api:8080/api/notificaciones",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "32",
+							"uri": "http://api:8080/api/notificaciones?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13759",
+							"uri": "http://api:8080/api/notificaciones/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "515",
+							"uri": "http://api:8080/api/notificaciones/10",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13760",
+							"uri": "http://api:8080/api/notificaciones/10/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "110",
+							"uri": "http://api:8080/api/notificaciones/10/8912992273584471668",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10\/8912992273584471668",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "109",
+							"uri": "http://api:8080/api/notificaciones/4523020563376323225",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/4523020563376323225",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "80",
+							"uri": "http://api:8080/api/notificaciones/no-leidas",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/no-leidas",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13764",
+							"uri": "http://api:8080/api/notificaciones/no-leidas/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/no-leidas\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "79",
+							"uri": "http://api:8080/api/notificaciones/todas?leida=true&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/todas (leida,pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13762",
+							"uri": "http://api:8080/api/notificaciones/todas/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/todas\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "615",
+							"uri": "http://api:8080/api/prestamos",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "30",
+							"uri": "http://api:8080/api/prestamos?estado=estado&q=q&desde=desde&hasta=hasta&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos (desde,estado,hasta,pageable,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13768",
+							"uri": "http://api:8080/api/prestamos/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "76",
+							"uri": "http://api:8080/api/prestamos/10",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13765",
+							"uri": "http://api:8080/api/prestamos/10/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "112",
+							"uri": "http://api:8080/api/prestamos/10/721492380945491583",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/721492380945491583",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "111",
+							"uri": "http://api:8080/api/prestamos/974254184070843426",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/974254184070843426",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "78",
+							"uri": "http://api:8080/api/prestamos/mis?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/mis (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13766",
+							"uri": "http://api:8080/api/prestamos/mis/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/mis\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "640",
+							"uri": "http://api:8080/api/prestamos/usuario",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/usuario",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13769",
+							"uri": "http://api:8080/api/prestamos/usuario/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/usuario\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "77",
+							"uri": "http://api:8080/api/prestamos/usuario/10?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/usuario\/10 (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13770",
+							"uri": "http://api:8080/api/prestamos/usuario/10/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/usuario\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "113",
+							"uri": "http://api:8080/api/prestamos/usuario/751566077171702573",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/usuario\/751566077171702573",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
+							"uri": "http://api:8080/api/qr-codigos",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13773",
+							"uri": "http://api:8080/api/qr-codigos/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "673",
+							"uri": "http://api:8080/api/qr-codigos/10",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13775",
+							"uri": "http://api:8080/api/qr-codigos/10/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "115",
+							"uri": "http://api:8080/api/qr-codigos/10/5150006572334606228",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/5150006572334606228",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "114",
+							"uri": "http://api:8080/api/qr-codigos/3728339868720634376",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/3728339868720634376",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "725",
+							"uri": "http://api:8080/api/qr-codigos/libro",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/libro",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13778",
+							"uri": "http://api:8080/api/qr-codigos/libro/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/libro\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "75",
+							"uri": "http://api:8080/api/qr-codigos/libro/10",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/libro\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13777",
+							"uri": "http://api:8080/api/qr-codigos/libro/10/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/libro\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "116",
+							"uri": "http://api:8080/api/qr-codigos/libro/560311230533703315",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/libro\/560311230533703315",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "750",
+							"uri": "http://api:8080/api/reportes",
+							"nodeName": "http:\/\/api:8080\/api\/reportes",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13781",
+							"uri": "http://api:8080/api/reportes/",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "117",
+							"uri": "http://api:8080/api/reportes/69315571320775203",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/69315571320775203",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "74",
+							"uri": "http://api:8080/api/reportes/libros-mas-solicitados",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/libros-mas-solicitados",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13780",
+							"uri": "http://api:8080/api/reportes/libros-mas-solicitados/",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/libros-mas-solicitados\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "73",
+							"uri": "http://api:8080/api/reportes/multas-cobradas",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/multas-cobradas",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13779",
+							"uri": "http://api:8080/api/reportes/multas-cobradas/",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/multas-cobradas\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "72",
+							"uri": "http://api:8080/api/reportes/prestamos-diarios",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/prestamos-diarios",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13783",
+							"uri": "http://api:8080/api/reportes/prestamos-diarios/",
+							"nodeName": "http:\/\/api:8080\/api\/reportes\/prestamos-diarios\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "779",
+							"uri": "http://api:8080/api/reservas",
+							"nodeName": "http:\/\/api:8080\/api\/reservas",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
+							"uri": "http://api:8080/api/reservas?q=q&estado=estado&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/reservas (estado,pageable,q)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13784",
+							"uri": "http://api:8080/api/reservas/",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "118",
+							"uri": "http://api:8080/api/reservas/2195529144151644149",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/2195529144151644149",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "71",
+							"uri": "http://api:8080/api/reservas/mis?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/mis (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13786",
+							"uri": "http://api:8080/api/reservas/mis/",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/mis\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "786",
+							"uri": "http://api:8080/api/sanciones",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "23",
+							"uri": "http://api:8080/api/sanciones?activa=true&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones (activa,pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13788",
+							"uri": "http://api:8080/api/sanciones/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "813",
+							"uri": "http://api:8080/api/sanciones/10",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13792",
+							"uri": "http://api:8080/api/sanciones/10/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "122",
+							"uri": "http://api:8080/api/sanciones/10/4114192145097333842",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/10\/4114192145097333842",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "121",
+							"uri": "http://api:8080/api/sanciones/3538380370529065733",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/3538380370529065733",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "70",
+							"uri": "http://api:8080/api/sanciones/mis?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/mis (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13790",
+							"uri": "http://api:8080/api/sanciones/mis/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/mis\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "833",
+							"uri": "http://api:8080/api/sanciones/usuario",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/usuario",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13794",
+							"uri": "http://api:8080/api/sanciones/usuario/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/usuario\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "69",
+							"uri": "http://api:8080/api/sanciones/usuario/10?pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/usuario\/10 (pageable)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13793",
+							"uri": "http://api:8080/api/sanciones/usuario/10/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/usuario\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "123",
+							"uri": "http://api:8080/api/sanciones/usuario/7678753476184958090",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/usuario\/7678753476184958090",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "859",
+							"uri": "http://api:8080/api/usuarios",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "21",
+							"uri": "http://api:8080/api/usuarios?q=q&rol=rol&activo=true&pageable=",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios (activo,pageable,q,rol)",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13797",
+							"uri": "http://api:8080/api/usuarios/",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "2",
+							"uri": "http://api:8080/api/usuarios/10",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13799",
+							"uri": "http://api:8080/api/usuarios/10/",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "124",
+							"uri": "http://api:8080/api/usuarios/8135756717088529991",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/8135756717088529991",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "137",
+							"uri": "http://api:8080/api/auth/login",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/login ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "68",
+							"uri": "http://api:8080/api/auth/login",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/login ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "650",
+							"uri": "http://api:8080/api/auth/login",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/login ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "13682",
+							"uri": "http://api:8080/api/auth/login/",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/login\/ ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13684",
+							"uri": "http://api:8080/api/auth/logout/",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/logout\/",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "67",
+							"uri": "http://api:8080/api/auth/register",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/register ()({nombre,email,password,telefono,rolId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "400",
+							"otherinfo": ""
+						},
+						{
+							"id": "758",
+							"uri": "http://api:8080/api/auth/register",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/register ()({nombre,email,password,telefono,rolId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "429",
+							"otherinfo": ""
+						},
+						{
+							"id": "13683",
+							"uri": "http://api:8080/api/auth/register/",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/register\/ ()({nombre,email,password,telefono,rolId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "42",
+							"uri": "http://api:8080/api/autores",
+							"nodeName": "http:\/\/api:8080\/api\/autores ()({id,nombre,apellido,nacionalidad,activo,createdAt,nombreCompleto})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13685",
+							"uri": "http://api:8080/api/autores/",
+							"nodeName": "http:\/\/api:8080\/api\/autores\/ ()({id,nombre,apellido,nacionalidad,activo,createdAt,nombreCompleto})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "40",
+							"uri": "http://api:8080/api/categorias",
+							"nodeName": "http:\/\/api:8080\/api\/categorias ()({id,nombre,descripcion,activo,createdAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13688",
+							"uri": "http://api:8080/api/categorias/",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/ ()({id,nombre,descripcion,activo,createdAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "38",
+							"uri": "http://api:8080/api/editoriales",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales ()({id,nombre,pais,activo,createdAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13702",
+							"uri": "http://api:8080/api/editoriales/",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/ ()({id,nombre,pais,activo,createdAt})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "1433",
+							"uri": "http://api:8080/api/libros",
+							"nodeName": "http:\/\/api:8080\/api\/libros ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[]})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "36",
+							"uri": "http://api:8080/api/libros",
+							"nodeName": "http:\/\/api:8080\/api\/libros ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[{}]})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13707",
+							"uri": "http://api:8080/api/libros/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/ ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[{}]})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "34",
+							"uri": "http://api:8080/api/multas/10/pagar",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/10\/pagar",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13711",
+							"uri": "http://api:8080/api/multas/10/pagar/",
+							"nodeName": "http:\/\/api:8080\/api\/multas\/10\/pagar\/",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "33",
+							"uri": "http://api:8080/api/notificaciones",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones ()({usuarioId,titulo,mensaje,tipo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13689",
+							"uri": "http://api:8080/api/notificaciones/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/ ()({usuarioId,titulo,mensaje,tipo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "31",
+							"uri": "http://api:8080/api/prestamos",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos ()({usuarioId,inventarioId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13712",
+							"uri": "http://api:8080/api/prestamos/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/ ()({usuarioId,inventarioId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "28",
+							"uri": "http://api:8080/api/qr-codigos",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos ()({libroId,codigo,imagenUrl})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13697",
+							"uri": "http://api:8080/api/qr-codigos/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/ ()({libroId,codigo,imagenUrl})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "29",
+							"uri": "http://api:8080/api/qr-codigos/validar",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/validar ()({codigo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13714",
+							"uri": "http://api:8080/api/qr-codigos/validar/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/validar\/ ()({codigo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "26",
+							"uri": "http://api:8080/api/reservas",
+							"nodeName": "http:\/\/api:8080\/api\/reservas ()({usuarioId,libroId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13696",
+							"uri": "http://api:8080/api/reservas/",
+							"nodeName": "http:\/\/api:8080\/api\/reservas\/ ()({usuarioId,libroId})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "24",
+							"uri": "http://api:8080/api/sanciones",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones ()({usuarioId,tipo,motivo,fechaInicio,fechaFin})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13698",
+							"uri": "http://api:8080/api/sanciones/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/ ()({usuarioId,tipo,motivo,fechaInicio,fechaFin})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "22",
+							"uri": "http://api:8080/api/usuarios",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13703",
+							"uri": "http://api:8080/api/usuarios/",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/ ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "10274",
+							"uri": "http://api:8080/computeMetadata/v1/",
+							"nodeName": "http:\/\/api:8080\/computeMetadata\/v1\/ ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10214",
+							"uri": "http://api:8080/latest/meta-data/",
+							"nodeName": "http:\/\/api:8080\/latest\/meta-data\/ ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10479",
+							"uri": "http://api:8080/metadata/instance",
+							"nodeName": "http:\/\/api:8080\/metadata\/instance ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10539",
+							"uri": "http://api:8080/metadata/v1",
+							"nodeName": "http:\/\/api:8080\/metadata\/v1 ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10302",
+							"uri": "http://api:8080/opc/v1/instance/",
+							"nodeName": "http:\/\/api:8080\/opc\/v1\/instance\/ ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10374",
+							"uri": "http://api:8080/opc/v2/instance/",
+							"nodeName": "http:\/\/api:8080\/opc\/v2\/instance\/ ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "10552",
+							"uri": "http://api:8080/openstack/latest/meta_data.json",
+							"nodeName": "http:\/\/api:8080\/openstack\/latest\/meta_data.json ()({email,password})",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
+							"uri": "http://api:8080/api/autores/10",
+							"nodeName": "http:\/\/api:8080\/api\/autores\/10 ()({id,nombre,apellido,nacionalidad,activo,createdAt,nombreCompleto})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13681",
+							"uri": "http://api:8080/api/autores/10/",
+							"nodeName": "http:\/\/api:8080\/api\/autores\/10\/ ()({id,nombre,apellido,nacionalidad,activo,createdAt,nombreCompleto})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
+							"uri": "http://api:8080/api/categorias/10",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/10 ()({id,nombre,descripcion,activo,createdAt})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13686",
+							"uri": "http://api:8080/api/categorias/10/",
+							"nodeName": "http:\/\/api:8080\/api\/categorias\/10\/ ()({id,nombre,descripcion,activo,createdAt})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
+							"uri": "http://api:8080/api/configuracion/10",
+							"nodeName": "http:\/\/api:8080\/api\/configuracion\/10 ()({valor})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13690",
+							"uri": "http://api:8080/api/configuracion/10/",
+							"nodeName": "http:\/\/api:8080\/api\/configuracion\/10\/ ()({valor})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "15",
+							"uri": "http://api:8080/api/editoriales/10",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/10 ()({id,nombre,pais,activo,createdAt})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13692",
+							"uri": "http://api:8080/api/editoriales/10/",
+							"nodeName": "http:\/\/api:8080\/api\/editoriales\/10\/ ()({id,nombre,pais,activo,createdAt})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "1446",
+							"uri": "http://api:8080/api/libros/10",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10 ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[]})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13",
+							"uri": "http://api:8080/api/libros/10",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10 ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[{}]})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13708",
+							"uri": "http://api:8080/api/libros/10/",
+							"nodeName": "http:\/\/api:8080\/api\/libros\/10\/ ()({titulo,isbn,anioPublicacion,edicion,ejemplaresTotales,ubicacion,descripcion,categoriaId,editorialId,autorIds:[{}]})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "10",
+							"uri": "http://api:8080/api/notificaciones/10/leida",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10\/leida",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13709",
+							"uri": "http://api:8080/api/notificaciones/10/leida/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10\/leida\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "11",
+							"uri": "http://api:8080/api/notificaciones/leer-todas",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/leer-todas",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13710",
+							"uri": "http://api:8080/api/notificaciones/leer-todas/",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/leer-todas\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "9",
+							"uri": "http://api:8080/api/prestamos/10/devolver",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/devolver",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13691",
+							"uri": "http://api:8080/api/prestamos/10/devolver/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/devolver\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "8",
+							"uri": "http://api:8080/api/prestamos/10/renovar",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/renovar",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13693",
+							"uri": "http://api:8080/api/prestamos/10/renovar/",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/renovar\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "7",
+							"uri": "http://api:8080/api/qr-codigos/10/activo?activo=true",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/activo (activo)",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13694",
+							"uri": "http://api:8080/api/qr-codigos/10/activo/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/activo\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "6",
+							"uri": "http://api:8080/api/qr-codigos/10/regenerar",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/regenerar",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13713",
+							"uri": "http://api:8080/api/qr-codigos/10/regenerar/",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/regenerar\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "5",
+							"uri": "http://api:8080/api/sanciones/10/levantar",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/10\/levantar",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13695",
+							"uri": "http://api:8080/api/sanciones/10/levantar/",
+							"nodeName": "http:\/\/api:8080\/api\/sanciones\/10\/levantar\/",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3",
+							"uri": "http://api:8080/api/usuarios/10",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10 ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13700",
+							"uri": "http://api:8080/api/usuarios/10/",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10\/ ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						}
+					],
+					"count": "219",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "34"
+				},
+				{
+					"pluginid": "10111",
+					"alertRef": "10111",
+					"alert": "Authentication Request Identified",
+					"name": "Authentication Request Identified",
+					"riskcode": "0",
+					"confidence": "1",
+					"riskdesc": "Informational (Low)",
+					"desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
+					"instances":[ 
+						{
+							"id": "63",
+							"uri": "http://api:8080/api/usuarios",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "POST",
+							"param": "email",
+							"attack": "",
+							"evidence": "password",
+							"otherinfo": "userParam=email\nuserValue=zaproxy@example.com\npasswordParam=password"
+						},
+						{
+							"id": "119",
+							"uri": "http://api:8080/api/auth/login",
+							"nodeName": "http:\/\/api:8080\/api\/auth\/login ()({email,password})",
+							"method": "POST",
+							"param": "email",
+							"attack": "",
+							"evidence": "password",
+							"otherinfo": "userParam=email\nuserValue=zaproxy@example.com\npasswordParam=password"
+						}
+					],
+					"count": "2",
+					"systemic": false,
+					"solution": "<p>This is an informational alert rather than a vulnerability and so there is nothing to fix.</p>",
+					"otherinfo": "<p>userParam=email</p><p>userValue=zaproxy@example.com</p><p>passwordParam=password</p>",
+					"reference": "<p>https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/</p>",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "38"
+				},
+				{
+					"pluginid": "10049",
+					"alertRef": "10049-1",
+					"alert": "Non-Storable Content",
+					"name": "Non-Storable Content",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+					"instances":[ 
+						{
+							"id": "0",
+							"uri": "http://api:8080/api-docs",
+							"nodeName": "http:\/\/api:8080\/api-docs",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-store",
+							"otherinfo": ""
+						},
+						{
+							"id": "51",
+							"uri": "http://api:8080/api/notificaciones/10/leida",
+							"nodeName": "http:\/\/api:8080\/api\/notificaciones\/10\/leida",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "PUT ",
+							"otherinfo": ""
+						},
+						{
+							"id": "54",
+							"uri": "http://api:8080/api/prestamos/10/devolver",
+							"nodeName": "http:\/\/api:8080\/api\/prestamos\/10\/devolver",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "PUT ",
+							"otherinfo": ""
+						},
+						{
+							"id": "43",
+							"uri": "http://api:8080/api/qr-codigos/10/regenerar",
+							"nodeName": "http:\/\/api:8080\/api\/qr-codigos\/10\/regenerar",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "PUT ",
+							"otherinfo": ""
+						},
+						{
+							"id": "44",
+							"uri": "http://api:8080/api/usuarios/10",
+							"nodeName": "http:\/\/api:8080\/api\/usuarios\/10 ()({nombre,email,password,telefono,rolId,activo})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "PUT ",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": true,
+					"solution": "<p>The content may be marked as storable by ensuring that the following conditions are satisfied:</p><p>The request method must be understood by the cache and defined as being cacheable (\"GET\", \"HEAD\", and \"POST\" are currently defined as cacheable)</p><p>The response status code must be understood by the cache (one of the 1XX, 2XX, 3XX, 4XX, or 5XX response classes are generally understood)</p><p>The \"no-store\" cache directive must not appear in the request or response header fields</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"private\" response directive must not appear in the response</p><p>For caching by \"shared\" caches such as \"proxy\" caches, the \"Authorization\" header field must not appear in the request, unless the response explicitly allows it (using one of the \"must-revalidate\", \"public\", or \"s-maxage\" Cache-Control response directives)</p><p>In addition to the conditions above, at least one of the following conditions must also be satisfied by the response:</p><p>It must contain an \"Expires\" header field</p><p>It must contain a \"max-age\" response directive</p><p>For \"shared\" caches such as \"proxy\" caches, it must contain a \"s-maxage\" response directive</p><p>It must contain a \"Cache Control Extension\" that allows it to be cached</p><p>It must have a status code that is defined as cacheable by default (200, 203, 204, 206, 300, 301, 404, 405, 410, 414, 501).</p>",
+					"otherinfo": "",
+					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
+					"cweid": "524",
+					"wascid": "13",
+					"sourceid": "1"
+				}
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}

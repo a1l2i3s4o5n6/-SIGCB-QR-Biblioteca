@@ -7,7 +7,7 @@
         ['Mis préstamos activos', 'fa-exchange-alt', 'bg-primary-50 text-primary-400', $k['prestamosActivos'] ?? 0, route('prestamos.index')],
         ['Préstamos vencidos', 'fa-hourglass-end', 'bg-red-50 text-red-500', $k['prestamosVencidos'] ?? 0, route('prestamos.index')],
         ['Vencen en 24 horas', 'fa-clock', 'bg-amber-50 text-amber-500', $k['prestamosProximos24h'] ?? 0, route('prestamos.index')],
-        ['Mis reservas', 'fa-calendar-check', 'bg-gold-50 text-gold-400', $k['reservasPendientes'] ?? 0, route('prestamos.index')],
+        ['Mis reservas', 'fa-calendar-check', 'bg-gold-50 text-gold-400', $k['reservasPendientes'] ?? 0, route('reservas.index')],
         ['Sanciones activas', 'fa-ban', 'bg-red-50 text-red-500', $k['sancionesActivas'] ?? 0, route('sanciones.index')],
         ['Multas pendientes', 'fa-money-bill-wave', 'bg-blue-50 text-blue-500', $k['multasPendientes'] ?? 0, route('multas.index')],
     ];

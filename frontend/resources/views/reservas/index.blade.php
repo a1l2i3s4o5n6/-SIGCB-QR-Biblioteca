@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-bold text-gray-800">Reservas</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Gestión de reservas de libros</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']) ? 'Gestión de reservas de libros' : 'Tus solicitudes de reserva' }}</p>
             </div>
             @if (in_array(session('rol'), ['ADMIN', 'BIBLIOTECARIO']))
                 <a href="{{ route('reservas.create') }}"

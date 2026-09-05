@@ -78,6 +78,7 @@ window.formularioPrestamo = function (cfg) {
     return {
         usuarios: cfg.usuarios,
         inventario: cfg.inventario,
+        solicitudes: cfg.solicitudes ?? [],
         usuarioId: cfg.oldUsuarioId ?? '',
         usuarioSel: null,
         usuarioQ: '',
@@ -164,6 +165,29 @@ window.formularioPrestamo = function (cfg) {
         get ejemplaresDelLibro() {
             if (!this.libroKey) return [];
             return this.inventario.filter((it) => this.claveItem(it) === this.libroKey);
+        },
+
+        get solicitantesPorLibro() {
+            const m = new Map();
+            this.solicitudes.forEach((s) => {
+                const clave = String(s.libroId ?? 't:' + s.libroTitulo);
+                if (!m.has(clave)) m.set(clave, []);
+                m.get(clave).push(s);
+            });
+            return m;
+        },
+
+        get solicitantesActuales() {
+            if (!this.libroKey) return [];
+            return this.solicitantesPorLibro.get(this.libroKey) ?? [];
+        },
+
+        get haySolicitudes() {
+            return this.solicitantesActuales.length > 0;
+        },
+
+        get nombresSolicitantes() {
+            return this.solicitantesActuales.map((s) => s.usuarioNombre ?? 'Usuario').join(', ');
         },
 
         async buscarPorCodigo(url) {
