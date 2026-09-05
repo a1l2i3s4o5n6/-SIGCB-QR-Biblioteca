@@ -9,6 +9,15 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8080"
+    },
+    {
+      "key": "seedAdminEmail",
+      "value": "admin@biblioteca.com"
+    },
+    {
+      "key": "seedAdminPassword",
+      "value": "admin123",
+      "description": "Credencial SOLO para desarrollo local (ver .env.example y docs/seguridad/SECRETOS.md). Sobrescríbela según tu entorno; no usar valores de desarrollo en un despliegue real."
     }
   ],
   "auth": {
@@ -28,7 +37,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@biblioteca.com\",\n  \"password\": \"admin123\"\n}"
+              "raw": "{\n  \"email\": \"{{seedAdminEmail}}\",\n  \"password\": \"{{seedAdminPassword}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",

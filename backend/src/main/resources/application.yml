@@ -24,6 +24,13 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    # Contraseñas de los usuarios semilla (V7). Llegan por variables de
+    # entorno; con valor vacío la migración V7 las deja intactas (guarda
+    # '${...}' <> ''). Nunca fijadas en código: ver docs/seguridad/SECRETOS.md.
+    placeholders:
+      seed_admin_password: ${SEED_ADMIN_PASSWORD:}
+      seed_biblio_password: ${SEED_BIBLIO_PASSWORD:}
+      seed_student_password: ${SEED_STUDENT_PASSWORD:}
 
   data:
     redis:

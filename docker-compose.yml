@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: sigcbqr
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
       TZ: America/Guayaquil
     ports:
       - "5432:5432"
@@ -48,7 +48,14 @@ services:
       TZ: America/Guayaquil
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sigcbqr
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:?define SPRING_DATASOURCE_PASSWORD en .env}
+      # Credenciales de los usuarios semilla (V7): sin valor por defecto a
+      # proposito, en coherencia con JWT_SECRET. En desarrollo se rellenan
+      # desde .env (valores SOLO-dev); un despliegue real debe dar valores
+      # distintos o dejar vacio y depender de la desactivacion semilla (V13-prod).
+      SEED_ADMIN_PASSWORD: '${SEED_ADMIN_PASSWORD:?define SEED_ADMIN_PASSWORD en .env}'
+      SEED_BIBLIO_PASSWORD: '${SEED_BIBLIO_PASSWORD:?define SEED_BIBLIO_PASSWORD en .env}'
+      SEED_STUDENT_PASSWORD: '${SEED_STUDENT_PASSWORD:?define SEED_STUDENT_PASSWORD en .env}'
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SPRING_MVC_LOG_RESOLVED_EXCEPTION: "true"

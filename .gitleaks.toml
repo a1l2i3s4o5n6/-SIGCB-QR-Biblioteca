@@ -1,0 +1,28 @@
+# Configuración de gitleaks para el CI (trabajo secret-scan).
+#
+# Contexto:
+#  - La exploración se limita al commit HEAD (--log-opts=-n1) para no fallar
+#    por el histórico anterior a la limpieza de OBS-23. La historia de Git se
+#    conserva a propósito: reescribirla rompería los hashes citados en la
+#    documentación. El riesgo residual queda declarado en
+#    docs/seguridad/SECRETOS.md.
+#  - Los archivos permitidos abajo son los que DOCUMENTAN las credenciales de
+#    desarrollo por diseño: la plantilla .env.example (valores SOLO-dev) y los
+#    inventarios/bitácoras que las listan como parte del trazado de secretos.
+#    No son secretos de despliegue.
+#  - Toda credencial real nueva (tokens, claves, contraseñas de despliegue)
+#    fuera de esos archivos rompe la compilación.
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+  '''\.env\.example$''',
+  '''docs/seguridad/SECRETOS\.md$''',
+  '''docs/observaciones/OBSERVACIONES\.md$''',
+  '''docs/requisitos/historias/HU-01-autenticacion\.md$''',
+  '''docs/informe/rediseno-dashboard\.md$''',
+  '''docs/mediciones/cobertura/COBERTURA\.md$''',
+  '''INFORME_TECNICO_PFC\.tex$''',
+]

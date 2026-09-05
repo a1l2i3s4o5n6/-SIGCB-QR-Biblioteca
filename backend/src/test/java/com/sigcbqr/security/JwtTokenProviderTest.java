@@ -18,10 +18,20 @@ import static org.mockito.Mockito.when;
 
 class JwtTokenProviderTest {
 
-    private static final String SECRET = "dGVzdFNlY3JldEtleUZvclNpZ2NiUXJQcm9qZWN0VGVzdGluZ1B1cnBvc2VzT25seTEyMw==";
+    private static final String SECRET = secretFromEnv();
     private static final long EXPIRATION = 3600000L;
     private static final String ISSUER = "sigcbqr-api-test";
     private static final String AUDIENCE = "sigcbqr-frontend-test";
+
+    private static String secretFromEnv() {
+        String value = System.getenv("TEST_JWT_SECRET");
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    "Define TEST_JWT_SECRET (base64 de 64 bytes) en el entorno. "
+                    + "No se versiona ningún secreto de prueba; lo suministra scripts/run-tests.sh.");
+        }
+        return value;
+    }
 
     private JwtTokenProvider tokenProvider;
     private SecretKey secretKey;

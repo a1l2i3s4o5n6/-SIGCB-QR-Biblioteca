@@ -141,6 +141,43 @@ curl -fsS http://localhost:8080/actuator/health
 sigcbqr-api`, no es un problema de DNS, sino que el contenedor `api` está
 detenido; al arrancarlo el nombre se resuelve dentro de la red de Compose.
 
+### 3.6 BD con checksum desfasado por la remediación de credenciales (V3/V5/V7)
+
+**Síntoma:** tras la remediación de OBS-23 (las migraciones V3/V5/V7 cambiaron
+para dejar de versionar contraseñas en claro), el contenedor `api` de una BD
+cuya `pgdata` se creó **antes** de ese cambio queda en `Exited (1)` con:
+
+```
+Validate failed: Migrations have failed validation
+Migration checksum mismatch for migration version 7
+```
+
+Esto **no** ocurre en un clon limpio. Tampoco borra datos.
+
+**Remedio (una sola vez por volumen):**
+
+```bash
+# 1. Alinear el historial de Flyway con el árbol de migraciones local
+PASSWORD=$(grep '^SPRING_DATASOURCE_PASSWORD=' .env | cut -d= -f2)
+docker run --rm --network sigcb-qr-biblioteca_default \
+  -v "$PWD/backend/src/main/resources/db/migration":/flyway/sql:ro \
+  flyway/flyway:11.7.2 \
+  repair -url=jdbc:postgresql://postgres:5432/sigcbqr \
+    -user=postgres -password="$PASSWORD"
+
+# 2. Comprobar que no hay más desfases
+docker exec sigcbqr-postgres psql -U postgres -d sigcbqr \
+  -c "SELECT installed_rank, version, description, success FROM flyway_schema_history ORDER BY installed_rank;"
+
+# 3. Levantar de nuevo
+docker compose up -d --build
+curl -fsS http://localhost:8080/actuator/health
+```
+
+Tras el `repair`, la siguiente arrancada vuelve a ejecutar V7 con los
+placeholders del entorno (`.env`): los usuarios semilla quedan re-hasheados con
+las variables `SEED_*_PASSWORD` definidas en `.env`.
+
 ## 4. Puesta en marcha / detención
 
 ```bash

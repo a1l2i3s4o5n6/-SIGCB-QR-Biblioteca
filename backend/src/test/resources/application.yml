@@ -5,7 +5,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sigcbqr_test}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:test123}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -17,6 +17,13 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    # Mismo bloque que application.yml (estos archivos coinciden en nombre y el
+    # de test sombrea al principal en el classpath de pruebas): los placeholders
+    # de V7 los suministra el arnés (scripts/run-tests.sh) como SEED_*_PASSWORD.
+    placeholders:
+      seed_admin_password: ${SEED_ADMIN_PASSWORD:}
+      seed_biblio_password: ${SEED_BIBLIO_PASSWORD:}
+      seed_student_password: ${SEED_STUDENT_PASSWORD:}
 
   data:
     redis:
@@ -26,7 +33,9 @@ spring:
 
 app:
   jwt:
-    secret: dGVzdFNlY3JldEtleUZvclNpZ2NiUXJQcm9qZWN0VGVzdGluZ1B1cnBvc2VzT25seTEyMw==
+    # Sin valor por defecto: lo suministra el arnés de pruebas (run-tests.sh,
+    # CI) como TEST_JWT_SECRET. Ver docs/seguridad/SECRETOS.md.
+    secret: ${TEST_JWT_SECRET}
     expiration-ms: 3600000
     issuer: sigcbqr-api-test
     audience: sigcbqr-frontend-test

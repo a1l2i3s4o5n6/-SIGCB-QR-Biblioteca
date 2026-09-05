@@ -2,31 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
+/**
+ * Seeder intencionalmente inactivo.
+ *
+ * El frontend Laravel es un Backend for Frontend (ADR-0002) y NO habla con la
+ * base de datos: todo el acceso a datos pasa por App\Services\ApiClient contra
+ * la API Spring Boot. Los usuarios reales se crean en PostgreSQL mediante las
+ * migraciones de Flyway del backend (los usuarios semilla, con contraseñas
+ * definidas por variables de entorno en V7; en producción se desactivan).
+ *
+ * Este seeder era un resto de la plantilla de Laravel y crearia una tabla
+ * 'users' local con contraseñas en claro versionadas; por eso su cuerpo esta
+ * vacio a proposito. Eliminar si no se usa.
+ */
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin Sistema',
-            'email' => 'admin@biblioteca.com',
-            'password' => bcrypt('admin123'),
-        ]);
-
-        User::create([
-            'name' => 'María López',
-            'email' => 'biblio@biblioteca.com',
-            'password' => bcrypt('admin123'),
-        ]);
-
-        User::create([
-            'name' => 'Carlos García',
-            'email' => 'estudiante@estudiante.com',
-            'password' => bcrypt('123456'),
-        ]);
-
-        $this->command->info('Usuarios de prueba creados correctamente.');
+        // Intencionalmente vacio: ver el comentario de clase.
     }
 }

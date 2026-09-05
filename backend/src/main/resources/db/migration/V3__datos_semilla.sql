@@ -7,7 +7,9 @@ INSERT INTO roles (nombre, descripcion) VALUES
 ('ESTUDIANTE', 'Usuario estudiante de la universidad');
 
 -- ============================================
--- USUARIOS (password: admin123 / biblio123 / estudiante123)
+-- USUARIOS
+-- Las contraseñas efectivas se fijan en V7 a partir de variables de
+-- entorno (placeholders de Flyway); los hashes de aquí son intermedios.
 -- ============================================
 INSERT INTO usuarios (nombre, email, password, telefono, activo, rol_id) VALUES
 ('Admin Sistema', 'admin@biblioteca.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '555-0100', true, 1),

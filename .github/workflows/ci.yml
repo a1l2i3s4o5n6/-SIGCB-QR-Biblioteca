@@ -6,67 +6,19 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  JAVA_VERSION: '21'
-  MAVEN_OPTS: '-Xmx1g'
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-
-    services:
-      postgres:
-        image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
-        env:
-          POSTGRES_DB: sigcbqr_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test123
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:7-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Build and test with Maven
-        run: mvn clean verify
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/sigcbqr_test
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: test123
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
+      # Suite autocontenida y sin credenciales versionadas: levanta PostgreSQL
+      # y Redis de prueba y ejecuta Maven en contenedor, generando contraseñas
+      # efímeras por corrida (ver scripts/run-tests.sh). Sustituye al anterior
+      # arnés de service containers con 'test123' fijo (OBS-23).
+      - name: Build and test with Maven (contenedor)
+        run: bash scripts/run-tests.sh
 
       - name: Upload JaCoCo report
         if: always()
@@ -116,3 +68,22 @@ jobs:
           done
           if [ "$faltan" -gt 0 ]; then echo "Faltan $faltan archivo(s)"; exit 1; fi
           echo "Todos los archivos de gobernanza están presentes."
+
+  # Escaneo de secretos. Se limita al commit HEAD (--log-opts=-n1) para no
+  # fallar por la historia previa a la limpieza de OBS-23: la historia de Git
+  # se conserva a propósito (riesgo residual, ver docs/seguridad/SECRETOS.md).
+  # Cualquier secreto nuevo añadido en un commit posterior rompe la compilación.
+  # Los archivos permitidos en .gitleaks.toml son los que documentan las
+  # credenciales de desarrollo por diseño (.env.example e inventarios).
+  secret-scan:
+    name: Escaneo de secretos (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks (HEAD)
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect --source /repo --log-opts="-n1" --no-banner --redact

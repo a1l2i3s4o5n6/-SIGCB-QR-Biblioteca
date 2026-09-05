@@ -87,13 +87,13 @@ curl http://localhost:8080/actuator/health   # → {"status":"UP",...}
 
 Credenciales de la semilla (datos **sintéticos**; ver [`ETHICS.md`](ETHICS.md)):
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Administrador | `admin@biblioteca.com` | `admin123` |
-| Bibliotecario | `biblio@biblioteca.com` | `biblio123` |
-| Estudiante | `carlos.garcia@estudiante.com` | `estudiante123` |
-
-Otros estudiantes: `ana.martinez@estudiante.com`, `pedro.ramirez@estudiante.com`, `laura.sanchez@estudiante.com`.
+- Los valores de desarrollo de los usuarios semilla (`admin@biblioteca.com`,
+  `biblio@biblioteca.com` y los estudiantes) están definidos en `.env.example`
+  como `SEED_*_PASSWORD`, marcados **solo para desarrollo**. La migración Flyway
+  `V7` los re-hashea desde esas variables de entorno.
+- **No usar esos valores en un despliegue real**: en producción los usuarios
+  semilla se desactivan (`db/migration-prod/V13`) y un operador crea las cuentas
+  reales. Detalle y trazado en [`docs/seguridad/SECRETOS.md`](docs/seguridad/SECRETOS.md).
 
 > El token de sesión expira a la 1 hora; al agotarse hay que volver a iniciar sesión.
 

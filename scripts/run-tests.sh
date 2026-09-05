@@ -36,6 +36,15 @@ MAVEN_IMG="maven:3.9-eclipse-temurin-21"
 # fijada a 'test123' en el Makefile y en la documentación.
 PGPASS="$(head -c 18 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
 
+# Credenciales de los usuarios semilla (V7): aleatorias por corrida. Ninguna
+# prueba inicia sesión contra la BD de prueba con las cuentas semilla, así que
+# su valor exacto es irrelevante; solo se exige que existan para que Flyway
+# resuelva los placeholders. JWT de prueba: aleatorio, igual que JWT_SECRET.
+TEST_JWT_SECRET="$(head -c 64 /dev/urandom | base64 | tr -d '\n')"
+SEED_ADMIN_PASSWORD="$(head -c 12 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
+SEED_BIBLIO_PASSWORD="$(head -c 12 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
+SEED_STUDENT_PASSWORD="$(head -c 12 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
+
 limpiar() {
     echo ""
     echo "Limpiando entorno de prueba..."
@@ -118,6 +127,10 @@ MSYS_NO_PATHCONV=1 docker run --rm --network "$RED" \
     -e TEST_DATASOURCE_URL="jdbc:postgresql://$PG:5432/sigcbqr_test" \
     -e TEST_DATASOURCE_USERNAME=postgres \
     -e TEST_DATASOURCE_PASSWORD="$PGPASS" \
+    -e TEST_JWT_SECRET="$TEST_JWT_SECRET" \
+    -e SEED_ADMIN_PASSWORD="$SEED_ADMIN_PASSWORD" \
+    -e SEED_BIBLIO_PASSWORD="$SEED_BIBLIO_PASSWORD" \
+    -e SEED_STUDENT_PASSWORD="$SEED_STUDENT_PASSWORD" \
     -e REDIS_HOST="$REDIS" \
     -e JWT_SECRET="$(head -c 64 /dev/urandom | base64 | tr -d '\n')" \
     "$MAVEN_IMG" mvn -B clean verify "$@"

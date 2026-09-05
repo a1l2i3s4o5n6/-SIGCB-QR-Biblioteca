@@ -7,6 +7,66 @@ versionado sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [No publicada] — Remediación de secretos OBS-23 (Fase 1 de seguridad)
+
+Limpieza de las contraseñas y secretos de desarrollo que estaban versionados en
+claro. El trazado completo estaba documentado en
+[`docs/seguridad/SECRETOS.md`](docs/seguridad/SECRETOS.md); esta versión ejecuta
+la remediación acordada (OBS-23).
+
+### Cambiado
+
+- **`V7__hashes_unicos_seed.sql`** deja de contener `admin123` / `biblio123` /
+  `estudiante123` en claro: las contraseñas de los usuarios semilla llegan por
+  variables de entorno (`SEED_ADMIN_PASSWORD`, `SEED_BIBLIO_PASSWORD`,
+  `SEED_STUDENT_PASSWORD`) a través de los placeholders de Flyway, con guarda
+  «no vacío». Con valor vacío, V7 no modifica nada.
+- **`V3` y `V5`**: eliminada la referencia a las contraseñas de los comentarios
+  (los hashes intermedios quedan intactos).
+- **`application.yml`**: `spring.flyway.placeholders` declaran las tres
+  variables de semilla con valor por defecto vacío.
+- **`.env.example`**: bloque `SEED_*_PASSWORD` marcado **solo desarrollo**
+  (valores `admin123`/`biblio123`/`estudiante123`).
+- **`backend/src/test/resources/application.yml`**: replica el bloque de
+  placeholders de `application.yml`. Ojo: el archivo de test coincide en nombre
+  con el principal y lo **sombrea** en el classpath de pruebas, así que sin ese
+  bloque Flyway arrancaba sin placeholders y V7 fallaba durante la suite
+  (detectado al verificar).
+- **`docker-compose.yml`**: eliminados los defaults `postgres` de
+  `POSTGRES_PASSWORD` y `SPRING_DATASOURCE_PASSWORD` (ahora `:?`, como
+  `JWT_SECRET`); el servicio `api` recibe las `SEED_*` con `:?`.
+- **`backend/src/test/resources/application.yml`**: eliminados el secreto JWT
+  `base64` hardcodeado (ahora `${TEST_JWT_SECRET}`) y la contraseña por defecto
+  `test123` (ahora `${SPRING_DATASOURCE_PASSWORD}`), ambos sin valor por defecto.
+- **`JwtTokenProviderTest`**: lee `TEST_JWT_SECRET` del entorno en lugar del
+  literal.
+- **`scripts/run-tests.sh`**: suministra `TEST_JWT_SECRET` y las `SEED_*`
+  generadas aleatoriamente por corrida.
+- **CI**: el trabajo `build-and-test` pasa a ejecutar
+  `scripts/run-tests.sh` (arnés autocontenido, sin `test123` fijo ni secretos
+  que almacenar); nuevo trabajo **`secret-scan` con gitleaks** limitado al
+  commit HEAD para no fallar por la historia previa (riesgo residual, ver
+  `SECRETOS.md`).
+- **Postman**: el login usa variables de colección
+  (`{{seedAdminEmail}}`/`{{seedAdminPassword}}`).
+- **README**: eliminada la tabla de credenciales; se remite a `.env.example` y a
+  `SECRETOS.md`.
+- **Seeder de Laravel** (`frontend/database/seeders/DatabaseSeeder.php`):
+  vaciado a propósito; el BFF no habla con la base de datos (ADR-0002).
+- **`RUNBOOK.md §3.5`**: extendido con el `flyway repair` que requieren los
+  volúmenes existentes creados con el V7 anterior (checksum nuevo).
+
+### Notas
+
+- Los volúmenes `pgdata` existentes (creados antes de este cambio) requieren una
+  **única** ejecución de `flyway repair`; un clon nuevo aplica las migraciones sin
+  fricción. Ver `RUNBOOK.md §3.5`.
+- El **histórico de Git** conserva los secretos anteriores a propósito: borrarlos
+  exigiría reescribir toda la historia y romper los hashes citados en la
+  documentación. Queda declarado como riesgo residual en `SECRETOS.md`.
+
+---
+
 ## [1.0.0] — 2026-09-04 — Versión publicada
 
 Primera versión estable. Cierra la única limitación de instrumento que quedaba

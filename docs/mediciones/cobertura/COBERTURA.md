@@ -14,13 +14,25 @@ son recalculables desde el CSV; el apartado 3.1 da el comando exacto.
 ## 1. Cómo reproducir
 
 Las pruebas necesitan PostgreSQL y Redis reales: hay una prueba de contexto
-(`SigcbQrApplicationTests`) que arranca la aplicación completa y aplica las diez
+(`SigcbQrApplicationTests`) que arranca la aplicación completa y aplica las
 migraciones de Flyway.
+
+La vía canónica es autocontenida y **genera sus propias credenciales efímeras de
+prueba** (no fija ninguna en el repositorio):
+
+```bash
+make test        # = bash scripts/run-tests.sh
+cp backend/target/site/jacoco/jacoco.{csv,xml} docs/mediciones/cobertura/
+```
+
+Para una reproducción manual con un contenedor desechable (la contraseña puede
+ser cualquiera, el contenedor es de un solo uso):
 
 ```bash
 docker network create sigcbqr-test-net
 docker run -d --name sigcbqr-test-pg --network sigcbqr-test-net \
-  -e POSTGRES_DB=sigcbqr_test -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=test123 \
+  -e POSTGRES_DB=sigcbqr_test -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=test-only \
   postgres:16@sha256:f1c3376c26f2609ab9f29f71f824103fe2fcd8ee0346485cb6122a4f93df6f94
 docker run -d --name sigcbqr-test-redis --network sigcbqr-test-net \
   redis:7@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7
@@ -28,13 +40,17 @@ docker run -d --name sigcbqr-test-redis --network sigcbqr-test-net \
 docker run --rm --network sigcbqr-test-net \
   -v "$PWD/backend":/app -v sigcbqr-m2:/root/.m2 -w /app \
   -e SPRING_DATASOURCE_URL=jdbc:postgresql://sigcbqr-test-pg:5432/sigcbqr_test \
-  -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=test123 \
+  -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=test-only \
+  -e TEST_JWT_SECRET="$(head -c 64 /dev/urandom | base64 | tr -d '\n')" \
+  -e SEED_ADMIN_PASSWORD=test-only -e SEED_BIBLIO_PASSWORD=test-only \
+  -e SEED_STUDENT_PASSWORD=test-only \
   -e REDIS_HOST=sigcbqr-test-redis \
   maven:3.9-eclipse-temurin-21 mvn -B clean verify
 ```
 
-En CI equivale al trabajo `test` de `.github/workflows/ci.yml`, que levanta los
-mismos servicios como *service containers*.
+En CI equivale al trabajo `build-and-test` de `.github/workflows/ci.yml`, que
+ejecuta el mismo arnés (`scripts/run-tests.sh`) con contraseñas aleatorias por
+corrida.
 
 ---
 

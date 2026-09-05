@@ -6,8 +6,8 @@
 -- producción y la numeración debe ser única en todo el esquema.
 -- En desarrollo los seed permanecen activos para poder probar el sistema.
 --
--- Las contraseñas de estos usuarios están documentadas públicamente
--- (admin123 / biblio123 / estudiante123), por lo que en producción
+-- Las contraseñas de los usuarios semilla se mantienen en claro-solo-desarrollo
+-- (.env.example, variables SEED_*_PASSWORD de V7), por lo que en producción
 -- representan un riesgo de acceso no autorizado. Se desactivan para
 -- impedir su uso; un administrador deberá activarlos y cambiarles la
 -- contraseña de forma manual durante el primer despliegue.
