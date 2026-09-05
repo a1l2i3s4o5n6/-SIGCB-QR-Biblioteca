@@ -18,7 +18,7 @@
                 this.notifCount = Number(j.count) || 0;
             } catch (e) { /* sin cambios si falla */ }
         }
-    }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-16">
+    }" class="navbar-custom fixed top-0 left-0 right-0 z-50 h-[55.5px]">
     <div class="h-full px-4 sm:px-6 flex items-center justify-between">
         <!-- Left side -->
         <div class="flex items-center space-x-4">
@@ -109,7 +109,7 @@
 
 <!-- ===== SIDEBAR ===== -->
 <aside x-data
-    class="sidebar fixed top-16 left-0 h-[calc(100vh-4rem)] w-[260px] overflow-y-auto overflow-x-hidden z-40 transition-transform duration-300 hidden md:block"
+    class="sidebar fixed top-[55.5px] left-0 h-[calc(100vh-55.5px)] w-[260px] overflow-y-auto overflow-x-hidden z-40 transition-transform duration-300 hidden md:block"
     :class="$store.ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
     <!-- Sidebar Header -->
@@ -279,7 +279,7 @@
     x-transition:leave="transition ease-in-out duration-300 transform"
     x-transition:leave-start="translate-x-0"
     x-transition:leave-end="-translate-x-full"
-    class="sidebar fixed top-16 left-0 h-[calc(100vh-4rem)] w-[260px] overflow-y-auto z-40 md:hidden"
+    class="sidebar fixed top-[55.5px] left-0 h-[calc(100vh-55.5px)] w-[260px] overflow-y-auto z-40 md:hidden"
     style="display: none;">
 
     <!-- Same content as desktop sidebar -->
