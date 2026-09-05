@@ -143,5 +143,5 @@ secretos a partir de este punto.
 | Código | Estado | Ejecutado en |
 |--------|--------|--------------|
 | Trazado de secretos versionados | Hecho | Este documento |
-| Limpieza real (rotación + entorno + CI) | **Hecho** | CHANGELOG «No publicada» (remediación OBS-23); commit de la Fase 1 |
+| Limpieza real (rotación + entorno + CI) | **Hecho** | CHANGELOG «No publicada» (remediación OBS-23); commit `da4df7a` (`fix(seguridad)`) |
 | Riesgo residual (histórico de Git) | Documentado (no reescrito) | Sección «Riesgo residual» de este documento |
