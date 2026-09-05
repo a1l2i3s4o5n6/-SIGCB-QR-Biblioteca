@@ -1,0 +1,16 @@
+# SIGCB-QR — mapa de identidades de autoría (git mailmap)
+#
+# Unifica los alias usados en los commits con la autoría canónica de
+# CONTRIBUTORS.md / CITATION.cff. NO reescribe la historia: solo cambia cómo
+# 'git log' y 'git shortlog' muestran a los autores (--use-mailmap).
+#
+# Precedente: JuniorSoft363 y BryBryst son la misma persona (mismo email) y
+# aparecían como dos autores; sin este mapa, cada email debe aparecer una sola
+# vez (lo verifica scripts/validate-authors.py).
+
+# Romero: el email romerosteven553@gmail.com se usó con dos alias distintos.
+Romero Mendez, Bryam Steven <romerosteven553@gmail.com>   JuniorSoft363 <romerosteven553@gmail.com>
+Romero Mendez, Bryam Steven <romerosteven553@gmail.com>   BryBryst <romerosteven553@gmail.com>
+
+# Zambrano: alias usado en los commits vs. nombre canónico de la autoría.
+Zambrano Moreira, Alison Ariana <azambranom17@uteq.edu.ec>   Ali Ariana Zambrano <azambranom17@uteq.edu.ec>

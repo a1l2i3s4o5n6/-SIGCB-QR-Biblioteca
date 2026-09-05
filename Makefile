@@ -44,6 +44,9 @@ verify:
 	@echo "=== Índice de ADR ==="
 	@bash scripts/validate-adr.sh
 	@echo ""
+	@echo "=== Coherencia de autoría (.mailmap y superficies) ==="
+	@python scripts/validate-authors.py
+	@echo ""
 	@echo "=== Auditoría de SQL dinámico (con autotest del instrumento) ==="
 	@bash scripts/audit-sql-dynamic.sh
 	@echo ""

@@ -31,7 +31,13 @@ jobs:
     name: Validar documentación y trazabilidad
     runs-on: ubuntu-latest
     steps:
+      # Historia completa: validate-authors.py recorre TODOS los commits (git
+      # log --no-merges) para comprobar la coherencia de autoría, igual que el
+      # trabajo secret-scan. Sin fetch-depth=0, un clon superficial vería solo
+      # el commit HEAD y la comprobación fallaría de forma engañosa.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Falla si la matriz cita una prueba o una evidencia que no existe en el
       # repositorio. Es la comprobación que impide repetir el problema de la
@@ -48,6 +54,12 @@ jobs:
       # Falla si el índice de ADR y los archivos del directorio se desincronizan.
       - name: Índice de ADR
         run: bash scripts/validate-adr.sh
+
+      # Coherencia de autoría: el .mailmap evita identidades duplicadas (un
+      # correo, una persona) y las tres superficies (CONTRIBUTORS, CITATION.cff,
+      # .zenodo.json) declaran los mismos integrantes.
+      - name: Coherencia de autoría
+        run: python3 scripts/validate-authors.py
 
       # Verifica la fórmula del SUS contra los casos canónicos de la literatura.
       - name: Fórmula SUS

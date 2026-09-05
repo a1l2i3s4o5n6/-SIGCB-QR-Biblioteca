@@ -7,6 +7,41 @@ versionado sigue [Versionado Semántico](https://semver.org/lang/es/).
 
 ---
 
+## [No publicada] — Autoría verificada y unificada (Fase 2)
+
+Cierre de la fase de autoría: identidades de git unificadas, atribución verificable
+y coherencia automática entre las tres superficies de autoría.
+
+### Añadido
+
+- **`.mailmap`**: unifica a la misma persona que aparecía como `JuniorSoft363` y
+  `BryBryst` (mismo correo) bajo «Romero Mendez, Bryam Steven», y alinea los
+  nombres de autor con la autoría canónica de `CONTRIBUTORS.md`. No reescribe la
+  historia: solo cambia cómo `git log`/`git shortlog` muestran a los autores.
+- **`CONTRIBUTORS.md` — «Atribución verificada»**: fotografía de la autoría de
+  `main` (medida el 2026-09-05): Zambrano Moreira, Alison Ariana 62 commits,
+  Romero Mendez, Bryam Steven 55, Arias Moreira, Maybelin Gregoria 0 (aporte
+  no-código: escritura y revisión). Totales: 117 commits sin merges (127 con
+  merges). Ahora cada integrante declara su **Email (git)**.
+- **`scripts/validate-authors.py`**: comprueba en CI que (1) existe el `.mailmap`,
+  (2) ningún correo tiene más de una identidad, (3) los correos declarados en
+  `CONTRIBUTORS.md` son exactamente los de git, y (4) CONTRIBUTORS, `CITATION.cff`
+  y `.zenodo.json` declaran los mismos 3 integrantes. Avisa (sin fallar) cuando
+  quedan ORCID placeholder (`0000-0000-0000-0000`) pendientes de registro.
+
+### Cambiado
+
+- **`.github/workflows/ci.yml`**: el trabajo `validate-docs` ejecuta ahora
+  `scripts/validate-authors.py`.
+- **`Makefile`**: `make verify` incluye el nuevo validador de autoría.
+
+### Pendiente (documentado, no bloqueante)
+
+- Los **ORCID** siguen siendo placeholders: cada integrante debe registrar el suyo
+  antes de la publicación en Zenodo (Fase 4); el validador avisará mientras tanto.
+
+---
+
 ## [No publicada] — Remediación de secretos OBS-23 (Fase 1 de seguridad)
 
 Limpieza de las contraseñas y secretos de desarrollo que estaban versionados en
