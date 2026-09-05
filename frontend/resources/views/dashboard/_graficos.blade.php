@@ -69,14 +69,14 @@
         const serieCat = @json($serie);
         if (serieCat.some(d => d.prestamos + d.devoluciones + d.reservas + d.qr > 0)) {
             new Chart(document.getElementById('graficoActividad'), {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: serieCat.map(d => d.fecha),
                     datasets: [
-                        { label: 'Préstamos', data: serieCat.map(d => d.prestamos), borderColor: '#63A355', backgroundColor: 'rgba(99,163,85,.12)', fill: true, tension: .35, borderWidth: 2, pointRadius: 2 },
-                        { label: 'Devoluciones', data: serieCat.map(d => d.devoluciones), borderColor: '#3B82F6', backgroundColor: 'rgba(59,130,246,.10)', fill: true, tension: .35, borderWidth: 2, pointRadius: 2 },
-                        { label: 'Reservas', data: serieCat.map(d => d.reservas), borderColor: '#C9A94E', backgroundColor: 'rgba(201,169,78,.10)', fill: true, tension: .35, borderWidth: 2, pointRadius: 2 },
-                        { label: 'Códigos QR', data: serieCat.map(d => d.qr), borderColor: '#6366F1', backgroundColor: 'rgba(99,102,241,.10)', fill: true, tension: .35, borderWidth: 2, pointRadius: 2 },
+                        { label: 'Préstamos', data: serieCat.map(d => d.prestamos), backgroundColor: '#63A355', borderRadius: 3, stack: 'total' },
+                        { label: 'Devoluciones', data: serieCat.map(d => d.devoluciones), backgroundColor: '#3B82F6', borderRadius: 3, stack: 'total' },
+                        { label: 'Reservas', data: serieCat.map(d => d.reservas), backgroundColor: '#C9A94E', borderRadius: 3, stack: 'total' },
+                        { label: 'Códigos QR', data: serieCat.map(d => d.qr), backgroundColor: '#6366F1', borderRadius: 3, stack: 'total' },
                     ],
                 },
                 options: {
@@ -88,8 +88,8 @@
                         tooltip: { mode: 'index', intersect: false },
                     },
                     scales: {
-                        x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { family: 'Poppins', size: 10 } } },
-                        y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Poppins', size: 10 } } },
+                        x: { stacked: true, grid: { display: false }, ticks: { maxTicksLimit: 12, font: { family: 'Poppins', size: 10 } } },
+                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0, font: { family: 'Poppins', size: 10 } } },
                     },
                 },
             });
